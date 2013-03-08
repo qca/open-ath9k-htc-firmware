@@ -1,0 +1,71 @@
+This is the firmware for the Qualcomm Atheros AR7010 and AR9271 USB
+802.11n NICs.
+
+
+What is this exactly?
+---------------------
+
+This is the firmware which resides in RAM on the AR7010/AR9271 NICs.
+It is used by ath9k (Linux) and athn (OpenBSD) to provide wireless
+services.
+
+
+Ok, what are those NICs?
+------------------------
+
+The AR7010 is a USB/PCIe SoC with onboard RAM, ROM and flash.
+It comes with an external wireless chip connected via PCIe - typically
+an AR9280 or AR9285.
+
+The AR9271 is a USB/Wifi SoC with onboad RAM, ROM, flash and the
+actual wireless chip.  The wireless core is an off-shoot of the AR9285.
+It is a single-chip solution.
+
+How do I build it?
+------------------
+
+You're in for a treat.
+
+* You first have to build the toolchain.
+
+  * Linux:
+
+  $ make toolchain
+
+  * FreeBSD:
+
+  $ gmake toolchain
+
+  (Yes, I made this work on FreeBSD as well.)
+
+* Next, build the firmware.
+
+  * Linux:
+
+  $ ./build
+
+  * FreeBSD:
+
+  edit the build script, change make to gmake, and then
+
+  $ ./build
+
+You will end up with two .fw files - one for the AR7010 and one for
+the AR9271.
+
+
+Then what?
+----------
+
+You need to then copy this into the relevant location for your operating
+system.  Yes, this means you need a driver.  No, there's no FreeBSD
+driver yet for this particular chipset, sorry.
+
+
+Further information
+-------------------
+
+Bug tracking and email list will appear here shortly.
+
+
+
