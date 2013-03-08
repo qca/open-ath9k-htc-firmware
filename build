@@ -4,7 +4,7 @@ rm htc_9271.fw
 rm htc_7010.fw
 
 # MAKE=gmake
-MAKE?=make
+MAKE=make
 
 echo "*** AR9271 ***"
 ( cd target_firmware/magpie_fw_dev/build/k2_1_0/image/k2_ram	\
