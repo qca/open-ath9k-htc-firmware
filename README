@@ -1,7 +1,6 @@
 This is the firmware for the Qualcomm Atheros AR7010 and AR9271 USB
 802.11n NICs.
 
-
 What is this exactly?
 ---------------------
 
@@ -62,10 +61,20 @@ system.  Yes, this means you need a driver.  No, there's no FreeBSD
 driver yet for this particular chipset, sorry.
 
 
-Further information
--------------------
+Where do I file bugs?
+---------------------
 
-Bug tracking and email list will appear here shortly.
+Please file bugs in github - http://github.com/qca/open-ath9k-htc-firmware/issues .
 
 
+Mailing lists?
+--------------
+
+Here you go:
+
+http://lists.infradead.org/mailman/listinfo/ath9k_htc_fw
+
+And
+
+ath9k_htc_fw@lists.infradead.org
 
