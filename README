@@ -14,7 +14,7 @@ Ok, what are those NICs?
 
 The AR7010 is a USB/PCIe SoC with onboard RAM, ROM and flash.
 It comes with an external wireless chip connected via PCIe - typically
-an AR9280 or AR9285.
+an AR9280 or AR9287.
 
 The AR9271 is a USB/Wifi SoC with onboad RAM, ROM, flash and the
 actual wireless chip.  The wireless core is an off-shoot of the AR9285.
