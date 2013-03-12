@@ -8,6 +8,26 @@ This is the firmware which resides in RAM on the AR7010/AR9271 NICs.
 It is used by ath9k (Linux) and athn (OpenBSD) to provide wireless
 services.
 
+What licence is this covered by?
+--------------------------------
+
+The Qualcomm Atheros owned code is under the ISC licence.
+
+The NOTICES.TXT file contains copyright notices for software which
+this firmware release leverages.
+
+There is some code that is based off of work done under contract
+but is owned by Qualcomm Atheros; the original copyright statements
+from that work are in NOTICES.TXT.
+
+The Tensilica code (xtos/xtensa) is distributed with permission from
+Tensilica, Inc., under the MIT licence.
+
+There are three ECOS source files distributed under the terms of
+the GPLv2, with a caveat that linking or using the source files does
+not bring the rest of the binary under the GPLv2.  Please read the
+ECOS caveats in more detail.
+
 
 Ok, what are those NICs?
 ------------------------
