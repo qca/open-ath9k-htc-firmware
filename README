@@ -11,7 +11,7 @@ services.
 What licence is this covered by?
 --------------------------------
 
-The Qualcomm Atheros owned code is under the ISC licence.
+The Qualcomm Atheros owned code is under the ClearBSD licence.
 
 The NOTICES.TXT file contains copyright notices for software which
 this firmware release leverages.
