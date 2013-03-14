@@ -1,89 +1,136 @@
 GMP_VER=5.0.5
 GMP_URL=http://ftp.gnu.org/gnu/gmp/gmp-$(GMP_VER).tar.bz2
 GMP_TAR=gmp-$(GMP_VER).tar.bz2
+GMP_DIR=gmp-$(GMP_VER)
 
 MPFR_VER=3.1.1
 MPFR_URL=http://ftp.gnu.org/gnu/mpfr/mpfr-$(MPFR_VER).tar.bz2
 MPFR_TAR=mpfr-$(MPFR_VER).tar.bz2
+MPFR_DIR=mpfr-$(MPFR_VER)
 
 MPC_VER=1.0.1
 MPC_URL=http://ftp.gnu.org/gnu/mpc/mpc-$(MPC_VER).tar.gz
 MPC_TAR=mpc-$(MPC_VER).tar.gz
+MPC_DIR=mpc-$(MPC_VER)
 
 BINUTILS_VER=2.23.1
 BINUTILS_URL=http://ftp.gnu.org/gnu/binutils/binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_TAR=binutils-$(BINUTILS_VER).tar.bz2
+BINUTILS_DIR=binutils-$(BINUTILS_VER)
+BINUTILS_PATCHES=local/patches/binutils.patch
 
 GCC_VER=4.7.2
 GCC_URL=http://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.bz2
 GCC_TAR=gcc-$(GCC_VER).tar.bz2
+GCC_DIR=gcc-$(GCC_VER)
+GCC_PATCHES=local/patches/gcc.patch
 
 BASEDIR=$(shell pwd)
 TOOLCHAIN_DIR=$(BASEDIR)/toolchain
 TARGET=xtensa-elf
+DL_DIR=$(TOOLCHAIN_DIR)/dl
+BUILD_DIR=$(TOOLCHAIN_DIR)/build
 
 all: toolchain
 
-gmp-$(GMP_VER):
-	wget -N -P $(TOOLCHAIN_DIR)/dl $(GMP_URL)
-	tar -C $(TOOLCHAIN_DIR)/dl -xjf $(TOOLCHAIN_DIR)/dl/$(GMP_TAR)
+# 1: package name
+# 2: configure arguments
+# 3: make command
+define Common/Compile
+	mkdir -p $(BUILD_DIR)/$($(1)_DIR)
+	+cd $(BUILD_DIR)/$($(1)_DIR) && \
+	$(DL_DIR)/$($(1)_DIR)/configure \
+		--prefix=$(TOOLCHAIN_DIR)/inst \
+		$(2) && \
+	$(3)
+endef
 
-gmp: gmp-$(GMP_VER)
-	mkdir -p $(TOOLCHAIN_DIR)/build/gmp
-	cd $(TOOLCHAIN_DIR)/build/gmp; \
-	$(TOOLCHAIN_DIR)/dl/$</configure --disable-shared --enable-static --prefix=$(TOOLCHAIN_DIR)/inst; \
-	$(MAKE); $(MAKE) check;$(MAKE) install
+define GMP/Compile
+	$(call Common/Compile,GMP, \
+		--disable-shared --enable-static, \
+		$(MAKE) && $(MAKE) check && $(MAKE) -j1 install \
+	)
+endef
 
-mpfr-$(MPFR_VER):
-	wget -N -P $(TOOLCHAIN_DIR)/dl $(MPFR_URL)
-	tar -C $(TOOLCHAIN_DIR)/dl -xjf $(TOOLCHAIN_DIR)/dl/$(MPFR_TAR)
+define MPFR/Compile
+	$(call Common/Compile,MPFR, \
+		--disable-shared --enable-static \
+		--with-gmp=$(TOOLCHAIN_DIR)/inst, \
+		$(MAKE) && $(MAKE) check && $(MAKE) -j1 install \
+	)
+endef
 
-mpfr: mpfr-$(MPFR_VER)
-	mkdir -p $(TOOLCHAIN_DIR)/build/mpfr
-	cd $(TOOLCHAIN_DIR)/build/mpfr; \
-	$(TOOLCHAIN_DIR)/dl/$</configure --disable-shared --enable-static --with-gmp=$(TOOLCHAIN_DIR)/inst \
-	--prefix=$(TOOLCHAIN_DIR)/inst; \
-	$(MAKE); $(MAKE) check;$(MAKE) install
+define MPC/Compile
+	$(call Common/Compile,MPC, \
+		--disable-shared --enable-static \
+		--with-gmp=$(TOOLCHAIN_DIR)/inst \
+		--with-mpfr=$(TOOLCHAIN_DIR)/inst, \
+		$(MAKE) && $(MAKE) check && $(MAKE) -j1 install \
+	)
+endef
 
-mpc-$(MPC_VER):
-	wget -N -P $(TOOLCHAIN_DIR)/dl $(MPC_URL)
-	tar -C $(TOOLCHAIN_DIR)/dl -zxvf $(TOOLCHAIN_DIR)/dl/$(MPC_TAR)
+define BINUTILS/Compile
+	$(call Common/Compile,BINUTILS, \
+		--target=$(TARGET), \
+		$(MAKE) && $(MAKE) -j1 install \
+	)
+endef
 
-mpc: mpc-$(MPC_VER)
-	mkdir -p $(TOOLCHAIN_DIR)/build/mpfc
-	cd $(TOOLCHAIN_DIR)/build/mpfc; \
-	$(TOOLCHAIN_DIR)/dl/$</configure --disable-shared --enable-static --with-gmp=$(TOOLCHAIN_DIR)/inst \
-	--with-mpfr=$(TOOLCHAIN_DIR)/inst --prefix=$(TOOLCHAIN_DIR)/inst; \
-	$(MAKE); $(MAKE) check;$(MAKE) install
+define GCC/Compile
+	$(call Common/Compile,GCC, \
+		--target=$(TARGET) \
+		--enable-languages=c \
+		--disable-libssp \
+		--disable-shared \
+		--disable-libquadmath \
+		--with-gmp=$(TOOLCHAIN_DIR)/inst \
+		--with-mpfr=$(TOOLCHAIN_DIR)/inst \
+		--with-mpc=$(TOOLCHAIN_DIR)/inst \
+		--with-newlib, \
+		$(MAKE) && $(MAKE) -j1 install \
+	)
+endef
 
-binutils-$(BINUTILS_VER):
-	wget -N -P $(TOOLCHAIN_DIR)/dl $(BINUTILS_URL)
-	tar -C $(TOOLCHAIN_DIR)/dl -xjf $(TOOLCHAIN_DIR)/dl/$(BINUTILS_TAR)
-	patch -d $(TOOLCHAIN_DIR)/dl/$@ -p1 < local/patches/binutils.patch
+# 1: package name
+# 2: dependencies on other packages
+define Build
+$(DL_DIR)/$($(1)_TAR):
+	mkdir -p $(DL_DIR)
+	wget -N -P $(DL_DIR) $($(1)_URL)
 
-binutils: binutils-$(BINUTILS_VER)
-	mkdir -p $(TOOLCHAIN_DIR)/build/binutils
-	cd $(TOOLCHAIN_DIR)/build/binutils; \
-	$(TOOLCHAIN_DIR)/dl/$</configure --target=$(TARGET) --prefix=$(TOOLCHAIN_DIR)/inst; \
-	$(MAKE) all; $(MAKE) install
+$(DL_DIR)/$($(1)_DIR)/.prepared: $(DL_DIR)/$($(1)_TAR)
+	tar -C $(DL_DIR) -x$(if $(findstring bzip2,$($(1)_TAR)),j,z)f $(DL_DIR)/$($(1)_TAR)
+	$(if $($(1)_PATCHES), \
+		cat $($(1)_PATCHES) | \
+		patch -p1 -d $(DL_DIR)/$($(1)_DIR))
+	touch $$@
 
-gcc-$(GCC_VER):
-	wget -N -P $(TOOLCHAIN_DIR)/dl $(GCC_URL)
-	tar -C $(TOOLCHAIN_DIR)/dl -xjf $(TOOLCHAIN_DIR)/dl/$(GCC_TAR)
-	patch -d $(TOOLCHAIN_DIR)/dl/$@ -p1 < local/patches/gcc.patch
+$(1)_DEPENDS = $(foreach pkg,$(2),$(BUILD_DIR)/$($(pkg)_DIR)/.built)
+$(BUILD_DIR)/$($(1)_DIR)/.built: $(DL_DIR)/$($(1)_DIR)/.prepared $$($(1)_DEPENDS)
+	mkdir -p $(BUILD_DIR)/$($(1)_DIR)
+	$($(1)/Compile)
+	touch $$@
 
-gcc: gcc-$(GCC_VER)
-	mkdir -p $(TOOLCHAIN_DIR)/build/gcc
-	cd $(TOOLCHAIN_DIR)/build/gcc; \
-	export PATH=$(TOOLCHAIN_DIR)/inst/bin:$(PATH); \
-	$(TOOLCHAIN_DIR)/dl/$</configure --target=$(TARGET) --prefix=$(TOOLCHAIN_DIR)/inst \
-	--enable-languages=c --disable-libssp --disable-shared --disable-libquadmath \
-	--with-gmp=$(TOOLCHAIN_DIR)/inst \
-	--with-mpfr=$(TOOLCHAIN_DIR)/inst \
-	--with-mpc=$(TOOLCHAIN_DIR)/inst --with-newlib; \
-	$(MAKE) all; $(MAKE) install
+clean-dl-$(1):
+	rm -rf $(DL_DIR)/$($(1)_DIR)
 
-toolchain: gmp mpfr mpc binutils gcc
+toolchain: $(BUILD_DIR)/$($(1)_DIR)/.built
+clean-dl: clean-dl-$(1)
+download: $(DL_DIR)/$($(1)_DIR)/.prepared
 
+endef
+
+all: toolchain
 clean:
 	rm -rf $(TOOLCHAIN_DIR)/build $(TOOLCHAIN_DIR)/inst
+clean-dl:
+download:
+toolchain:
+
+.PHONY: all clean clean-dl download toolchain
+
+$(eval $(call Build,GMP))
+$(eval $(call Build,MPFR,GMP))
+$(eval $(call Build,MPC,GMP MPFR))
+$(eval $(call Build,BINUTILS))
+$(eval $(call Build,GCC,MPC MPFR))
