@@ -131,7 +131,7 @@ extern  void* __ahdecl ath_hal_ioremap(a_uint32_t addr, a_uint32_t len);
 #define OS_MEMZERO(_a, _n)  ath_hal_memzero((_a), (_n))
 extern void __ahdecl ath_hal_memzero(void *, size_t);
 #define OS_MEMCPY(_d, _s, _n)   ath_hal_memcpy(_d,_s,_n)
-extern void * __ahdecl ath_hal_memcpy(void *, void *, size_t);
+extern void * __ahdecl ath_hal_memcpy(void *, const void *, size_t);
 
 #ifndef abs
 #define abs(_a)     __builtin_abs(_a)

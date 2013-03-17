@@ -142,7 +142,7 @@ ath_hal_memzero(void *dst, adf_os_size_t n)
 }
 
 void * __ahdecl
-ath_hal_memcpy(void *dst, void *src, adf_os_size_t n)
+ath_hal_memcpy(void *dst, const void *src, adf_os_size_t n)
 {
 	adf_os_mem_copy(dst, src, n);
 	return 0;
