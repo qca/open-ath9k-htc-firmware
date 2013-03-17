@@ -141,40 +141,11 @@ struct ath_hal;
 extern  a_uint32_t __ahdecl ath_hal_getuptime(struct ath_hal *);
 #define OS_GETUPTIME(_ah)   ath_hal_getuptime(_ah)
 
-/*
- * Byte order/swapping support.
- */
-#define AH_LITTLE_ENDIAN    1234
-#define AH_BIG_ENDIAN       4321
-
-#if AH_BYTE_ORDER == AH_BIG_ENDIAN
-/*
- * This could be optimized but since we only use it for
- * a few registers there's little reason to do so.
- */
-#ifndef __bswap32
-static inline a_uint32_t
-__bswap32(a_uint32_t _x)
-{
-    return ((a_uint32_t)(
-          (((const a_uint8_t *)(&_x))[0]    ) |
-          (((const a_uint8_t *)(&_x))[1]<< 8) |
-          (((const a_uint8_t *)(&_x))[2]<<16) |
-          (((const a_uint8_t *)(&_x))[3]<<24))
-    );
-}
-#endif
-#ifndef __bswap16
-#define __bswap16(_x) ( (a_uint16_t)( (((const a_uint8_t *)(&_x))[0] ) |\
-                         ( ( (const a_uint8_t *)( &_x ) )[1]<< 8) ) )
-#endif
-#else
 #ifndef __bswap32
 #define __bswap32(_x)	(_x)
 #endif
 #ifndef __bswap16
 #define __bswap16(_x)	(_x)
-#endif
 #endif
 
 #define OS_REG_WRITE(_ah, _reg, _val)   ath_hal_reg_write_target(_ah, _reg, _val)
