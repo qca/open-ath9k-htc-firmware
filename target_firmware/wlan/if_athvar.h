@@ -124,8 +124,6 @@ typedef enum {
 #define TARGET_NODE_MAX ATH_NODE_MAX
 #define TARGET_VAP_MAX  ATH_VAP_MAX
 
-#define ATH_NODE_TARGET(_n) ((struct ath_node *)(_n))
-
 #define MAX_RATE_POWER               63
 #define ATH_COMP_PROC_NO_COMP_NO_CCS 3
 
