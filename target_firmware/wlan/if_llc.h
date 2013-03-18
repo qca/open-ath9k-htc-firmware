@@ -94,15 +94,15 @@ struct llc {
 		a_uint8_t format_id;
 		a_uint8_t class;
 		a_uint8_t window_x2;
-	    } type_u adf_os_packed;
+	    } adf_os_packed type_u;
 	    struct {
 		a_uint8_t num_snd_x2;
 		a_uint8_t num_rcv_x2;
-	    } type_i adf_os_packed;
+	    } adf_os_packed type_i;
 	    struct {
 		a_uint8_t control;
 		a_uint8_t num_rcv_x2;
-	    } type_s adf_os_packed;
+	    } adf_os_packed type_s;
 	    struct {
 	        a_uint8_t control;
 		/*
@@ -114,16 +114,16 @@ struct llc {
 		a_uint8_t frmr_control;
 		a_uint8_t frmr_control_ext;
 		a_uint8_t frmr_cause;
-	    } type_frmr adf_os_packed;
+	    } adf_os_packed type_frmr;
 	    struct {
 		a_uint8_t  control;
 		a_uint8_t  org_code[3];
 		a_uint16_t ether_type;
-	    } type_snap adf_os_packed;
+	    } adf_os_packed type_snap;
 	    struct {
 		a_uint8_t control;
 		a_uint8_t control_ext;
-	    } type_raw adf_os_packed;
+	    } adf_os_packed type_raw;
 	} llc_un /* XXX adf_os_packed ??? */;
 } adf_os_packed;
 
