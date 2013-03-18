@@ -128,13 +128,13 @@ void app_start()
 	A_PRINTF(" A_WDT_INIT()\n\r");
 
 #if defined(PROJECT_K2)
-	save_cmnos_printf = (uint32_t) fw_cmnos_printf;
+	save_cmnos_printf = fw_cmnos_printf;
 #endif
 
 	if( hostif == HIF_USB ) {
 #if defined(PROJECT_K2)
 #if MOVE_PRINT_TO_RAM
-		save_cmnos_printf = (uint32_t) _indir_tbl.cmnos.printf._printf;
+		save_cmnos_printf = _indir_tbl.cmnos.printf._printf;
 		_indir_tbl.cmnos.printf._printf = fw_cmnos_printf;
 #endif
 		_indir_tbl.cmnos.usb._usb_fw_task = _fw_usb_fw_task;

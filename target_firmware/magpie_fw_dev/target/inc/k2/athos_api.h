@@ -56,7 +56,7 @@
 /* ROM Patch API */
 
 /* save the ROM printf function point */
-extern uint32_t save_cmnos_printf;
+extern int (* save_cmnos_printf)(const char * fmt, ...);
 
 extern unsigned int _data_start_in_rom;
 extern unsigned int _data_start;
