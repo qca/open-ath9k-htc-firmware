@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 #define MAX_READ_SIZE	80
 
-unsigned long checksum = 0;
+uint32_t checksum = 0;
 
-void write_file(FILE *out, unsigned char *buf, unsigned long size, unsigned char *endian, unsigned char nl)
+void write_file(FILE *out, unsigned char *buf, uint32_t size, unsigned char *endian, unsigned char nl)
 {
 	int i=0;
 	unsigned char tmp_buf[4];
@@ -23,7 +24,7 @@ void write_file(FILE *out, unsigned char *buf, unsigned long size, unsigned char
         	    tmp_buf[2] = buf[i+2];
         	    tmp_buf[3] = buf[i+3];
 
-			fprintf(out, "0x%08X, ", *((unsigned long *)(&tmp_buf[0])));
+			fprintf(out, "0x%08X, ", *((uint32_t *)(&tmp_buf[0])));
 
         } else {
             
@@ -34,9 +35,9 @@ void write_file(FILE *out, unsigned char *buf, unsigned long size, unsigned char
 			tmp_buf[1] = buf[i+2];
 			tmp_buf[2] = buf[i+1];
 			tmp_buf[3] = buf[i+0];
-			fprintf(out, "0x%08X, ", *((unsigned long *)(&tmp_buf[0])));
+			fprintf(out, "0x%08X, ", *((uint32_t *)(&tmp_buf[0])));
 		}
-        checksum = checksum ^ *((unsigned long *)(&tmp_buf[0]));
+        checksum = checksum ^ *((uint32_t *)(&tmp_buf[0]));
 	}
 }
 
@@ -109,7 +110,7 @@ void write_array(FILE *out, FILE *in, unsigned char hif)
 			}
 
 			fprintf(out, "};\n");
-			fprintf(out, "\nconst unsigned long zcFwImageSize=%ld;\n", file_size);
+			fprintf(out, "\nconst uint32_t zcFwImageSize=%ld;\n", file_size);
 
 			goto ERR_DONE;
 		}
@@ -125,7 +126,7 @@ void write_array(FILE *out, FILE *in, unsigned char hif)
 
 			file_size += 4;
 			fprintf(out, "};\n");
-			fprintf(out, "\nconst unsigned long zcFwImageSize=%ld;\n", file_size);
+			fprintf(out, "\nconst uint32_t zcFwImageSize=%ld;\n", file_size);
 
 			goto ERR_DONE;
 		}
