@@ -24,6 +24,7 @@ HPATH=" -I$XTENSA_TOOLS_INC                     	\
 	-I$MAGPIE_ROOT/target/inc    			\
 	-I$MAGPIE_ROOT/target/inc/OTUS    		\
 	-I$MAGPIE_ROOT/target/adf/   		        \
+	-I$MAGPIE_ROOT/build/include/xtensa-elf/        \
 	-I$MAGPIE_ROOT/build/include";
 
 export HPATH
