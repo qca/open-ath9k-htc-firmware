@@ -1648,7 +1648,7 @@ static void ath_setcurmode_tgt(void *Context, A_UINT16 Command,
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
-static a_uint32_t ath_detach_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo,
+static void ath_detach_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo,
 				 A_UINT8 *data, a_int32_t datalen)
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
