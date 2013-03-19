@@ -970,14 +970,14 @@ ath_tgt_tx_send_normal(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		ath_tgt_rate_findrate(sc, an, shortPreamble,
 				      0, 0, 0, 0, 0,
 				      rcs, &isProbe);
-		memcpy(bf->bf_rcs, rcs, sizeof(rcs));
+		ath_hal_memcpy(bf->bf_rcs, rcs, sizeof(rcs));
 	} else {
 		mrcs[1].tries = mrcs[2].tries = mrcs[3].tries = 0;
 		mrcs[1].rix = mrcs[2].rix = mrcs[3].rix = 0;
 		mrcs[0].rix   = 0;
 		mrcs[0].tries = 1;
 		mrcs[0].flags = 0;
-		memcpy(bf->bf_rcs, mrcs, sizeof(mrcs));
+		ath_hal_memcpy(bf->bf_rcs, mrcs, sizeof(mrcs));
 	}
 
 	ath_buf_set_rate(sc, bf);
