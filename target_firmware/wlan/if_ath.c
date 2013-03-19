@@ -485,7 +485,6 @@ static void ath_tgt_rx_tasklet(TQUEUE_ARG data)
 	struct ath_rx_buf *bf = NULL;
 	struct ath_hal *ah = sc->sc_ah;
 	struct rx_frame_header *rxhdr;
-	struct ieee80211_frame *wh;
 	struct ath_rx_status *rxstats;
 	adf_nbuf_t skb = ADF_NBUF_NULL;
 
@@ -519,7 +518,6 @@ static void ath_tgt_rx_tasklet(TQUEUE_ARG data)
 		HTC_SendMsg(sc->tgt_htc_handle, RX_ENDPOINT_ID, skb);
 		sc->sc_rx_stats.ast_rx_send++;
 
-	next_buf:
 		bf->bf_status &= ~ATH_BUFSTATUS_DONE;
 		asf_tailq_insert_tail(&sc->sc_rxbuf, bf, bf_list);
 
@@ -544,7 +542,7 @@ static void ath_beacon_setup(struct ath_softc_tgt *sc,
 	adf_nbuf_t skb = bf->bf_skb;
 	struct ath_hal *ah = sc->sc_ah;
 	struct ath_desc *ds;
-	a_int32_t flags, antenna;
+	a_int32_t flags;
 	const HAL_RATE_TABLE *rt;
 	a_uint8_t rix, rate;
 	HAL_11N_RATE_SERIES series[4] = {{ 0 }};
@@ -1020,7 +1018,6 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)hdl;
 	struct ath_hal *ah = sc->sc_ah;
-	struct ieee80211com_target *ic = &sc->sc_ic;
 	HAL_INT status;
 
 	if (sc->sc_invalid)
@@ -1642,7 +1639,6 @@ static void ath_setcurmode_tgt(void *Context, A_UINT16 Command,
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
 	a_uint16_t mode;
-	struct ath_hal *ah = sc->sc_ah;
 
 	mode= *((a_uint16_t *)data);
 	mode = adf_os_ntohs(mode);
