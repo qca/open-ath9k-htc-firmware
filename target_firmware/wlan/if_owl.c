@@ -532,7 +532,7 @@ void ath_tx_status_clear(struct ath_softc_tgt *sc)
 	}
 }
 
-struct WMI_TXSTATUS_EVENT* ath_tx_status_get(struct ath_softc_tgt *sc)
+static WMI_TXSTATUS_EVENT *ath_tx_status_get(struct ath_softc_tgt *sc)
 {
 	WMI_TXSTATUS_EVENT *txs = NULL;
 	int i;
