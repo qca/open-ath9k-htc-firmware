@@ -380,7 +380,7 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 			break;
 		}
 
-		if (ds->ds_link == NULL) {
+		if (ds->ds_link == 0) {
 			break;
 		}
 
