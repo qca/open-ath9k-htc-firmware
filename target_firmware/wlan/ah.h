@@ -462,7 +462,7 @@ struct ath_hal
 	HAL_STATUS __ahdecl(*ah_procRxDesc)(struct ath_hal *, struct ath_desc *,
 					    a_uint32_t phyAddr, struct ath_desc *next, u_int64_t tsf);
 	HAL_STATUS __ahdecl(*ah_procRxDescFast)(struct ath_hal *ah, 
-						struct ath_desc *ds, a_uint32_t pa, 
+						struct ath_rx_desc *ds, a_uint32_t pa,
 						struct ath_desc *nds, 
 						struct ath_rx_status *rx_stats);
 	HAL_BOOL  __ahdecl(*ah_stopDmaReceive)(struct ath_hal*);
