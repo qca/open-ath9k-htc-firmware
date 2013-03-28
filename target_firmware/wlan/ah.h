@@ -457,7 +457,7 @@ struct ath_hal
 	/* Target receive Functions */
 	a_uint32_t __ahdecl(*ah_getRxDP)(struct ath_hal*);
 	void	   __ahdecl(*ah_setRxDP)(struct ath_hal*, a_uint32_t rxdp);
-	HAL_BOOL  __ahdecl(*ah_setupRxDesc)(struct ath_hal *, struct ath_desc *,
+	HAL_BOOL  __ahdecl(*ah_setupRxDesc)(struct ath_hal *, struct ath_rx_desc *,
 					    a_uint32_t size, a_uint32_t flags);
 	HAL_STATUS __ahdecl(*ah_procRxDesc)(struct ath_hal *, struct ath_desc *,
 					    a_uint32_t phyAddr, struct ath_desc *next, u_int64_t tsf);
