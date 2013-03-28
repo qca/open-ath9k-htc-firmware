@@ -222,7 +222,7 @@ static a_uint32_t ath_pkt_duration(struct ath_softc_tgt *sc,
 	return duration;
 }
 
-static void ath_dma_map(struct ath_softc_tgt *sc, struct ath_buf *bf)
+static void ath_dma_map(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	adf_nbuf_t skb = bf->bf_skb;
 
@@ -230,7 +230,7 @@ static void ath_dma_map(struct ath_softc_tgt *sc, struct ath_buf *bf)
 	adf_nbuf_map(sc->sc_dev, bf->bf_dmamap, skb, ADF_OS_DMA_TO_DEVICE);
 }
 
-static void ath_dma_unmap(struct ath_softc_tgt *sc, struct ath_buf *bf)
+static void ath_dma_unmap(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	adf_nbuf_t skb = bf->bf_skb;
 
