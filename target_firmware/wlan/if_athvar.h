@@ -383,7 +383,7 @@ struct ath_softc_tgt
 
 	ath_deschead       sc_rxdesc_idle;
 	ath_deschead	   sc_rxdesc;
-	struct ath_desc    *sc_rxdesc_held;
+	struct ath_rx_desc    *sc_rxdesc_held;
 
    	struct ath_buf    *sc_txbuf_held;
 
