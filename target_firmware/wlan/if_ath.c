@@ -446,7 +446,7 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 
 			bf->bf_status |= ATH_BUFSTATUS_DONE;
 
-			bf = asf_tailq_next(bf, bf_list);
+			bf = (struct ath_rx_buf *)asf_tailq_next(bf, bf_list);
 		}
 		else {
 			ds = asf_tailq_next(ds, ds_list);
