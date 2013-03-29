@@ -44,6 +44,7 @@
 #endif
 
 #define AR5416_DEVID_PCIE   0x0024  /* AR5416 PCI-E (XB) (Owl) */
+#define HAL_RATE_TABLE_SIZE 33
 
 typedef enum {
 	HAL_OK           = 0,    /* No error */
@@ -275,7 +276,7 @@ typedef struct {
 
 typedef struct {
 	a_int32_t    rateCount;
-	a_uint8_t    rateCodeToIndex[32];
+	a_uint8_t    rateCodeToIndex[HAL_RATE_TABLE_SIZE];
 	struct {
 		a_uint8_t    valid;
 		a_uint8_t    phy;
@@ -289,7 +290,7 @@ typedef struct {
 		a_uint8_t    controlRate;
 		a_uint16_t   lpAckDuration;
 		a_uint16_t   spAckDuration;
-	} info[32];
+	} info[HAL_RATE_TABLE_SIZE];
 } HAL_RATE_TABLE;
 
 typedef struct {
@@ -306,7 +307,7 @@ typedef struct {
 
 typedef struct {
 	a_int32_t    rateCount;
-	a_uint8_t    rateCodeToIndex[32];
+	a_uint8_t    rateCodeToIndex[HAL_RATE_TABLE_SIZE];
 	struct {
 		a_uint8_t    valid;
 		a_uint8_t    phy;
@@ -317,7 +318,7 @@ typedef struct {
 		a_uint8_t    controlRate;
 		a_uint16_t   lpAckDuration;
 		a_uint16_t   spAckDuration;
-	} info[32];
+	} info[HAL_RATE_TABLE_SIZE];
 } HAL_RATE_TABLE;
 
 #define HAL_RATESERIES_RTS_CTS    0x0001  /* use rts/cts w/this series */
