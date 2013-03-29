@@ -534,7 +534,7 @@ static void ath_tgt_rx_tasklet(TQUEUE_ARG data)
  * FIXME: Short Preamble.
  */
 static void ath_beacon_setup(struct ath_softc_tgt *sc,
-			     struct ath_buf *bf,
+			     struct ath_tx_buf *bf,
 			     struct ath_vap_target *avp)
 {
 	adf_nbuf_t skb = bf->bf_skb;
