@@ -603,7 +603,7 @@ static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
 
 	vap_index = bhdr->vap_index;
 	adf_os_assert(vap_index < TARGET_VAP_MAX);
-	vap = &sc->sc_vap[vap_index];
+	vap = &sc->sc_vap[vap_index].av_vap;
 
 	wh = (struct ieee80211_frame *)adf_nbuf_pull_head(nbuf,
 						  sizeof(ath_beacon_hdr_t));
