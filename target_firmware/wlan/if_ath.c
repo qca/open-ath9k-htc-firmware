@@ -880,7 +880,7 @@ static void ath_descdma_cleanup(struct ath_softc_tgt *sc,
 				ath_bufhead *head, a_int32_t dir)
 {
 	struct ath_tx_buf *bf;
-	struct ieee80211_node *ni;
+	struct ieee80211_node_target *ni;
 
 	asf_tailq_foreach(bf, head, bf_list) {
 		if (adf_nbuf_queue_len(&bf->bf_skbhead) != 0) {
