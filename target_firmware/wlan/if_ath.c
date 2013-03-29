@@ -73,7 +73,7 @@ uint32_t *init_htc_handle = 0;
 void owl_tgt_tx_tasklet(TQUEUE_ARG data);
 static void ath_tgt_send_beacon(struct ath_softc_tgt *sc,adf_nbuf_t bc_hdr,adf_nbuf_t nbuf,HTC_ENDPOINT_ID EndPt);
 static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen);
-extern struct ath_buf * ath_tgt_tx_prepare(struct ath_softc_tgt *sc, adf_nbuf_t skb, ath_data_hdr_t *dh);
+extern struct ath_tx_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc, adf_nbuf_t skb, ath_data_hdr_t *dh);
 extern void  ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t mgt_hdr, adf_nbuf_t skb,HTC_ENDPOINT_ID EndPt);
 extern HAL_BOOL ath_hal_wait(struct ath_hal *ah, a_uint32_t reg, a_uint32_t mask, a_uint32_t val);
 extern void owltgt_tx_processq(struct ath_softc_tgt *sc, struct ath_txq *txq,  owl_txq_state_t txqstate);

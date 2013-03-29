@@ -110,8 +110,6 @@ static void ath_update_stats(struct ath_softc_tgt *sc, struct ath_buf *bf);
 void adf_print_buf(adf_nbuf_t buf);
 static void ath_tgt_tx_enqueue(struct ath_txq *txq, struct ath_atx_tid  *tid);
 
-struct ath_buf * ath_tgt_tx_prepare(struct ath_softc_tgt *sc,
-				    adf_nbuf_t skb, ath_data_hdr_t *dh);
 void ath_tgt_tx_comp_aggr(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
 struct ieee80211_frame *ATH_SKB_2_WH(adf_nbuf_t skb);
 
@@ -775,7 +773,7 @@ static struct ath_buf* ath_buf_alloc(struct ath_softc_tgt *sc)
 	return  bf;
 }
 
-struct ath_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc,
+struct ath_tx_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc,
 				   adf_nbuf_t skb, ath_data_hdr_t *dh)
 {
 	struct ath_tx_buf *bf;
