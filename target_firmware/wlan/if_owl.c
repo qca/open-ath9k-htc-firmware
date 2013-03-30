@@ -374,7 +374,6 @@ static void ath_buf_set_rate(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
     HAL_11N_RATE_SERIES series[4];
     a_int32_t i, flags;
     a_uint8_t rix, cix, rtsctsrate;
-    a_uint32_t aggr_limit_with_rts;
     a_uint32_t ctsduration = 0;
     a_int32_t prot_mode = AH_FALSE;
 
@@ -400,13 +399,6 @@ static void ath_buf_set_rate(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		    }
 
 	    }
-    }
-
-    ath_hal_getrtsaggrlimit(sc->sc_ah, &aggr_limit_with_rts);
-
-    if (bf->bf_isaggr && aggr_limit_with_rts &&
-	bf->bf_al > aggr_limit_with_rts) {
-	    flags &= ~(HAL_TXDESC_RTSENA);
     }
 
     adf_os_mem_set(series, 0, sizeof(HAL_11N_RATE_SERIES) * 4);
