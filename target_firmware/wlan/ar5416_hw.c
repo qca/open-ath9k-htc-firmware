@@ -929,7 +929,7 @@ HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_desc *gds)
         return HAL_OK;
 }
 
-void ar5416Set11nTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+void ar5416Set11nTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 			   a_uint32_t pktLen, HAL_PKT_TYPE type, a_uint32_t txPower,
 			   a_uint32_t keyIx, HAL_KEY_TYPE keyType,
 			   a_uint32_t flags)

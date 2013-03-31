@@ -475,7 +475,7 @@ extern  HAL_BOOL ar5416FillKeyTxDesc_20(struct ath_hal *ah, struct ath_desc *,HA
 extern  HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_desc *);
 
 extern void ar5416IntrReqTxDesc_20(struct ath_hal *ah, struct ath_desc *ds);
-extern void ar5416Set11nTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+extern void ar5416Set11nTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
        a_uint32_t pktLen, HAL_PKT_TYPE type, a_uint32_t txPower,
        a_uint32_t keyIx, HAL_KEY_TYPE keyType, a_uint32_t flags);
 extern void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_tx_desc *ds,
