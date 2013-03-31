@@ -758,7 +758,7 @@ static struct ieee80211_node_target * ath_tgt_find_node(struct ath_softc_tgt *sc
 	return NULL;
 }
 
-static struct ath_buf* ath_buf_alloc(struct ath_softc_tgt *sc)
+static struct ath_tx_buf* ath_tx_buf_alloc(struct ath_softc_tgt *sc)
 {
 	struct ath_tx_buf *bf = NULL;
 
@@ -790,7 +790,7 @@ struct ath_tx_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc,
 		return NULL;
 	}
 
-	bf = ath_buf_alloc(sc);
+	bf = ath_tx_buf_alloc(sc);
 	if (!bf) {
 		__stats(sc, tx_nobufs);
 		return NULL;
