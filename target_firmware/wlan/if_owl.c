@@ -1490,7 +1490,7 @@ static u_int32_t ath_lookup_rate(struct ath_softc_tgt *sc,
 }
 
 int ath_tgt_tx_form_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid,
-			 ath_bufhead *bf_q)
+			 ath_tx_bufhead *bf_q)
 {
 	struct ath_tx_buf *bf_first ,*bf_prev = NULL;
 	int nframes = 0, rl = 0;;
