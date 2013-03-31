@@ -303,7 +303,7 @@ struct ath_descdma {
 struct ath_txq {
 	a_uint32_t           axq_qnum;
 	a_uint32_t           *axq_link;
-	asf_tailq_head(,ath_buf) axq_q;
+	asf_tailq_head(,ath_tx_buf) axq_q;
 	a_uint32_t           axq_depth;
 	struct  ath_buf     *axq_linkbuf;
 	asf_tailq_head(,ath_atx_tid) axq_tidq;
