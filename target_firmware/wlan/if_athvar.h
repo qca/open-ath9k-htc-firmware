@@ -194,7 +194,6 @@ struct ath_buf_state {
 #define bf_retries        bf_state.bfs_retries
 
 #define ATH_GENERIC_BUF                     \
-    asf_tailq_entry(ath_buf)  bf_list;      \
     struct ath_buf        *bf_next;	    \
     struct ath_desc       *bf_desc;	    \
     struct ath_desc       *bf_descarr;	    \
@@ -208,11 +207,13 @@ struct ath_buf_state {
 struct ath_buf
 {
     ATH_GENERIC_BUF
+    asf_tailq_entry(ath_buf)  bf_list;
 };
 
 struct ath_tx_buf
 {
 	ATH_GENERIC_BUF
+	asf_tailq_entry(ath_tx_buf)  bf_list;
 	struct ath_buf_state  bf_state;
 	a_uint16_t            bf_flags;
 	HTC_ENDPOINT_ID       bf_endpt;
@@ -223,6 +224,7 @@ struct ath_tx_buf
 struct ath_rx_buf
 {
 	ATH_GENERIC_BUF
+	asf_tailq_entry(ath_rx_buf)  bf_list;
 	a_uint32_t            bf_status;
 	struct ath_rx_status  bf_rx_status;
 };
@@ -234,6 +236,8 @@ struct ath_rx_buf
 
 typedef asf_tailq_head(ath_deschead_s, ath_rx_desc) ath_deschead;
 typedef asf_tailq_head(ath_bufhead_s, ath_buf) ath_bufhead;
+typedef asf_tailq_head(ath_rx_bufhead_s, ath_rx_buf) ath_rx_bufhead;
+typedef asf_tailq_head(ath_tx_bufhead_s, ath_tx_buf) ath_tx_bufhead;
 
 #define WME_NUM_TID 8
 #define WME_BA_BMP_SIZE 64
@@ -379,7 +383,7 @@ struct ath_softc_tgt
    	tq_struct         sc_txtotq;
    	tq_struct         sc_fataltq;
 
-	ath_bufhead        sc_rxbuf;
+	ath_rx_bufhead     sc_rxbuf;
 
 	ath_deschead       sc_rxdesc_idle;
 	ath_deschead	   sc_rxdesc;
@@ -392,7 +396,7 @@ struct ath_softc_tgt
 	struct ath_descdma  sc_bdma;
 
 	a_uint32_t	   *sc_rxlink;
-	ath_bufhead        sc_txbuf;
+	ath_tx_bufhead     sc_txbuf;
   	a_uint8_t          sc_txqsetup;
 
 	struct ath_txq     sc_txq[HAL_NUM_TX_QUEUES];
