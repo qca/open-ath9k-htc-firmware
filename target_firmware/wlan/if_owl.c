@@ -119,7 +119,7 @@ static void ath_tgt_tx_sched_normal(struct ath_softc_tgt *sc, ath_atx_tid_t *tid
 static void ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid);
 
 extern a_int32_t ath_chainmask_sel_logic(void *);
-static a_int32_t ath_get_pktlen(struct ath_buf *bf, a_int32_t hdrlen);
+static a_int32_t ath_get_pktlen(struct ath_tx_buf *bf, a_int32_t hdrlen);
 static void ath_tgt_txq_schedule(struct ath_softc_tgt *sc, struct ath_txq *txq);
 
 typedef void (*ath_ft_set_atype_t)(struct ath_softc_tgt *sc, struct ath_buf *bf);
@@ -938,7 +938,7 @@ static a_int32_t ath_tgt_txbuf_setup(struct ath_softc_tgt *sc,
 }
 
 static a_int32_t
-ath_get_pktlen(struct ath_buf *bf, a_int32_t hdrlen)
+ath_get_pktlen(struct ath_tx_buf *bf, a_int32_t hdrlen)
 {
 	adf_nbuf_t skb = bf->bf_skb;
 	a_int32_t pktlen;
