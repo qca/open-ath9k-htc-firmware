@@ -801,7 +801,7 @@ struct ath_tx_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc,
 	bf->bf_keytype = dh->keytype;
 	bf->bf_keyix = dh->keyix;
 	bf->bf_protmode = dh->flags & (IEEE80211_PROT_RTSCTS | IEEE80211_PROT_CTSONLY);
-	bf->bf_node = (struct ath_node_target *)ni;
+	bf->bf_node = ni;
 
 	adf_nbuf_queue_add(&bf->bf_skbhead, skb);
 	skb = adf_nbuf_queue_first(&(bf->bf_skbhead));
