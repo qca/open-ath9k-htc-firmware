@@ -468,9 +468,9 @@ extern  HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
         a_uint32_t keyIx, a_uint32_t antMode, a_uint32_t flags,
         a_uint32_t rtsctsRate, a_uint32_t rtsctsDuration,
         a_uint32_t compicvLen, a_uint32_t compivLen, a_uint32_t comp);
-extern  HAL_BOOL ar5416FillTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+extern  HAL_BOOL ar5416FillTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
         a_uint32_t segLen, HAL_BOOL firstSeg, HAL_BOOL lastSeg,
-        const struct ath_desc *ds0);
+        const struct ath_tx_desc *ds0);
 extern  HAL_BOOL ar5416FillKeyTxDesc_20(struct ath_hal *ah, struct ath_desc *,HAL_KEY_TYPE);
 extern  HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_desc *);
 
