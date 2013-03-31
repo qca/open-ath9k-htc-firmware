@@ -908,12 +908,8 @@ static a_int32_t ath_tgt_txbuf_setup(struct ath_softc_tgt *sc,
 				     ath_data_hdr_t *dh)
 
 {
-	struct ath_node_target *an = ATH_NODE_TARGET(bf->bf_node);
 	struct ieee80211_frame *wh = ATH_SKB2_WH(bf->bf_skb);
-	struct ieee80211_node_target *ni = (struct ieee80211_node_target *)an;
-	struct ieee80211vap_target *vap = ni->ni_vap;
-	struct ieee80211com_target *ic = &sc->sc_ic;
-	a_int32_t retval, fragno = 0;
+	a_int32_t retval;
 	a_uint32_t flags = adf_os_ntohl(dh->flags);
 
 	ath_tgt_tx_seqno_normal(bf);
