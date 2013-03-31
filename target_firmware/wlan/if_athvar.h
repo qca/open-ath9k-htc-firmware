@@ -321,7 +321,7 @@ struct wmi_rc_rate_mask_cmd {
 struct ath_vap_target {
 	struct ieee80211vap_target      av_vap;
 	struct ath_txq                  av_mcastq;
-	struct ath_buf                  *av_bcbuf;
+	struct ath_tx_buf		*av_bcbuf;
 	a_uint32_t                      av_rate_mask[2];  /* 0 - 2G, 1 - 5G */
 	a_uint8_t                       av_minrateidx[2]; /* 0 - 2G, 1 - 5G */
 	a_int8_t                        av_valid;
