@@ -106,7 +106,7 @@ static a_int32_t ath_tgt_txbuf_setup(struct ath_softc_tgt *sc,
 				     struct ath_tx_buf *bf, ath_data_hdr_t *dh);
 static void ath_tx_freebuf(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
 static void ath_tx_uc_comp(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
-static void ath_update_stats(struct ath_softc_tgt *sc, struct ath_buf *bf);
+static void ath_update_stats(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
 void adf_print_buf(adf_nbuf_t buf);
 static void ath_tgt_tx_enqueue(struct ath_txq *txq, struct ath_atx_tid  *tid);
 
@@ -1020,7 +1020,7 @@ ath_tx_uc_comp(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 }
 
 static void
-ath_update_stats(struct ath_softc_tgt *sc, struct ath_buf *bf)
+ath_update_stats(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	struct ath_tx_desc *ds = bf->bf_desc;
 	u_int32_t sr, lr;
