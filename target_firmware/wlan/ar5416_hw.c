@@ -862,7 +862,7 @@ HAL_BOOL ar5416FillKeyTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
 	return AH_TRUE;
 }
 
-HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_desc *gds)
+HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *gds)
 {
         struct ar5416_desc *ads = AR5416DESC(gds);
         struct ath_tx_desc *ds = (struct ath_tx_desc *)gds;
