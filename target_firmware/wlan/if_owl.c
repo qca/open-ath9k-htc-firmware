@@ -951,7 +951,7 @@ ath_get_pktlen(struct ath_tx_buf *bf, a_int32_t hdrlen)
 void
 ath_tgt_tx_send_normal(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
-	struct ath_node_target *an = bf->bf_node;
+	struct ath_node_target *an = ATH_NODE_TARGET(bf->bf_node);
 	struct ath_rc_series rcs[4];
 	struct ath_rc_series mrcs[4];
 	a_int32_t shortPreamble = 0;
