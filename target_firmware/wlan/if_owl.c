@@ -1376,7 +1376,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 {
 	struct ath_tx_buf  *bf, *bf_last;
 	ATH_AGGR_STATUS status;
-	ath_bufhead bf_q;
+	ath_tx_bufhead bf_q;
 	struct ath_txq *txq = TID_TO_ACTXQ(tid->tidno);
 	struct ath_desc *ds = NULL;
 	int i;
@@ -1397,7 +1397,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 			break;
 
 		bf = asf_tailq_first(&bf_q);
-		bf_last = asf_tailq_last(&bf_q, ath_bufhead_s);
+		bf_last = asf_tailq_last(&bf_q, ath_tx_bufhead_s);
 
 		if (bf->bf_nframes == 1) {
 
