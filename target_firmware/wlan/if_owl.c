@@ -238,7 +238,7 @@ static void ath_dma_unmap(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 
 static void ath_filltxdesc(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
-	struct ath_desc *ds0, *ds = bf->bf_desc;
+	struct ath_tx_desc *ds0, *ds = bf->bf_desc;
 	a_uint8_t i;
 
 	ds0 = ds;
