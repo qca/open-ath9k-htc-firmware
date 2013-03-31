@@ -1906,7 +1906,7 @@ a_int32_t ath_tgt_attach(a_uint32_t devid,a_uint32_t mem_start,
 	ATH_INIT_TQUEUE(sc->sc_dev, &sc->sc_fataltq, ath_fatal_tasklet, sc);
 
 	flags |= AH_USE_EEPROM;
-	ah = _ath_hal_attach_tgt(devid,sc,sc->sc_dev,mem_start, flags, &status);
+	ah = _ath_hal_attach_tgt(devid, sc, sc->sc_dev, flags, &status);
 	if (ah == NULL) {
 		error = ENXIO;
 		goto bad;

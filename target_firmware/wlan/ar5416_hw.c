@@ -99,7 +99,7 @@ void ar5416Detach(struct ath_hal *ah)
 
 struct ath_hal *
 ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
-	     HAL_BUS_HANDLE sh, a_uint32_t flags, HAL_STATUS *status)
+	     a_uint32_t flags, HAL_STATUS *status)
 {
 	struct ath_hal_5416 *ahp;
 	struct ath_hal *ah;
@@ -115,7 +115,6 @@ ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
 
 	ah->ah_dev = dev;
 	ah->ah_sc = sc;
-	ah->ah_sh = sh;
 	
 	/* If its a Owl 2.0 chip then change the hal structure to
 	   point to the Owl 2.0 ar5416_hal_20 structure */

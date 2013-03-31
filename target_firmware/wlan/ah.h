@@ -367,7 +367,6 @@ struct ath_hal
 {
 	a_uint32_t ah_magic;
 	HAL_SOFTC ah_sc;
-	HAL_BUS_HANDLE ah_sh;
 	adf_os_device_t ah_dev;
            
 	a_uint32_t ah_macVersion;
@@ -479,7 +478,7 @@ struct ath_hal
 
 
 extern struct ath_hal * __ahdecl ath_hal_attach_tgt(a_uint32_t devid, HAL_SOFTC,
-						    adf_os_device_t dev, HAL_BUS_HANDLE sh,
+						    adf_os_device_t dev,
 						    a_uint32_t flags, HAL_STATUS* status);
 
 extern const HAL_RATE_TABLE * __ahdecl ath_hal_getratetable(struct ath_hal *,

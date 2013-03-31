@@ -62,10 +62,10 @@ ath_hal_getuptime(struct ath_hal *ah)
 
 struct ath_hal *
 _ath_hal_attach_tgt(a_uint32_t devid, HAL_SOFTC sc,
-		    adf_os_device_t dev,HAL_BUS_HANDLE sh, a_uint32_t flags, void* s)
+		    adf_os_device_t dev, a_uint32_t flags, void* s)
 {
 	HAL_STATUS status;
-	struct ath_hal *ah = ath_hal_attach_tgt(devid,sc,dev,sh, flags, &status);
+	struct ath_hal *ah = ath_hal_attach_tgt(devid, sc, dev, flags, &status);
 	adf_os_print(" ath_hal = %p \n",ah);
 	*(HAL_STATUS *)s = status;
 	return ah;
