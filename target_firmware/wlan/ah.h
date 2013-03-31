@@ -408,7 +408,7 @@ struct ath_hal
 					     HAL_KEY_TYPE keyType,
 					     a_uint32_t flags);
 	void      __ahdecl(*ah_set11nRateScenario)(struct ath_hal *ah,
-						   struct ath_desc *ds,
+						   struct ath_tx_desc *ds,
 						   a_uint32_t durUpdateEn,
 						   a_uint32_t rtsctsRate,
 						   a_uint32_t rtsctsDuration,
