@@ -389,7 +389,7 @@ struct ath_softc_tgt
 	ath_deschead	   sc_rxdesc;
 	struct ath_rx_desc    *sc_rxdesc_held;
 
-   	struct ath_buf    *sc_txbuf_held;
+	struct ath_tx_buf    *sc_txbuf_held;
 
 	struct ath_descdma  sc_rxdma;
    	struct ath_descdma  sc_txdma;
