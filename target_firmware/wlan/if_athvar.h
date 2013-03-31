@@ -194,26 +194,30 @@ struct ath_buf_state {
 #define bf_retries        bf_state.bfs_retries
 
 #define ATH_GENERIC_BUF                     \
-    struct ath_buf        *bf_next;	    \
-    struct ath_desc       *bf_desc;	    \
-    struct ath_desc       *bf_descarr;	    \
     adf_os_dma_map_t      bf_dmamap;	    \
     adf_os_dmamap_info_t  bf_dmamap_info;   \
     struct ieee80211_node_target *bf_node;  \
     adf_nbuf_queue_t      bf_skbhead;	    \
-    adf_nbuf_t            bf_skb;	    \
-    struct ath_desc 	  *bf_lastds;
+    adf_nbuf_t            bf_skb;
 
 struct ath_buf
 {
     ATH_GENERIC_BUF
     asf_tailq_entry(ath_buf)  bf_list;
+    struct ath_buf        *bf_next;
+    struct ath_desc 	  *bf_lastds;
+    struct ath_desc       *bf_desc;
+    struct ath_desc       *bf_descarr;
 };
 
 struct ath_tx_buf
 {
 	ATH_GENERIC_BUF
 	asf_tailq_entry(ath_tx_buf)  bf_list;
+	struct ath_tx_buf	     *bf_next;
+	struct ath_tx_desc	     *bf_desc;
+	struct ath_tx_desc	     *bf_descarr;
+	struct ath_tx_desc	     *bf_lastds;
 	struct ath_buf_state  bf_state;
 	a_uint16_t            bf_flags;
 	HTC_ENDPOINT_ID       bf_endpt;
@@ -225,6 +229,10 @@ struct ath_rx_buf
 {
 	ATH_GENERIC_BUF
 	asf_tailq_entry(ath_rx_buf)  bf_list;
+	struct ath_rx_buf	     *bf_next;
+	struct ath_rx_desc	     *bf_desc;
+	struct ath_rx_desc	     *bf_descarr;
+	struct ath_rx_desc	     *bf_lastds;
 	a_uint32_t            bf_status;
 	struct ath_rx_status  bf_rx_status;
 };
