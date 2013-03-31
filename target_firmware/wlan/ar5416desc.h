@@ -462,7 +462,7 @@ extern  void ar5416SetRxFilter(struct ath_hal *ah, a_uint32_t bits);
 extern  HAL_BOOL ar5416UpdateCTSForBursting_20(struct ath_hal *, struct ath_desc *,
          struct ath_desc *,struct ath_desc *, struct ath_desc *,
          a_uint32_t, a_uint32_t);
-extern  HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+extern  HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
         a_uint32_t pktLen, a_uint32_t hdrLen, HAL_PKT_TYPE type, a_uint32_t txPower,
         a_uint32_t txRate0, a_uint32_t txTries0,
         a_uint32_t keyIx, a_uint32_t antMode, a_uint32_t flags,

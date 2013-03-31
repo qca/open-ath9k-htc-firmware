@@ -747,7 +747,7 @@ void ar5416IntrReqTxDesc_20(struct ath_hal *ah, struct ath_desc *ds)
 	ads->ds_ctl0 |= AR_TxIntrReq;
 }
 
-HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 			      a_uint32_t pktLen,
 			      a_uint32_t hdrLen,
 			      HAL_PKT_TYPE type,

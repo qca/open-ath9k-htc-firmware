@@ -429,7 +429,7 @@ struct ath_hal
 	void      __ahdecl(*ah_set11nVirtualMoreFrag)(struct ath_hal *ah,
 						      struct ath_desc *ds, a_uint32_t vmf);
            
-	HAL_BOOL  __ahdecl(*ah_setupTxDesc)(struct ath_hal *, struct ath_desc *,
+	HAL_BOOL  __ahdecl(*ah_setupTxDesc)(struct ath_hal *, struct ath_tx_desc *,
 					    a_uint32_t pktLen, a_uint32_t hdrLen,
 					    HAL_PKT_TYPE type, a_uint32_t txPower,
 					    a_uint32_t txRate0, a_uint32_t txTries0,
