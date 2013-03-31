@@ -492,9 +492,9 @@ extern void ar5416Set11nBurstDuration_20(struct ath_hal *ah, struct ath_desc *ds
 extern void ar5416Set11nVirtualMoreFrag_20(struct ath_hal *ah, struct ath_desc *ds,
        a_uint32_t vmf);
 extern  HAL_BOOL ar5416SetupRxDesc_20(struct ath_hal *,
-        struct ath_desc *, a_uint32_t size, a_uint32_t flags);
+        struct ath_rx_desc *, a_uint32_t size, a_uint32_t flags);
 extern  HAL_STATUS ar5416ProcRxDescFast_20(struct ath_hal *ah, 
-                                           struct ath_desc *, a_uint32_t,
+                                           struct ath_rx_desc *, a_uint32_t,
                                            struct ath_desc *,
                                            struct ath_rx_status *);
 #endif

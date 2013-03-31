@@ -459,7 +459,7 @@ void ar5416StopPcuReceive(struct ath_hal *ah)
 	OS_REG_SET_BIT(ah, AR_DIAG_SW, AR_DIAG_RX_DIS);
 }
 
-HAL_BOOL ar5416SetupRxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+HAL_BOOL ar5416SetupRxDesc_20(struct ath_hal *ah, struct ath_rx_desc *ds,
 			      a_uint32_t size, a_uint32_t flags)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
@@ -476,7 +476,7 @@ HAL_BOOL ar5416SetupRxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
 	return AH_TRUE;
 }
 
-HAL_STATUS ar5416ProcRxDescFast_20(struct ath_hal *ah, struct ath_desc *ds,
+HAL_STATUS ar5416ProcRxDescFast_20(struct ath_hal *ah, struct ath_rx_desc *ds,
 				   a_uint32_t pa, struct ath_desc *nds,
 				   struct ath_rx_status *rx_stats)
 {
