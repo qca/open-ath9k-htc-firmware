@@ -97,7 +97,7 @@ static a_uint16_t bits_per_symbol[][2] = {
 void owltgt_tx_processq(struct ath_softc_tgt *sc, struct ath_txq *txq,
 			owl_txq_state_t txqstate);
 static void ath_tgt_txqaddbuf(struct ath_softc_tgt *sc, struct ath_txq *txq,
-			      struct ath_buf *bf,  struct ath_desc *lastds);
+			      struct ath_tx_buf *bf,  struct ath_tx_desc *lastds);
 void ath_rate_findrate_11n_Hardcoded(struct ath_softc_tgt *sc,
 				     struct ath_rc_series series[]);
 void ath_buf_set_rate_Hardcoded(struct ath_softc_tgt *sc,
@@ -1246,8 +1246,8 @@ fail:
 
 static void
 ath_tgt_txqaddbuf(struct ath_softc_tgt *sc,
-		  struct ath_txq *txq, struct ath_buf *bf,
-		  struct ath_desc *lastds)
+		  struct ath_txq *txq, struct ath_tx_buf *bf,
+		  struct ath_tx_desc *lastds)
 {
 	struct ath_hal *ah = sc->sc_ah;
 
