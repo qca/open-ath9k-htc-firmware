@@ -113,7 +113,6 @@ static adf_os_pci_dev_id_t ath_pci_id_table[] = {
 };
 #endif
 
-void bus_read_cachesize(struct ath_softc *sc, a_uint8_t *csz);
 void exit_ath_pci(void);
 a_int32_t init_ath_pci(void);
 
@@ -173,12 +172,6 @@ ath_pci_suspend(adf_drv_handle_t hdl, adf_os_pm_t pm)
 static void
 ath_pci_resume(adf_drv_handle_t hdl)
 {
-}
-
-void
-bus_read_cachesize(struct ath_softc *sc, a_uint8_t *csz)
-{
-	*csz = adf_os_cache_line_size();
 }
 
 static adf_drv_info_t ath_drv_info = adf_os_pci_set_drv_info(ath_pci_tgt,&ath_pci_id_table[0], ath_pci_probe, ath_pci_remove, ath_pci_suspend, ath_pci_resume);

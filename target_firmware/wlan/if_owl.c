@@ -120,7 +120,7 @@ static void ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid);
 
 extern a_int32_t ath_chainmask_sel_logic(void *);
 static a_int32_t ath_get_pktlen(struct ath_buf *bf, a_int32_t hdrlen);
-static void ath_tgt_txq_schedule(struct ath_softc *sc, struct ath_txq *txq);
+static void ath_tgt_txq_schedule(struct ath_softc_tgt *sc, struct ath_txq *txq);
 
 typedef void (*ath_ft_set_atype_t)(struct ath_softc_tgt *sc, struct ath_buf *bf);
 
@@ -1293,7 +1293,7 @@ ath_tgt_tx_enqueue(struct ath_txq *txq, struct ath_atx_tid  *tid)
 }
 
 static void
-ath_tgt_txq_schedule(struct ath_softc *sc, struct ath_txq *txq)
+ath_tgt_txq_schedule(struct ath_softc_tgt *sc, struct ath_txq *txq)
 {
 	struct ath_atx_tid  *tid;
 	u_int8_t bdone;
