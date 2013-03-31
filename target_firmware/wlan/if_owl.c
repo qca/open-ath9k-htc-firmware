@@ -288,7 +288,7 @@ static void ath_tx_tgt_setds(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 	ath_filltxdesc(sc, bf);
 }
 
-static struct ath_buf *ath_buf_toggle(struct ath_softc_tgt *sc,
+static struct ath_tx_buf *ath_buf_toggle(struct ath_softc_tgt *sc,
 				      struct ath_tx_buf *bf,
 				      a_uint8_t retry)
 {
