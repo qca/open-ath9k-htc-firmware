@@ -278,7 +278,7 @@ typedef struct ath_atx_tid {
 	a_int32_t          baw_tail;
 	a_uint32_t         tx_buf_bitmap[ATH_TID_MAX_BUFS/TX_BUF_BITMAP_SIZE];
 	asf_tailq_entry(ath_atx_tid) tid_qelem;
-	asf_tailq_head(ath_tid_rbq,ath_buf) buf_q;
+	asf_tailq_head(ath_tid_rbq,ath_tx_buf) buf_q;
 	a_int8_t           paused;
 	a_int8_t           sched;
 	a_uint8_t          flag;
