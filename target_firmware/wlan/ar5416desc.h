@@ -489,7 +489,7 @@ extern void ar5416Set11nAggrLast_20(struct ath_hal *ah, struct ath_desc *ds);
 extern void ar5416Clr11nAggr_20(struct ath_hal *ah, struct ath_tx_desc *ds);
 extern void ar5416Set11nBurstDuration_20(struct ath_hal *ah, struct ath_tx_desc *ds,
        a_uint32_t burstDuration);
-extern void ar5416Set11nVirtualMoreFrag_20(struct ath_hal *ah, struct ath_desc *ds,
+extern void ar5416Set11nVirtualMoreFrag_20(struct ath_hal *ah, struct ath_tx_desc *ds,
        a_uint32_t vmf);
 extern  HAL_BOOL ar5416SetupRxDesc_20(struct ath_hal *,
         struct ath_rx_desc *, a_uint32_t size, a_uint32_t flags);
