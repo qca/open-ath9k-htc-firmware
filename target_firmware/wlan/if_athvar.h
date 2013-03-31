@@ -229,7 +229,7 @@ struct ath_rx_buf
 	struct ath_rx_status  bf_rx_status;
 };
 
-#define ATH_BUF_GET_DESC_PHY_ADDR(bf)                       bf->bf_desc
+#define ATH_BUF_GET_DESC_PHY_ADDR(bf)                       (a_uint32_t)bf->bf_desc
 #define ATH_BUF_GET_DESC_PHY_ADDR_WITH_IDX(bf, idx)         (adf_os_dma_addr_t)(&bf->bf_descarr[idx])
 #define ATH_BUF_SET_DESC_PHY_ADDR(bf, addr)
 #define ATH_BUF_SET_DESC_PHY_ADDR_WITH_IDX(bf, idx, addr)
