@@ -64,8 +64,7 @@
 #include "if_athvar.h"
 #include "if_ath_pci.h"
 
-extern a_int32_t ath_tgt_attach(a_uint32_t devid,a_uint32_t mem_start,
-				struct ath_softc_tgt *sc, adf_os_device_t osdev);
+extern a_int32_t ath_tgt_attach(a_uint32_t devid, struct ath_softc_tgt *sc, adf_os_device_t osdev);
 extern a_int32_t ath_detach(void *);
 extern adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl);
 
@@ -145,7 +144,7 @@ ath_pci_probe(adf_os_resource_t *res,a_int32_t count, adf_os_attach_data_t *data
 
 	adf_os_print("ath_pci_probe %x\n",id->device);
 
-	if (ath_tgt_attach(id->device, res->start, &sc->aps_sc, osdev) != 0)
+	if (ath_tgt_attach(id->device, &sc->aps_sc, osdev) != 0)
 		goto bad3;
 
 	/* ready to process interrupts */

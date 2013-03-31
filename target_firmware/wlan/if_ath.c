@@ -1883,8 +1883,7 @@ static void tgt_hif_htc_wmi_init(struct ath_softc_tgt *sc)
 	HTC_Ready(sc->tgt_htc_handle);
 }
 
-a_int32_t ath_tgt_attach(a_uint32_t devid,a_uint32_t mem_start,
-			 struct ath_softc_tgt *sc, adf_os_device_t osdev)
+a_int32_t ath_tgt_attach(a_uint32_t devid, struct ath_softc_tgt *sc, adf_os_device_t osdev)
 {
 	struct ath_hal *ah;
 	HAL_STATUS status;
