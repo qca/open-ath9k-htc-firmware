@@ -418,9 +418,9 @@ struct ath_hal
 						struct ath_tx_desc *ds, a_uint32_t aggrLen,
 						a_uint32_t numDelims);
 	void      __ahdecl(*ah_set11nAggrMiddle)(struct ath_hal *ah,
-						 struct ath_desc *ds, a_uint32_t numDelims);
+						 struct ath_tx_desc *ds, a_uint32_t numDelims);
 	void      __ahdecl(*ah_set11nAggrLast)(struct ath_hal *ah,
-					       struct ath_desc *ds);
+					       struct ath_tx_desc *ds);
 	void      __ahdecl(*ah_clr11nAggr)(struct ath_hal *ah,
 					   struct ath_tx_desc *ds);
 	void      __ahdecl(*ah_set11nBurstDuration)(struct ath_hal *ah,
