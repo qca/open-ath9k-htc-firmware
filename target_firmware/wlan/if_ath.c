@@ -539,7 +539,7 @@ static void ath_beacon_setup(struct ath_softc_tgt *sc,
 {
 	adf_nbuf_t skb = bf->bf_skb;
 	struct ath_hal *ah = sc->sc_ah;
-	struct ath_desc *ds;
+	struct ath_tx_desc *ds;
 	a_int32_t flags;
 	const HAL_RATE_TABLE *rt;
 	a_uint8_t rix, rate;
