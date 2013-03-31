@@ -420,7 +420,7 @@ struct ath_softc_tgt
 	struct ath_vap_target      sc_vap[TARGET_VAP_MAX];
 	struct ieee80211com_target sc_ic;
 
-	ath_bufhead         sc_bbuf;
+	ath_tx_bufhead         sc_bbuf;
 	a_uint64_t          sc_swba_tsf;
 
 	WMI_TXSTATUS_EVENT  tx_status[2];
