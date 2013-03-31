@@ -146,8 +146,10 @@ struct ath_txq;
 #define ath_free_rx_skb(_sc,_skb)                   BUF_Pool_free_buf(_sc->pool_handle, POOL_ID_WLAN_RX_BUF, _skb)
 #define ath_free_tx_skb(_htc_handle, endpt, _skb)   HTC_ReturnBuffers(_htc_handle, endpt, _skb);
 
-typedef void (*ath_txq_add_fn_t)(struct ath_softc_tgt *sc, struct ath_buf *bf);
-typedef void (*ath_tx_comp_fn_t)(struct ath_softc_tgt *sc, struct ath_buf *bf);
+struct ath_tx_buf;
+
+typedef void (*ath_txq_add_fn_t)(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
+typedef void (*ath_tx_comp_fn_t)(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
 
 struct ath_buf_state {
 	ath_tx_comp_fn_t        bfs_comp;           /* completion function          */
