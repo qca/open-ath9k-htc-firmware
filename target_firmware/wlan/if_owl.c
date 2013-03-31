@@ -133,7 +133,7 @@ static void
 ath_tx_update_baw(ath_atx_tid_t *tid, int seqno);
 static  void
 ath_tx_retry_subframe(struct ath_softc_tgt *sc, struct ath_tx_buf *bf,
-		      ath_bufhead *bf_q, struct ath_tx_buf **bar);
+		      ath_tx_bufhead *bf_q, struct ath_tx_buf **bar);
 
 static void
 ath_tx_comp_aggr_error(struct ath_softc_tgt *sc, struct ath_tx_buf *bf, ath_atx_tid_t *tid);
@@ -1795,7 +1795,7 @@ ath_tx_comp_cleanup(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 
 static void
 ath_tx_retry_subframe(struct ath_softc_tgt *sc, struct ath_tx_buf *bf,
-		      ath_bufhead *bf_q, struct ath_tx_buf **bar)
+		      ath_tx_bufhead *bf_q, struct ath_tx_buf **bar)
 {
 
 	struct ath_node_target *an = ATH_NODE_TARGET(bf->bf_node);
