@@ -46,6 +46,7 @@ struct ath_node_target;
 struct ath_desc;
 struct ieee80211vap;
 struct ieee80211com_target;
+struct ath_tx_desc;
 
 struct ath_ratectrl {
 	size_t	arc_space;	/* space required for per-node state */

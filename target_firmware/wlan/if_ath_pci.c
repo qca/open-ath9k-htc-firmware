@@ -176,8 +176,6 @@ ath_pci_resume(adf_drv_handle_t hdl)
 {
 }
 
-static char *dev_info = "ath_pci_tgt";
-
 void
 bus_read_cachesize(struct ath_softc *sc, a_uint8_t *csz)
 {

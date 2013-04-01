@@ -53,6 +53,7 @@ void htc_setup_comp(void)
 static void dispatch_magpie_sys_cmds(void *pContext, A_UINT16 Command,
 				     A_UINT16 SeqNo, A_UINT8 *buffer, int Length);
 
+#if MAGPIE_ENABLE_WLAN == 0
 static WMI_DISPATCH_ENTRY Magpie_Sys_DispatchEntries[] =
 {
 	{dispatch_magpie_sys_cmds,  WMI_ECHO_CMDID, 0},
@@ -60,6 +61,7 @@ static WMI_DISPATCH_ENTRY Magpie_Sys_DispatchEntries[] =
 };
 
 static WMI_DECLARE_DISPATCH_TABLE(Magpie_Sys_Commands_Tbl, Magpie_Sys_DispatchEntries);
+#endif
 
 htc_handle_t htc_handle;
 

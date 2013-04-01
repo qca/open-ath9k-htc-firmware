@@ -125,7 +125,7 @@ struct ath_rx_status {
 
 #define HAL_RXKEYIX_INVALID ((a_uint8_t) -1)
 
-#define HAL_TXKEYIX_INVALID ((a_uint32_t) -1)
+#define HAL_TXKEYIX_INVALID ((a_uint8_t) -1)
 
 /*
  * The following definitions are passed directly

@@ -110,8 +110,6 @@ static void ath_update_stats(struct ath_softc_tgt *sc, struct ath_buf *bf);
 void adf_print_buf(adf_nbuf_t buf);
 static void ath_tgt_tx_enqueue(struct ath_txq *txq, struct ath_atx_tid  *tid);
 
-struct ath_buf * ath_tgt_tx_prepare(struct ath_softc_tgt *sc,
-				    adf_nbuf_t skb, ath_data_hdr_t *dh);
 void ath_tgt_tx_comp_aggr(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
 struct ieee80211_frame *ATH_SKB_2_WH(adf_nbuf_t skb);
 
@@ -120,9 +118,6 @@ void ath_tgt_tx_send_normal(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
 static void ath_tgt_tx_sched_normal(struct ath_softc_tgt *sc, ath_atx_tid_t *tid);
 static void ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid);
 
-static struct ath_node_target * owltarget_findnode(struct  tx_frame_heade *dh,
-						   struct ath_softc_tgt *sc,
-						   struct adf_nbuf_t *skb);
 extern a_int32_t ath_chainmask_sel_logic(void *);
 static a_int32_t ath_get_pktlen(struct ath_buf *bf, a_int32_t hdrlen);
 static void ath_tgt_txq_schedule(struct ath_softc *sc, struct ath_txq *txq);
@@ -225,7 +220,7 @@ static a_uint32_t ath_pkt_duration(struct ath_softc_tgt *sc,
 	return duration;
 }
 
-static void ath_dma_map(struct ath_softc_tgt *sc, struct ath_buf *bf)
+static void ath_dma_map(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	adf_nbuf_t skb = bf->bf_skb;
 
@@ -233,7 +228,7 @@ static void ath_dma_map(struct ath_softc_tgt *sc, struct ath_buf *bf)
 	adf_nbuf_map(sc->sc_dev, bf->bf_dmamap, skb, ADF_OS_DMA_TO_DEVICE);
 }
 
-static void ath_dma_unmap(struct ath_softc_tgt *sc, struct ath_buf *bf)
+static void ath_dma_unmap(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	adf_nbuf_t skb = bf->bf_skb;
 
@@ -269,10 +264,7 @@ static void ath_filltxdesc(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 
 static void ath_tx_tgt_setds(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
-	struct ath_desc *ds0, *ds = bf->bf_desc;
-	adf_nbuf_t skb;
-	adf_nbuf_queue_t skbhead;
-	a_int32_t i, dscnt = 0;
+	struct ath_desc *ds = bf->bf_desc;
 
 	switch (bf->bf_protmode) {
     	case IEEE80211_PROT_RTSCTS:
@@ -380,7 +372,6 @@ static void ath_buf_set_rate(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
     HAL_11N_RATE_SERIES series[4];
     a_int32_t i, flags;
     a_uint8_t rix, cix, rtsctsrate;
-    a_uint32_t aggr_limit_with_rts;
     a_uint32_t ctsduration = 0;
     a_int32_t prot_mode = AH_FALSE;
 
@@ -406,13 +397,6 @@ static void ath_buf_set_rate(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		    }
 
 	    }
-    }
-
-    ath_hal_getrtsaggrlimit(sc->sc_ah, &aggr_limit_with_rts);
-
-    if (bf->bf_isaggr && aggr_limit_with_rts &&
-	bf->bf_al > aggr_limit_with_rts) {
-	    flags &= ~(HAL_TXDESC_RTSENA);
     }
 
     adf_os_mem_set(series, 0, sizeof(HAL_11N_RATE_SERIES) * 4);
@@ -521,7 +505,7 @@ static void owl_tgt_tid_cleanup(struct ath_softc_tgt *sc,
 void owl_tgt_node_init(struct ath_node_target * an)
 {
 	struct ath_atx_tid *tid;
-	int tidno, i;
+	int tidno;
 
 	for (tidno = 0, tid = &an->tid[tidno]; tidno < WME_NUM_TID;tidno++, tid++) {
 		tid->tidno = tidno;
@@ -546,7 +530,7 @@ void ath_tx_status_clear(struct ath_softc_tgt *sc)
 	}
 }
 
-struct WMI_TXSTATUS_EVENT* ath_tx_status_get(struct ath_softc_tgt *sc)
+static WMI_TXSTATUS_EVENT *ath_tx_status_get(struct ath_softc_tgt *sc)
 {
 	WMI_TXSTATUS_EVENT *txs = NULL;
 	int i;
@@ -643,9 +627,7 @@ void owl_tgt_tx_tasklet(TQUEUE_ARG data)
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)data;
 	a_int32_t i;
-	a_uint32_t qcumask = ((1 << HAL_NUM_TX_QUEUES) - 1);
 	struct ath_txq *txq;
-	ath_data_hdr_t *dh;
 
 	ath_tx_status_clear(sc);
 
@@ -741,7 +723,6 @@ static void ath_tgt_tx_comp_normal(struct ath_softc_tgt *sc,
 				   struct ath_tx_buf *bf)
 {
 	struct ath_node_target *an = ATH_NODE_TARGET(bf->bf_node);
-	struct ath_desc *ds = bf->bf_lastds;
 	ath_atx_tid_t *tid = ATH_AN_2_TID(an, bf->bf_tidno);
 
 	if (tid->flag & TID_CLEANUP_INPROGRES) {
@@ -759,7 +740,6 @@ static struct ieee80211_node_target * ath_tgt_find_node(struct ath_softc_tgt *sc
 							a_int32_t node_index)
 {
 	struct ath_node_target *an;
-	a_int32_t i;
 	struct ieee80211_node_target *ni;
 
 	if (node_index > TARGET_NODE_MAX)
@@ -793,13 +773,11 @@ static struct ath_buf* ath_buf_alloc(struct ath_softc_tgt *sc)
 	return  bf;
 }
 
-struct ath_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc,
+struct ath_tx_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc,
 				   adf_nbuf_t skb, ath_data_hdr_t *dh)
 {
 	struct ath_tx_buf *bf;
-	struct ath_txq *txq;
 	struct ieee80211_node_target *ni;
-	a_uint32_t flags = adf_os_ntohl(dh->flags);
 	struct ath_atx_tid *tid;
 
 	ni = ath_tgt_find_node(sc, dh->ni_index);
@@ -868,8 +846,6 @@ static a_int32_t ath_key_setup(struct ieee80211_node_target *ni,
 			       struct ath_tx_buf *bf)
 {
 	struct ieee80211_frame *wh = ATH_SKB_2_WH(bf->bf_skb);
-	const struct ieee80211_cipher *cip;
-	struct ieee80211_key *k;
 
 	if (!(wh->i_fc[1] & IEEE80211_FC1_WEP)) {
 		bf->bf_keytype = HAL_KEY_TYPE_CLEAR;
@@ -902,9 +878,7 @@ static void ath_tgt_txq_add_ucast(struct ath_softc_tgt *sc, struct ath_tx_buf *b
 {
 	struct ath_hal *ah = sc->sc_ah;
 	struct ath_txq *txq;
-	struct ath_node_target *an;
 	HAL_STATUS status;
-	static a_int32_t count = 0,i;
 	volatile a_int32_t txe_val;
 
 	adf_os_assert(bf);
@@ -994,14 +968,14 @@ ath_tgt_tx_send_normal(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		ath_tgt_rate_findrate(sc, an, shortPreamble,
 				      0, 0, 0, 0, 0,
 				      rcs, &isProbe);
-		memcpy(bf->bf_rcs, rcs, sizeof(rcs));
+		ath_hal_memcpy(bf->bf_rcs, rcs, sizeof(rcs));
 	} else {
 		mrcs[1].tries = mrcs[2].tries = mrcs[3].tries = 0;
 		mrcs[1].rix = mrcs[2].rix = mrcs[3].rix = 0;
 		mrcs[0].rix   = 0;
 		mrcs[0].tries = 1;
 		mrcs[0].flags = 0;
-		memcpy(bf->bf_rcs, mrcs, sizeof(mrcs));
+		ath_hal_memcpy(bf->bf_rcs, mrcs, sizeof(mrcs));
 	}
 
 	ath_buf_set_rate(sc, bf);
@@ -1048,11 +1022,8 @@ ath_tx_uc_comp(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 static void
 ath_update_stats(struct ath_softc_tgt *sc, struct ath_buf *bf)
 {
-	struct ieee80211_node_target *ni = bf->bf_node;
 	struct ath_tx_desc *ds = bf->bf_desc;
-	struct ath_node_target *an = ATH_NODE_TARGET(ni);
 	u_int32_t sr, lr;
-	struct ieee80211_cb *cb;
 
 	if (ds->ds_txstat.ts_status == 0) {
 		if (ds->ds_txstat.ts_rate & HAL_TXSTAT_ALTRATE)
@@ -1082,9 +1053,9 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 	struct ath_vap_target *avp;
 	struct ath_hal *ah = sc->sc_ah;
 	a_uint8_t rix, txrate, ctsrate, cix = 0xff, *data;
-	a_uint32_t ivlen = 0, icvlen = 0, subtype, flags, ctsduration, fval;
+	a_uint32_t ivlen = 0, icvlen = 0, subtype, flags, ctsduration;
 	a_int32_t i, iswep, ismcast, hdrlen, pktlen, try0, len;
-	struct ath_desc *ds=NULL, *ds0=NULL;
+	struct ath_desc *ds=NULL;
 	struct ath_txq *txq=NULL;
 	struct ath_tx_buf *bf;
 	HAL_PKT_TYPE atype;
@@ -1094,7 +1065,6 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 	struct ath_rc_series rcs[4];
 	HAL_11N_RATE_SERIES series[4];
 	ath_mgt_hdr_t *mh;
-	struct ieee80211com_target *ic = &sc->sc_ic;
 	a_int8_t keyix;
 
 	if (!hdr_buf) {
@@ -1297,9 +1267,6 @@ void ath_tgt_handle_normal(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	ath_atx_tid_t *tid;
 	struct ath_node_target *an;
-	struct ath_desc *ds;
-	struct ath_txq *txq = bf->bf_txq;
-	a_bool_t queue_frame;
 
 	an = (struct ath_node_target *)bf->bf_node;
 	adf_os_assert(an);
@@ -1330,10 +1297,6 @@ ath_tgt_txq_schedule(struct ath_softc *sc, struct ath_txq *txq)
 {
 	struct ath_atx_tid  *tid;
 	u_int8_t bdone;
-	HAL_STATUS status;
-	u_int8_t smps_mode;
-	struct ieee80211_node *ieee_node;
-	u_int32_t aggr_limit_with_rts;
 
 	bdone = AH_FALSE;
 
@@ -1367,7 +1330,6 @@ ath_tgt_handle_aggr(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	ath_atx_tid_t *tid;
 	struct ath_node_target *an;
-	struct ath_desc *ds;
 	struct ath_txq *txq = bf->bf_txq;
 	a_bool_t queue_frame, within_baw;
 

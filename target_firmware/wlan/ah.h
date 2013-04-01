@@ -44,6 +44,7 @@
 #endif
 
 #define AR5416_DEVID_PCIE   0x0024  /* AR5416 PCI-E (XB) (Owl) */
+#define HAL_RATE_TABLE_SIZE 33
 
 typedef enum {
 	HAL_OK           = 0,    /* No error */
@@ -275,7 +276,7 @@ typedef struct {
 
 typedef struct {
 	a_int32_t    rateCount;
-	a_uint8_t    rateCodeToIndex[32];
+	a_uint8_t    rateCodeToIndex[HAL_RATE_TABLE_SIZE];
 	struct {
 		a_uint8_t    valid;
 		a_uint8_t    phy;
@@ -289,7 +290,7 @@ typedef struct {
 		a_uint8_t    controlRate;
 		a_uint16_t   lpAckDuration;
 		a_uint16_t   spAckDuration;
-	} info[32];
+	} info[HAL_RATE_TABLE_SIZE];
 } HAL_RATE_TABLE;
 
 typedef struct {
@@ -306,7 +307,7 @@ typedef struct {
 
 typedef struct {
 	a_int32_t    rateCount;
-	a_uint8_t    rateCodeToIndex[32];
+	a_uint8_t    rateCodeToIndex[HAL_RATE_TABLE_SIZE];
 	struct {
 		a_uint8_t    valid;
 		a_uint8_t    phy;
@@ -317,7 +318,7 @@ typedef struct {
 		a_uint8_t    controlRate;
 		a_uint16_t   lpAckDuration;
 		a_uint16_t   spAckDuration;
-	} info[32];
+	} info[HAL_RATE_TABLE_SIZE];
 } HAL_RATE_TABLE;
 
 #define HAL_RATESERIES_RTS_CTS    0x0001  /* use rts/cts w/this series */
@@ -456,12 +457,12 @@ struct ath_hal
 	/* Target receive Functions */
 	a_uint32_t __ahdecl(*ah_getRxDP)(struct ath_hal*);
 	void	   __ahdecl(*ah_setRxDP)(struct ath_hal*, a_uint32_t rxdp);
-	HAL_BOOL  __ahdecl(*ah_setupRxDesc)(struct ath_hal *, struct ath_desc *,
+	HAL_BOOL  __ahdecl(*ah_setupRxDesc)(struct ath_hal *, struct ath_rx_desc *,
 					    a_uint32_t size, a_uint32_t flags);
 	HAL_STATUS __ahdecl(*ah_procRxDesc)(struct ath_hal *, struct ath_desc *,
 					    a_uint32_t phyAddr, struct ath_desc *next, u_int64_t tsf);
 	HAL_STATUS __ahdecl(*ah_procRxDescFast)(struct ath_hal *ah, 
-						struct ath_desc *ds, a_uint32_t pa, 
+						struct ath_rx_desc *ds, a_uint32_t pa,
 						struct ath_desc *nds, 
 						struct ath_rx_status *rx_stats);
 	HAL_BOOL  __ahdecl(*ah_stopDmaReceive)(struct ath_hal*);

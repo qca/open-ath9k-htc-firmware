@@ -766,7 +766,6 @@ HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
 #define RTSCTS  (HAL_TXDESC_RTSENA|HAL_TXDESC_CTSENA)
 
         struct ar5416_desc *ads = AR5416DESC(ds);
-        struct ath_hal_5416 *ahp = AH5416(ah);
 
         (void) hdrLen;
 
@@ -937,7 +936,6 @@ void ar5416Set11nTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
 			   a_uint32_t flags)
 {
         struct ar5416_desc *ads = AR5416DESC(ds);
-        struct ath_hal_5416 *ahp = AH5416(ah);
 
         HALASSERT(isValidPktType(type));
         HALASSERT(isValidKeyType(keyType));
@@ -973,11 +971,7 @@ void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_desc *ds,
 				 a_uint32_t flags)
 {
         struct ar5416_desc *ads = AR5416DESC(ds);
-        struct ar5416_desc_20 *ads_20 = AR5416DESC_20(ds);
         a_uint32_t ds_ctl0;
-        a_int16_t txpower;
-        a_uint32_t count;
-        struct ath_hal_private *ahpriv = AH_PRIVATE(ah);
 
         HALASSERT(nseries == 4);
         (void)nseries;
