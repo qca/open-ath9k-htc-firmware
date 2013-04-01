@@ -81,7 +81,7 @@
 #define ATH_ENABLE_WLAN_FOR_K2
 
 #define ATH_VERSION_MAJOR 1
-#define ATH_VERSION_MINOR 3
+#define ATH_VERSION_MINOR 4
  
 /************************** HAL configurations **************************/
 

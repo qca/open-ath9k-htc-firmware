@@ -66,7 +66,7 @@
 #define ATH_SUPPORT_A_MODE 
 
 #define ATH_VERSION_MAJOR 1
-#define ATH_VERSION_MINOR 3
+#define ATH_VERSION_MINOR 4
 
 /************************** HAL configurations **************************/
 
