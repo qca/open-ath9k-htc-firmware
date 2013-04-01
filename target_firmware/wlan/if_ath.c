@@ -933,7 +933,7 @@ static a_int32_t ath_desc_alloc(struct ath_softc_tgt *sc)
 
 	a_uint32_t i;
 	struct ath_descdma *dd = &sc->sc_rxdma;
-	struct ath_rx_desc *ds = dd->dd_desc;
+	struct ath_rx_desc *ds = (struct ath_rx_desc *)dd->dd_desc;
 	struct ath_rx_desc *ds_prev = NULL;
 
 	asf_tailq_init(&sc->sc_rxdesc);
