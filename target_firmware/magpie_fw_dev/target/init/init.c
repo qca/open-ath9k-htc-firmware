@@ -86,7 +86,7 @@ void fatal_exception_func()
 void
 change_magpie_clk(void)
 {
-	volatile uint32_t i=0, rd_data;
+	volatile uint32_t rd_data;
 
 	HAL_WORD_REG_WRITE(0x00056004, 0x11);
 	rd_data = HAL_WORD_REG_READ(0x00056004) & 0x1;
@@ -218,7 +218,6 @@ void
 AR6002_fatal_exception_handler_patch(CPU_exception_frame_t *exc_frame)
 {
 	struct register_dump_s dump;
-	void (*reset_func)(void) = (void*)(RESET_VECTOR_ADDRESS);
 	uint32_t  exc_cause, exc_vaddr;
 	asm volatile("rsr %0,%1" : "=r" (exc_cause) : "n" (EXCCAUSE));
 	asm volatile("rsr %0,%1" : "=r" (exc_vaddr) : "n" (EXCVADDR));

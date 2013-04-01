@@ -171,8 +171,6 @@ HAL_RATE_TABLE ar5416_11na_table = {
 	},
 };
 
-adf_os_export_symbol(ar5416_11na_table);
-
 #undef  OFDM
 #undef  CCK
 #undef  TURBO

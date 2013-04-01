@@ -70,12 +70,10 @@ uint32_t *init_htc_handle = 0;
 #define UAPSDQ_NUM   9
 #define CABQ_NUM     8
 
-void wmi_event(wmi_handle_t handle, WMI_EVENT_ID evt_id, A_UINT8 *buffer, a_int32_t Length);
 void owl_tgt_tx_tasklet(TQUEUE_ARG data);
 static void ath_tgt_send_beacon(struct ath_softc_tgt *sc,adf_nbuf_t bc_hdr,adf_nbuf_t nbuf,HTC_ENDPOINT_ID EndPt);
-void wmi_cmd_rsp(void *pContext, WMI_COMMAND_ID cmd_id, A_UINT16 SeqNo, A_UINT8 *buffer, a_int32_t Length);
 static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen);
-extern struct ath_buf * ath_tgt_tx_prepare(struct ath_softc_tgt *sc, adf_nbuf_t skb, ath_data_hdr_t *dh);
+extern struct ath_tx_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc, adf_nbuf_t skb, ath_data_hdr_t *dh);
 extern void  ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t mgt_hdr, adf_nbuf_t skb,HTC_ENDPOINT_ID EndPt);
 extern HAL_BOOL ath_hal_wait(struct ath_hal *ah, a_uint32_t reg, a_uint32_t mask, a_uint32_t val);
 extern void owltgt_tx_processq(struct ath_softc_tgt *sc, struct ath_txq *txq,  owl_txq_state_t txqstate);
@@ -160,7 +158,7 @@ static void ath_setcurmode(struct ath_softc_tgt *sc,
 }
 
 void wmi_event(wmi_handle_t handle, WMI_EVENT_ID evt_id,
-	       A_UINT8 *buffer, a_int32_t Length)
+	       void *buffer, a_int32_t Length)
 {
 	adf_nbuf_t netbuf = ADF_NBUF_NULL;
 	a_uint8_t *pData;
@@ -182,7 +180,7 @@ void wmi_event(wmi_handle_t handle, WMI_EVENT_ID evt_id,
 }
 
 void wmi_cmd_rsp(void *pContext, WMI_COMMAND_ID cmd_id, A_UINT16 SeqNo,
-		 A_UINT8 *buffer, a_int32_t Length)
+		 void *buffer, a_int32_t Length)
 {
 	adf_nbuf_t netbuf = ADF_NBUF_NULL;
 	A_UINT8 *pData;
@@ -380,7 +378,7 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 			break;
 		}
 
-		if (ds->ds_link == NULL) {
+		if (ds->ds_link == 0) {
 			break;
 		}
 
@@ -446,7 +444,7 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 
 			bf->bf_status |= ATH_BUFSTATUS_DONE;
 
-			bf = asf_tailq_next(bf, bf_list);
+			bf = (struct ath_rx_buf *)asf_tailq_next(bf, bf_list);
 		}
 		else {
 			ds = asf_tailq_next(ds, ds_list);
@@ -485,7 +483,6 @@ static void ath_tgt_rx_tasklet(TQUEUE_ARG data)
 	struct ath_rx_buf *bf = NULL;
 	struct ath_hal *ah = sc->sc_ah;
 	struct rx_frame_header *rxhdr;
-	struct ieee80211_frame *wh;
 	struct ath_rx_status *rxstats;
 	adf_nbuf_t skb = ADF_NBUF_NULL;
 
@@ -519,7 +516,6 @@ static void ath_tgt_rx_tasklet(TQUEUE_ARG data)
 		HTC_SendMsg(sc->tgt_htc_handle, RX_ENDPOINT_ID, skb);
 		sc->sc_rx_stats.ast_rx_send++;
 
-	next_buf:
 		bf->bf_status &= ~ATH_BUFSTATUS_DONE;
 		asf_tailq_insert_tail(&sc->sc_rxbuf, bf, bf_list);
 
@@ -538,13 +534,13 @@ static void ath_tgt_rx_tasklet(TQUEUE_ARG data)
  * FIXME: Short Preamble.
  */
 static void ath_beacon_setup(struct ath_softc_tgt *sc,
-			     struct ath_buf *bf,
+			     struct ath_tx_buf *bf,
 			     struct ath_vap_target *avp)
 {
 	adf_nbuf_t skb = bf->bf_skb;
 	struct ath_hal *ah = sc->sc_ah;
 	struct ath_desc *ds;
-	a_int32_t flags, antenna;
+	a_int32_t flags;
 	const HAL_RATE_TABLE *rt;
 	a_uint8_t rix, rate;
 	HAL_11N_RATE_SERIES series[4] = {{ 0 }};
@@ -607,7 +603,7 @@ static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
 
 	vap_index = bhdr->vap_index;
 	adf_os_assert(vap_index < TARGET_VAP_MAX);
-	vap = &sc->sc_vap[vap_index];
+	vap = &sc->sc_vap[vap_index].av_vap;
 
 	wh = (struct ieee80211_frame *)adf_nbuf_pull_head(nbuf,
 						  sizeof(ath_beacon_hdr_t));
@@ -884,7 +880,7 @@ static void ath_descdma_cleanup(struct ath_softc_tgt *sc,
 				ath_bufhead *head, a_int32_t dir)
 {
 	struct ath_tx_buf *bf;
-	struct ieee80211_node *ni;
+	struct ieee80211_node_target *ni;
 
 	asf_tailq_foreach(bf, head, bf_list) {
 		if (adf_nbuf_queue_len(&bf->bf_skbhead) != 0) {
@@ -1020,7 +1016,6 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)hdl;
 	struct ath_hal *ah = sc->sc_ah;
-	struct ieee80211com_target *ic = &sc->sc_ic;
 	HAL_INT status;
 
 	if (sc->sc_invalid)
@@ -1642,7 +1637,6 @@ static void ath_setcurmode_tgt(void *Context, A_UINT16 Command,
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
 	a_uint16_t mode;
-	struct ath_hal *ah = sc->sc_ah;
 
 	mode= *((a_uint16_t *)data);
 	mode = adf_os_ntohs(mode);
@@ -1652,7 +1646,7 @@ static void ath_setcurmode_tgt(void *Context, A_UINT16 Command,
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
-static a_uint32_t ath_detach_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo,
+static void ath_detach_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo,
 				 A_UINT8 *data, a_int32_t datalen)
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;

@@ -76,7 +76,7 @@ adf_os_mem_free(void *buf)
  * @param[in] size    buffer size
  */
 static inline void
-adf_os_mem_copy(void *dst, void *src, adf_os_size_t size)
+adf_os_mem_copy(void *dst, const void *src, adf_os_size_t size)
 {
     __adf_os_mem_copy(dst, src, size);
 }
