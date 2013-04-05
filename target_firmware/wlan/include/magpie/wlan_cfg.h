@@ -68,6 +68,9 @@
 #define ATH_VERSION_MAJOR 1
 #define ATH_VERSION_MINOR 4
 
+#define ATH_BUILD_NUMBER_MAJOR 1
+#define ATH_BUILD_NUMBER_MINOR 1
+#define ATH_BUILD_NUMBER_TAG   1
 /************************** HAL configurations **************************/
 
 #define HAL_DESC_OPTIMIZATION
