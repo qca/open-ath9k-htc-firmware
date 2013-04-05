@@ -99,7 +99,7 @@ void ar5416Detach(struct ath_hal *ah)
 
 struct ath_hal *
 ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
-	     HAL_BUS_HANDLE sh, a_uint32_t flags, HAL_STATUS *status)
+	     a_uint32_t flags, HAL_STATUS *status)
 {
 	struct ath_hal_5416 *ahp;
 	struct ath_hal *ah;
@@ -115,7 +115,6 @@ ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
 
 	ah->ah_dev = dev;
 	ah->ah_sc = sc;
-	ah->ah_sh = sh;
 	
 	/* If its a Owl 2.0 chip then change the hal structure to
 	   point to the Owl 2.0 ar5416_hal_20 structure */
@@ -459,7 +458,7 @@ void ar5416StopPcuReceive(struct ath_hal *ah)
 	OS_REG_SET_BIT(ah, AR_DIAG_SW, AR_DIAG_RX_DIS);
 }
 
-HAL_BOOL ar5416SetupRxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+HAL_BOOL ar5416SetupRxDesc_20(struct ath_hal *ah, struct ath_rx_desc *ds,
 			      a_uint32_t size, a_uint32_t flags)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
@@ -476,7 +475,7 @@ HAL_BOOL ar5416SetupRxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
 	return AH_TRUE;
 }
 
-HAL_STATUS ar5416ProcRxDescFast_20(struct ath_hal *ah, struct ath_desc *ds,
+HAL_STATUS ar5416ProcRxDescFast_20(struct ath_hal *ah, struct ath_rx_desc *ds,
 				   a_uint32_t pa, struct ath_desc *nds,
 				   struct ath_rx_status *rx_stats)
 {
@@ -748,7 +747,7 @@ void ar5416IntrReqTxDesc_20(struct ath_hal *ah, struct ath_desc *ds)
 	ads->ds_ctl0 |= AR_TxIntrReq;
 }
 
-HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 			      a_uint32_t pktLen,
 			      a_uint32_t hdrLen,
 			      HAL_PKT_TYPE type,
@@ -816,9 +815,9 @@ HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
 #undef RTSCTS
 }
 
-HAL_BOOL ar5416FillTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+HAL_BOOL ar5416FillTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 			     a_uint32_t segLen, HAL_BOOL firstSeg, HAL_BOOL lastSeg,
-			     const struct ath_desc *ds0)
+			     const struct ath_tx_desc *ds0)
 {
         struct ar5416_desc *ads = AR5416DESC(ds);
 
@@ -854,7 +853,7 @@ HAL_BOOL ar5416FillTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
         return AH_TRUE;
 }
 
-HAL_BOOL ar5416FillKeyTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+HAL_BOOL ar5416FillKeyTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 				HAL_KEY_TYPE keyType)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
@@ -863,7 +862,7 @@ HAL_BOOL ar5416FillKeyTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
 	return AH_TRUE;
 }
 
-HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_desc *gds)
+HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *gds)
 {
         struct ar5416_desc *ads = AR5416DESC(gds);
         struct ath_tx_desc *ds = (struct ath_tx_desc *)gds;
@@ -930,7 +929,7 @@ HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_desc *gds)
         return HAL_OK;
 }
 
-void ar5416Set11nTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
+void ar5416Set11nTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 			   a_uint32_t pktLen, HAL_PKT_TYPE type, a_uint32_t txPower,
 			   a_uint32_t keyIx, HAL_KEY_TYPE keyType,
 			   a_uint32_t flags)
@@ -964,7 +963,7 @@ void ar5416Set11nTxDesc_20(struct ath_hal *ah, struct ath_desc *ds,
 
 #ifdef MAGPIE_MERLIN
 
-void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_desc *ds, 
+void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 				 a_uint32_t durUpdateEn, a_uint32_t rtsctsRate,
 				 a_uint32_t rtsctsDuration,
 				 HAL_11N_RATE_SERIES series[], a_uint32_t nseries,
@@ -1021,7 +1020,7 @@ void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_desc *ds,
 
 #else
 
-void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_desc *ds, 
+void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 				 a_uint32_t durUpdateEn, a_uint32_t rtsctsRate,
 				 a_uint32_t rtsctsDuration,
 				 HAL_11N_RATE_SERIES series[], a_uint32_t nseries,
@@ -1076,7 +1075,7 @@ void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_desc *ds,
 
 #endif
 
-void ar5416Set11nAggrFirst_20(struct ath_hal *ah, struct ath_desc *ds, a_uint32_t aggrLen,
+void ar5416Set11nAggrFirst_20(struct ath_hal *ah, struct ath_tx_desc *ds, a_uint32_t aggrLen,
 			      a_uint32_t numDelims)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
@@ -1088,7 +1087,7 @@ void ar5416Set11nAggrFirst_20(struct ath_hal *ah, struct ath_desc *ds, a_uint32_
 		SM(numDelims, AR_PadDelim);
 }
 
-void ar5416Set11nAggrMiddle_20(struct ath_hal *ah, struct ath_desc *ds, a_uint32_t numDelims)
+void ar5416Set11nAggrMiddle_20(struct ath_hal *ah, struct ath_tx_desc *ds, a_uint32_t numDelims)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
 	a_uint32_t ctl6;
@@ -1105,7 +1104,7 @@ void ar5416Set11nAggrMiddle_20(struct ath_hal *ah, struct ath_desc *ds, a_uint32
 	ads->ds_ctl6 = ctl6;
 }
 
-void ar5416Set11nAggrLast_20(struct ath_hal *ah, struct ath_desc *ds)
+void ar5416Set11nAggrLast_20(struct ath_hal *ah, struct ath_tx_desc *ds)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
 
@@ -1114,14 +1113,14 @@ void ar5416Set11nAggrLast_20(struct ath_hal *ah, struct ath_desc *ds)
 	ads->ds_ctl6 &= ~AR_PadDelim;
 }
 
-void ar5416Clr11nAggr_20(struct ath_hal *ah, struct ath_desc *ds)
+void ar5416Clr11nAggr_20(struct ath_hal *ah, struct ath_tx_desc *ds)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
 
 	ads->ds_ctl1 &= (~AR_IsAggr & ~AR_MoreAggr);
 }
 
-void ar5416Set11nBurstDuration_20(struct ath_hal *ah, struct ath_desc *ds,
+void ar5416Set11nBurstDuration_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 				  a_uint32_t burstDuration)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
@@ -1130,7 +1129,7 @@ void ar5416Set11nBurstDuration_20(struct ath_hal *ah, struct ath_desc *ds,
 	ads->ds_ctl2 |= SM(burstDuration, AR_BurstDur);
 }
 
-void ar5416Set11nVirtualMoreFrag_20(struct ath_hal *ah, struct ath_desc *ds,
+void ar5416Set11nVirtualMoreFrag_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 				    a_uint32_t vmf)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);

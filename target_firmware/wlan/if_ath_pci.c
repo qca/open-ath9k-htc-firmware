@@ -64,8 +64,7 @@
 #include "if_athvar.h"
 #include "if_ath_pci.h"
 
-extern a_int32_t ath_tgt_attach(a_uint32_t devid,a_uint32_t mem_start,
-				struct ath_softc_tgt *sc, adf_os_device_t osdev);
+extern a_int32_t ath_tgt_attach(a_uint32_t devid, struct ath_softc_tgt *sc, adf_os_device_t osdev);
 extern a_int32_t ath_detach(void *);
 extern adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl);
 
@@ -114,7 +113,6 @@ static adf_os_pci_dev_id_t ath_pci_id_table[] = {
 };
 #endif
 
-void bus_read_cachesize(struct ath_softc *sc, a_uint8_t *csz);
 void exit_ath_pci(void);
 a_int32_t init_ath_pci(void);
 
@@ -145,7 +143,7 @@ ath_pci_probe(adf_os_resource_t *res,a_int32_t count, adf_os_attach_data_t *data
 
 	adf_os_print("ath_pci_probe %x\n",id->device);
 
-	if (ath_tgt_attach(id->device, res->start, &sc->aps_sc, osdev) != 0)
+	if (ath_tgt_attach(id->device, &sc->aps_sc, osdev) != 0)
 		goto bad3;
 
 	/* ready to process interrupts */
@@ -174,12 +172,6 @@ ath_pci_suspend(adf_drv_handle_t hdl, adf_os_pm_t pm)
 static void
 ath_pci_resume(adf_drv_handle_t hdl)
 {
-}
-
-void
-bus_read_cachesize(struct ath_softc *sc, a_uint8_t *csz)
-{
-	*csz = adf_os_cache_line_size();
 }
 
 static adf_drv_info_t ath_drv_info = adf_os_pci_set_drv_info(ath_pci_tgt,&ath_pci_id_table[0], ath_pci_probe, ath_pci_remove, ath_pci_suspend, ath_pci_resume);

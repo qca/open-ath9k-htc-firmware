@@ -539,7 +539,7 @@ static void ath_beacon_setup(struct ath_softc_tgt *sc,
 {
 	adf_nbuf_t skb = bf->bf_skb;
 	struct ath_hal *ah = sc->sc_ah;
-	struct ath_desc *ds;
+	struct ath_tx_desc *ds;
 	a_int32_t flags;
 	const HAL_RATE_TABLE *rt;
 	a_uint8_t rix, rate;
@@ -879,7 +879,7 @@ static void ath_descdma_cleanup(struct ath_softc_tgt *sc,
 				struct ath_descdma *dd,
 				ath_bufhead *head, a_int32_t dir)
 {
-	struct ath_tx_buf *bf;
+	struct ath_buf *bf;
 	struct ieee80211_node_target *ni;
 
 	asf_tailq_foreach(bf, head, bf_list) {
@@ -924,7 +924,7 @@ static a_int32_t ath_desc_alloc(struct ath_softc_tgt *sc)
 	if (ath_numrxdescs == -1)
 		ath_numrxdescs = ATH_RXDESC;
 
-	error = ath_descdma_setup(sc, &sc->sc_rxdma, &sc->sc_rxbuf,
+	error = ath_descdma_setup(sc, &sc->sc_rxdma, (ath_bufhead *)&sc->sc_rxbuf,
 				  "rx", ath_numrxdescs, 1,
 				  sizeof(struct ath_rx_buf),
 				  sizeof(struct ath_rx_desc));
@@ -933,7 +933,7 @@ static a_int32_t ath_desc_alloc(struct ath_softc_tgt *sc)
 
 	a_uint32_t i;
 	struct ath_descdma *dd = &sc->sc_rxdma;
-	struct ath_rx_desc *ds = dd->dd_desc;
+	struct ath_rx_desc *ds = (struct ath_rx_desc *)dd->dd_desc;
 	struct ath_rx_desc *ds_prev = NULL;
 
 	asf_tailq_init(&sc->sc_rxdesc);
@@ -961,24 +961,24 @@ static a_int32_t ath_desc_alloc(struct ath_softc_tgt *sc)
 		asf_tailq_insert_tail(&sc->sc_rxdesc, ds, ds_list);
 	}
 
-	error = ath_descdma_setup(sc, &sc->sc_txdma, &sc->sc_txbuf,
+	error = ath_descdma_setup(sc, &sc->sc_txdma, (ath_bufhead *)&sc->sc_txbuf,
 				  "tx", ATH_TXBUF + 1, ATH_TXDESC,
 				  sizeof(struct ath_tx_buf),
 				  sizeof(struct ath_tx_desc));
 	if (error != 0) {
-		ath_descdma_cleanup(sc, &sc->sc_rxdma, &sc->sc_rxbuf,
+		ath_descdma_cleanup(sc, &sc->sc_rxdma, (ath_bufhead *)&sc->sc_rxbuf,
 				    ADF_OS_DMA_FROM_DEVICE);
 		return error;
 	}
 
-	error = ath_descdma_setup(sc, &sc->sc_bdma, &sc->sc_bbuf,
+	error = ath_descdma_setup(sc, &sc->sc_bdma, (ath_bufhead *)&sc->sc_bbuf,
 				  "beacon", ATH_BCBUF, 1,
 				  sizeof(struct ath_tx_buf),
 				  sizeof(struct ath_tx_desc));
 	if (error != 0) {
-		ath_descdma_cleanup(sc, &sc->sc_txdma, &sc->sc_txbuf,
+		ath_descdma_cleanup(sc, &sc->sc_txdma, (ath_bufhead *)&sc->sc_txbuf,
 				    ADF_OS_DMA_TO_DEVICE);
-		ath_descdma_cleanup(sc, &sc->sc_rxdma, &sc->sc_rxbuf,
+		ath_descdma_cleanup(sc, &sc->sc_rxdma, (ath_bufhead *)&sc->sc_rxbuf,
 				    ADF_OS_DMA_FROM_DEVICE);
 		return error;
 	}
@@ -1001,10 +1001,10 @@ static void ath_desc_free(struct ath_softc_tgt *sc)
 	sc->sc_txbuf_held = NULL;
 
 	if (sc->sc_txdma.dd_desc_len != 0)
-		ath_descdma_cleanup(sc, &sc->sc_txdma, &sc->sc_txbuf,
+		ath_descdma_cleanup(sc, &sc->sc_txdma, (ath_bufhead *)&sc->sc_txbuf,
 				    ADF_OS_DMA_TO_DEVICE);
 	if (sc->sc_rxdma.dd_desc_len != 0)
-		ath_descdma_cleanup(sc, &sc->sc_rxdma, &sc->sc_rxbuf,
+		ath_descdma_cleanup(sc, &sc->sc_rxdma, (ath_bufhead *)&sc->sc_rxbuf,
 				    ADF_OS_DMA_FROM_DEVICE);
 }
 
@@ -1532,7 +1532,7 @@ static void ath_flushrecv_tgt(void *Context, A_UINT16 Command,
 			      A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen)
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
-	struct ath_buf *bf;
+	struct ath_rx_buf *bf;
 
 	asf_tailq_foreach(bf, &sc->sc_rxbuf, bf_list)
 		if (bf->bf_skb != NULL) {
@@ -1883,8 +1883,7 @@ static void tgt_hif_htc_wmi_init(struct ath_softc_tgt *sc)
 	HTC_Ready(sc->tgt_htc_handle);
 }
 
-a_int32_t ath_tgt_attach(a_uint32_t devid,a_uint32_t mem_start,
-			 struct ath_softc_tgt *sc, adf_os_device_t osdev)
+a_int32_t ath_tgt_attach(a_uint32_t devid, struct ath_softc_tgt *sc, adf_os_device_t osdev)
 {
 	struct ath_hal *ah;
 	HAL_STATUS status;
@@ -1906,7 +1905,7 @@ a_int32_t ath_tgt_attach(a_uint32_t devid,a_uint32_t mem_start,
 	ATH_INIT_TQUEUE(sc->sc_dev, &sc->sc_fataltq, ath_fatal_tasklet, sc);
 
 	flags |= AH_USE_EEPROM;
-	ah = _ath_hal_attach_tgt(devid,sc,sc->sc_dev,mem_start, flags, &status);
+	ah = _ath_hal_attach_tgt(devid, sc, sc->sc_dev, flags, &status);
 	if (ah == NULL) {
 		error = ENXIO;
 		goto bad;

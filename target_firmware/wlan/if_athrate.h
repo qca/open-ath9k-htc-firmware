@@ -39,7 +39,6 @@
 #ifndef _ATH_RATECTRL_H_
 #define _ATH_RATECTRL_H_
 
-struct ath_softc;
 struct ath_softc_tgt;
 struct ath_node;
 struct ath_node_target;
