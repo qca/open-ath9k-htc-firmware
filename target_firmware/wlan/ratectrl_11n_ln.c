@@ -476,7 +476,6 @@ rcRateFind_ht(struct ath_softc_tgt *sc, struct atheros_node *pSib,
 	A_UINT32             bestThruput, thisThruput;
 	A_UINT32             nowMsec;
 	A_UINT8              rate, nextRate, bestRate;
-	A_RSSI               rssiLast, rssiReduce = 0;
 	A_UINT8              maxIndex, minIndex;
 	A_INT8               index;
 	TX_RATE_CTRL         *pRc = NULL;
@@ -676,7 +675,6 @@ void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	struct atheros_node *asn = ATH_NODE_ATHEROS(an);
 	A_UINT8 rix, nrix;
 	A_UINT8 dot11Rate;
-	A_UINT8 rateCode;
 	WLAN_PHY phy;
 
 	rix = rcRateFind_ht(sc, asn, pRateTable, (rcflag & ATH_RC_PROBE_ALLOWED) ? 1 : 0, 
@@ -758,13 +756,11 @@ rcUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an, int txRate,
 {
 	TX_RATE_CTRL *pRc;
 	A_UINT32 nowMsec = A_MS_TICKGET();
-	A_BOOL stateChange = FALSE;
 	A_UINT8 lastPer;
 	int rate,count;
 	struct atheros_node *pSib = ATH_NODE_ATHEROS(an);
 	struct atheros_softc *asc = (struct atheros_softc*)sc->sc_rc;
 	RATE_TABLE_11N *pRateTable = (RATE_TABLE_11N *)asc->hwRateTable[sc->sc_curmode];
-	u_int32_t txRateKbps;
 
 	static A_UINT32 nRetry2PerLookup[10] = {
 		100 * 0 / 1,    // 0
@@ -1111,12 +1107,6 @@ ath_rate_findrate(struct ath_softc_tgt *sc,
                   struct ath_rc_series series[],
                   int *isProbe)
 {
-	struct ieee80211vap *vap = an->ni.ni_vap;
-	struct atheros_node *oan = ATH_NODE_ATHEROS(an);
-	struct atheros_softc *asc = (struct atheros_softc *) sc->sc_rc;
-	RATE_TABLE *pRateTable = (RATE_TABLE *)asc->hwRateTable[sc->sc_curmode];
-	u_int32_t *retrySched;
-
 	*isProbe = 0;
 
 	if (!numRates || !numTries) {
@@ -1136,10 +1126,6 @@ ath_rate_tx_complete(struct ath_softc_tgt *sc,
 		     struct ath_rc_series rcs[], 
 		     int nframes, int nbad)
 {
-	struct atheros_softc *asc = (struct atheros_softc *) sc->sc_rc;
-	const RATE_TABLE *pRateTable = (RATE_TABLE *)asc->hwRateTable[sc->sc_curmode];
-	u_int8_t txRate = ds->ds_txstat.ts_rate &~ HAL_TXSTAT_ALTRATE;
-
 	ath_rate_tx_complete_11n(sc, an, ds, rcs, nframes, nbad);
 }
 
@@ -1189,9 +1175,6 @@ ath_rate_findrate_11n(struct ath_softc_tgt *sc,
 		      struct ath_rc_series series[],
 		      int *isProbe)
 {
-	struct ieee80211vap  *vap = an->ni.ni_vap;
-	struct atheros_node *oan = ATH_NODE_ATHEROS(an);
-
 	*isProbe = 0;
 	if (!numRates || !numTries) {
 		return;
@@ -1227,8 +1210,6 @@ static void
 ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew, 
 		      unsigned int capflag, struct ieee80211_rate *rs)
 {
-	struct ieee80211vap  *vap = an->ni.ni_vap;
-    
 	if (isnew) {
 		struct atheros_node *oan = ATH_NODE_ATHEROS(an);
 

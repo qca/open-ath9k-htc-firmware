@@ -367,7 +367,6 @@ struct ath_hal
 {
 	a_uint32_t ah_magic;
 	HAL_SOFTC ah_sc;
-	HAL_BUS_HANDLE ah_sh;
 	adf_os_device_t ah_dev;
            
 	a_uint32_t ah_macVersion;
@@ -403,34 +402,34 @@ struct ath_hal
 	HAL_BOOL  __ahdecl(*ah_abortTxDma)(struct ath_hal *);
            
 	void      __ahdecl(*ah_set11nTxDesc)(struct ath_hal *ah,
-					     struct ath_desc *ds,
+					     struct ath_tx_desc *ds,
 					     a_uint32_t pktLen, HAL_PKT_TYPE type,
 					     a_uint32_t txPower, a_uint32_t keyIx,
 					     HAL_KEY_TYPE keyType,
 					     a_uint32_t flags);
 	void      __ahdecl(*ah_set11nRateScenario)(struct ath_hal *ah,
-						   struct ath_desc *ds,
+						   struct ath_tx_desc *ds,
 						   a_uint32_t durUpdateEn,
 						   a_uint32_t rtsctsRate,
 						   a_uint32_t rtsctsDuration,
 						   HAL_11N_RATE_SERIES series[],
 						   a_uint32_t nseries, a_uint32_t flags);
 	void      __ahdecl(*ah_set11nAggrFirst)(struct ath_hal *ah,
-						struct ath_desc *ds, a_uint32_t aggrLen,
+						struct ath_tx_desc *ds, a_uint32_t aggrLen,
 						a_uint32_t numDelims);
 	void      __ahdecl(*ah_set11nAggrMiddle)(struct ath_hal *ah,
-						 struct ath_desc *ds, a_uint32_t numDelims);
+						 struct ath_tx_desc *ds, a_uint32_t numDelims);
 	void      __ahdecl(*ah_set11nAggrLast)(struct ath_hal *ah,
-					       struct ath_desc *ds);
+					       struct ath_tx_desc *ds);
 	void      __ahdecl(*ah_clr11nAggr)(struct ath_hal *ah,
-					   struct ath_desc *ds);
+					   struct ath_tx_desc *ds);
 	void      __ahdecl(*ah_set11nBurstDuration)(struct ath_hal *ah,
-						    struct ath_desc *ds,
+						    struct ath_tx_desc *ds,
 						    a_uint32_t burstDuration);
 	void      __ahdecl(*ah_set11nVirtualMoreFrag)(struct ath_hal *ah,
-						      struct ath_desc *ds, a_uint32_t vmf);
+						      struct ath_tx_desc *ds, a_uint32_t vmf);
            
-	HAL_BOOL  __ahdecl(*ah_setupTxDesc)(struct ath_hal *, struct ath_desc *,
+	HAL_BOOL  __ahdecl(*ah_setupTxDesc)(struct ath_hal *, struct ath_tx_desc *,
 					    a_uint32_t pktLen, a_uint32_t hdrLen,
 					    HAL_PKT_TYPE type, a_uint32_t txPower,
 					    a_uint32_t txRate0, a_uint32_t txTries0,
@@ -438,11 +437,11 @@ struct ath_hal
 					    a_uint32_t rtsctsRate, a_uint32_t rtsctsDuration,
 					    a_uint32_t compicvLen, a_uint32_t compivLen,
 					    a_uint32_t comp);
-	HAL_BOOL  __ahdecl(*ah_fillTxDesc)(struct ath_hal *, struct ath_desc *,
+	HAL_BOOL  __ahdecl(*ah_fillTxDesc)(struct ath_hal *, struct ath_tx_desc *,
 					   a_uint32_t segLen, HAL_BOOL firstSeg,
-					   HAL_BOOL lastSeg, const struct ath_desc *);
-	HAL_BOOL  __ahdecl (*ah_fillKeyTxDesc) (struct ath_hal *, struct ath_desc *, HAL_KEY_TYPE);
-	HAL_STATUS __ahdecl(*ah_procTxDesc)(struct ath_hal *, struct ath_desc*);
+					   HAL_BOOL lastSeg, const struct ath_tx_desc *);
+	HAL_BOOL  __ahdecl (*ah_fillKeyTxDesc) (struct ath_hal *, struct ath_tx_desc *, HAL_KEY_TYPE);
+	HAL_STATUS __ahdecl(*ah_procTxDesc)(struct ath_hal *, struct ath_tx_desc *);
 	void		__ahdecl(*ah_getTxIntrQueue)(struct ath_hal *, a_uint32_t *);
 	void	   __ahdecl(*ah_reqTxIntrDesc)(struct ath_hal *, struct ath_desc*);    
 	HAL_BOOL  __ahdecl(*ah_setBssIdMask)(struct ath_hal *, const a_uint8_t*);
@@ -479,7 +478,7 @@ struct ath_hal
 
 
 extern struct ath_hal * __ahdecl ath_hal_attach_tgt(a_uint32_t devid, HAL_SOFTC,
-						    adf_os_device_t dev, HAL_BUS_HANDLE sh,
+						    adf_os_device_t dev,
 						    a_uint32_t flags, HAL_STATUS* status);
 
 extern const HAL_RATE_TABLE * __ahdecl ath_hal_getratetable(struct ath_hal *,

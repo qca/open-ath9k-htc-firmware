@@ -146,8 +146,10 @@ struct ath_txq;
 #define ath_free_rx_skb(_sc,_skb)                   BUF_Pool_free_buf(_sc->pool_handle, POOL_ID_WLAN_RX_BUF, _skb)
 #define ath_free_tx_skb(_htc_handle, endpt, _skb)   HTC_ReturnBuffers(_htc_handle, endpt, _skb);
 
-typedef void (*ath_txq_add_fn_t)(struct ath_softc_tgt *sc, struct ath_buf *bf);
-typedef void (*ath_tx_comp_fn_t)(struct ath_softc_tgt *sc, struct ath_buf *bf);
+struct ath_tx_buf;
+
+typedef void (*ath_txq_add_fn_t)(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
+typedef void (*ath_tx_comp_fn_t)(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
 
 struct ath_buf_state {
 	ath_tx_comp_fn_t        bfs_comp;           /* completion function          */
@@ -194,25 +196,30 @@ struct ath_buf_state {
 #define bf_retries        bf_state.bfs_retries
 
 #define ATH_GENERIC_BUF                     \
-    asf_tailq_entry(ath_buf)  bf_list;      \
-    struct ath_buf        *bf_next;	    \
-    struct ath_desc       *bf_desc;	    \
-    struct ath_desc       *bf_descarr;	    \
     adf_os_dma_map_t      bf_dmamap;	    \
     adf_os_dmamap_info_t  bf_dmamap_info;   \
     struct ieee80211_node_target *bf_node;  \
     adf_nbuf_queue_t      bf_skbhead;	    \
-    adf_nbuf_t            bf_skb;	    \
-    struct ath_desc 	  *bf_lastds;
+    adf_nbuf_t            bf_skb;
 
 struct ath_buf
 {
     ATH_GENERIC_BUF
+    asf_tailq_entry(ath_buf)  bf_list;
+    struct ath_buf        *bf_next;
+    struct ath_desc 	  *bf_lastds;
+    struct ath_desc       *bf_desc;
+    struct ath_desc       *bf_descarr;
 };
 
 struct ath_tx_buf
 {
 	ATH_GENERIC_BUF
+	asf_tailq_entry(ath_tx_buf)  bf_list;
+	struct ath_tx_buf	     *bf_next;
+	struct ath_tx_desc	     *bf_desc;
+	struct ath_tx_desc	     *bf_descarr;
+	struct ath_tx_desc	     *bf_lastds;
 	struct ath_buf_state  bf_state;
 	a_uint16_t            bf_flags;
 	HTC_ENDPOINT_ID       bf_endpt;
@@ -223,17 +230,24 @@ struct ath_tx_buf
 struct ath_rx_buf
 {
 	ATH_GENERIC_BUF
+	asf_tailq_entry(ath_rx_buf)  bf_list;
+	struct ath_rx_buf	     *bf_next;
+	struct ath_rx_desc	     *bf_desc;
+	struct ath_rx_desc	     *bf_descarr;
+	struct ath_rx_desc	     *bf_lastds;
 	a_uint32_t            bf_status;
 	struct ath_rx_status  bf_rx_status;
 };
 
-#define ATH_BUF_GET_DESC_PHY_ADDR(bf)                       bf->bf_desc
+#define ATH_BUF_GET_DESC_PHY_ADDR(bf)                       (a_uint32_t)bf->bf_desc
 #define ATH_BUF_GET_DESC_PHY_ADDR_WITH_IDX(bf, idx)         (adf_os_dma_addr_t)(&bf->bf_descarr[idx])
 #define ATH_BUF_SET_DESC_PHY_ADDR(bf, addr)
 #define ATH_BUF_SET_DESC_PHY_ADDR_WITH_IDX(bf, idx, addr)
 
 typedef asf_tailq_head(ath_deschead_s, ath_rx_desc) ath_deschead;
 typedef asf_tailq_head(ath_bufhead_s, ath_buf) ath_bufhead;
+typedef asf_tailq_head(ath_rx_bufhead_s, ath_rx_buf) ath_rx_bufhead;
+typedef asf_tailq_head(ath_tx_bufhead_s, ath_tx_buf) ath_tx_bufhead;
 
 #define WME_NUM_TID 8
 #define WME_BA_BMP_SIZE 64
@@ -264,7 +278,7 @@ typedef struct ath_atx_tid {
 	a_int32_t          baw_tail;
 	a_uint32_t         tx_buf_bitmap[ATH_TID_MAX_BUFS/TX_BUF_BITMAP_SIZE];
 	asf_tailq_entry(ath_atx_tid) tid_qelem;
-	asf_tailq_head(ath_tid_rbq,ath_buf) buf_q;
+	asf_tailq_head(ath_tid_rbq,ath_tx_buf) buf_q;
 	a_int8_t           paused;
 	a_int8_t           sched;
 	a_uint8_t          flag;
@@ -291,9 +305,9 @@ struct ath_descdma {
 struct ath_txq {
 	a_uint32_t           axq_qnum;
 	a_uint32_t           *axq_link;
-	asf_tailq_head(,ath_buf) axq_q;
+	asf_tailq_head(,ath_tx_buf) axq_q;
 	a_uint32_t           axq_depth;
-	struct  ath_buf     *axq_linkbuf;
+	struct  ath_tx_buf     *axq_linkbuf;
 	asf_tailq_head(,ath_atx_tid) axq_tidq;
 };
 
@@ -307,7 +321,7 @@ struct wmi_rc_rate_mask_cmd {
 struct ath_vap_target {
 	struct ieee80211vap_target      av_vap;
 	struct ath_txq                  av_mcastq;
-	struct ath_buf                  *av_bcbuf;
+	struct ath_tx_buf		*av_bcbuf;
 	a_uint32_t                      av_rate_mask[2];  /* 0 - 2G, 1 - 5G */
 	a_uint8_t                       av_minrateidx[2]; /* 0 - 2G, 1 - 5G */
 	a_int8_t                        av_valid;
@@ -379,20 +393,20 @@ struct ath_softc_tgt
    	tq_struct         sc_txtotq;
    	tq_struct         sc_fataltq;
 
-	ath_bufhead        sc_rxbuf;
+	ath_rx_bufhead     sc_rxbuf;
 
 	ath_deschead       sc_rxdesc_idle;
 	ath_deschead	   sc_rxdesc;
 	struct ath_rx_desc    *sc_rxdesc_held;
 
-   	struct ath_buf    *sc_txbuf_held;
+	struct ath_tx_buf    *sc_txbuf_held;
 
 	struct ath_descdma  sc_rxdma;
    	struct ath_descdma  sc_txdma;
 	struct ath_descdma  sc_bdma;
 
 	a_uint32_t	   *sc_rxlink;
-	ath_bufhead        sc_txbuf;
+	ath_tx_bufhead     sc_txbuf;
   	a_uint8_t          sc_txqsetup;
 
 	struct ath_txq     sc_txq[HAL_NUM_TX_QUEUES];
@@ -406,7 +420,7 @@ struct ath_softc_tgt
 	struct ath_vap_target      sc_vap[TARGET_VAP_MAX];
 	struct ieee80211com_target sc_ic;
 
-	ath_bufhead         sc_bbuf;
+	ath_tx_bufhead         sc_bbuf;
 	a_uint64_t          sc_swba_tsf;
 
 	WMI_TXSTATUS_EVENT  tx_status[2];
