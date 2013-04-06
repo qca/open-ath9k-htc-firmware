@@ -434,7 +434,6 @@ ERR_DONE:
 static void turn_off_merlin()
 {
 	volatile uint32_t default_data[9];
-	volatile uint32_t read_data = 0;
 	uint32_t i=0;
 
 	if(1)
@@ -553,7 +552,6 @@ volatile uint32_t gpio = 0x0;
  */
 void zfTurnOffPower_patch(void)
 {
-	uint32_t i=0;
 	A_PRINTF("+++ goto suspend ......\n");
 
 	// setting the go suspend here, power down right away...
@@ -605,8 +603,6 @@ void zfResetUSBFIFO_patch(void)
 
 static void _fw_reset_dma_fifo()
 {
-	int i;
-	
 	HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100ae)|0x10));
 	HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100af)|0x10));
 	A_PRINTF("_fw_reset_dma_fifo\n");
