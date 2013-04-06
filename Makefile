@@ -99,7 +99,7 @@ $(DL_DIR)/$($(1)_TAR):
 	wget -N -P $(DL_DIR) $($(1)_URL)
 
 $(DL_DIR)/$($(1)_DIR)/.prepared: $(DL_DIR)/$($(1)_TAR)
-	tar -C $(DL_DIR) -x$(if $(findstring bzip2,$($(1)_TAR)),j,z)f $(DL_DIR)/$($(1)_TAR)
+	tar -C $(DL_DIR) -x$(if $(findstring bz2,$($(1)_TAR)),j,z)f $(DL_DIR)/$($(1)_TAR)
 	$(if $($(1)_PATCHES), \
 		cat $($(1)_PATCHES) | \
 		patch -p1 -d $(DL_DIR)/$($(1)_DIR))
@@ -120,14 +120,20 @@ download: $(DL_DIR)/$($(1)_DIR)/.prepared
 
 endef
 
-all: toolchain
-clean:
+all: toolchain firmware
+toolchain-clean:
 	rm -rf $(TOOLCHAIN_DIR)/build $(TOOLCHAIN_DIR)/inst
 clean-dl:
 download:
 toolchain:
 
-.PHONY: all clean clean-dl download toolchain
+clean:
+	$(MAKE) -C target_firmware clean
+
+firmware: toolchain
+	+$(MAKE) -C target_firmware
+
+.PHONY: all toolchain-clean clean clean-dl download toolchain firmware
 
 $(eval $(call Build,GMP))
 $(eval $(call Build,MPFR,GMP))
