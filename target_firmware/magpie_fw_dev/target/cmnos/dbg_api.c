@@ -539,7 +539,7 @@ int db_dump_memory(char* cmd, char* param1, char* param2, char* param3)
 {
 	unsigned long addr;
 	unsigned long length;
-	unsigned long ptrAddr;
+	unsigned long *ptrAddr;
 	int i;
 
 	if (db_ascii_to_hex(param1, &addr) != -1 &&
