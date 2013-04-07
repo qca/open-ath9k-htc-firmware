@@ -1161,7 +1161,7 @@ ath_rate_newstate(struct ath_softc_tgt *sc,
 	struct atheros_softc *asc = (struct atheros_softc *) sc->sc_rc;
 
 	asc->tx_chainmask = sc->sc_ic.ic_tx_chainmask;
-	ath_rate_newassoc(sc, ni, 1, capflag, rs);    
+	ath_rate_newassoc(sc, ATH_NODE_TARGET(ni), 1, capflag, rs);
 }
 
 static void
