@@ -246,14 +246,14 @@ rcSibSetValidRates(const RATE_TABLE_11N *pRateTable,
 	A_UINT8 i, j, hi = 0;
 	A_UINT8 singleStream = (capflag & WLAN_RC_DS_FLAG) ? 0 : 1;
 	A_UINT32 valid;
-	struct atheros_node *pSib = ATH_NODE_ATHEROS(an);
        
 	/* Use intersection of working rates and valid rates */
 	for (i = 0; i < pRateSet->rs_nrates; i++) {
 		for (j = 0; j < pRateTable->rateCount; j++) {
 			A_UINT32 phy = pRateTable->info[j].phy;
-
 #ifdef MAGPIE_MERLIN
+			struct atheros_node *pSib = ATH_NODE_ATHEROS(an);
+
 			if (pSib->stbc) {
 				valid = pRateTable->info[j].validSTBC;
 			} else if (singleStream) {
@@ -300,14 +300,14 @@ rcSibSetValidHtRates(const RATE_TABLE_11N *pRateTable,
 	A_UINT8 i, j, hi = 0;
 	A_UINT8 singleStream = (capflag & WLAN_RC_DS_FLAG) ? 0 : 1;
 	A_UINT8 valid;
-	struct atheros_node *pSib = ATH_NODE_ATHEROS(an);
     
 	/* Use intersection of working rates and valid rates */
 	for (i = 0; i <  ((struct ieee80211_rateset *)pMcsSet)->rs_nrates; i++) {
 		for (j = 0; j < pRateTable->rateCount; j++) {
 			A_UINT32 phy = pRateTable->info[j].phy;
-
 #ifdef MAGPIE_MERLIN
+			struct atheros_node *pSib = ATH_NODE_ATHEROS(an);
+
 			if (pSib->stbc) {
 				valid = pRateTable->info[j].validSTBC;
 			} else if (singleStream) {
