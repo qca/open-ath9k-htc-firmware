@@ -739,7 +739,8 @@ int db_info_cmd(char* cmd, char* param1, char* param2, char* param3)
 	{
 		A_ALLOCRAM_DEBUG();
 	}
-#if SYSTEM_MODULE_SYS_MONITOR
+#if 0  /* TODO: SYSTEM_MODULE_SYS_MONITOR depends on _ROM_ or _RAM_ which
+	* is dead too */
 	else if(strcmp(param1, "cpu") == 0)
 		zfPrintCpuUtilization();
 #endif
