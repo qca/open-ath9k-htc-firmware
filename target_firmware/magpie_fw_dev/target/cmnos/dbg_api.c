@@ -613,12 +613,6 @@ int db_patch_cmd(char* cmd, char* param1, char* param2, char* param3)
 
 uint32_t delay = 0;
 
-LOCAL void cb_tick()
-{
-	;    
-}
-
-
 int db_intr_cmd(char* cmd, char* param1, char* param2, char* param3)
 {
 #if SYSTEM_MODULE_INTR
@@ -641,8 +635,7 @@ int db_intr_cmd(char* cmd, char* param1, char* param2, char* param3)
 
 		if (strcmp(param2, "on") == 0 )
 		{
-			A_ATTACH_ISR(A_INUM_XTTIMER, cb_tick, NULL);
-
+			/* TODO: this part is probably dead. */
 			pending_intrs = A_INTR_GET_INTRENABLE()|CMNOS_IMASK_XTTIMER;
 			A_INTR_SET_INTRENABLE(pending_intrs);
 			A_PRINTF("- intr [0x%08x]\n\r", pending_intrs);
