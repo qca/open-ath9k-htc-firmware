@@ -231,10 +231,10 @@ uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t* i)
 			}
 		}
 
-		if(strlen(cmd_buffer[cmd_buf_loc]) != 0)
+		if (A_STRLEN(cmd_buffer[cmd_buf_loc]) != 0)
 		{
-			strcpy(cmd_line, cmd_buffer[cmd_buf_loc]);
-			*i = strlen(cmd_buffer[cmd_buf_loc]);
+			A_STRCPY(cmd_line, cmd_buffer[cmd_buf_loc]);
+			*i = A_STRLEN(cmd_buffer[cmd_buf_loc]);
 			zm_uart_send("\r>", 2);
 			zm_uart_send(cmd_line, *i);
 		}
@@ -248,7 +248,7 @@ uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t* i)
 			//Filter duplicated string in command history
 			if (strcmp(cmd_buffer[(cmd_buf_ptr==0)?(COMMAND_BUFFER_SIZE-1):(cmd_buf_ptr-1)], cmd_line) != 0)
 			{
-				strcpy(cmd_buffer[cmd_buf_ptr++], cmd_line);
+				A_STRCPY(cmd_buffer[cmd_buf_ptr++], cmd_line);
 			}
 		}
 		if (cmd_buf_ptr >= COMMAND_BUFFER_SIZE)
@@ -329,7 +329,7 @@ int db_formalize_command(char* raw_str,  char* cmd_str)
 		}
 		cmd_str[k*DB_MAX_COMMAND_LENGTH + j] = 0;
 	}
-	return (int)strlen(cmd_str);
+	return (int)A_STRLEN(cmd_str);
 }
 
 int db_ascii_to_hex(char* num_str, unsigned long* hex_num)
@@ -411,14 +411,18 @@ int db_help_cmd(char* cmd, char* param1, char* param2, char* param3)
 
 	i = 0;
 
-	zm_uart_send(ATH_DEBUGGER_VERSION_STR, strlen(ATH_DEBUGGER_VERSION_STR));
-	zm_uart_send(ATH_COMMAND_LIST_STR, strlen(ATH_COMMAND_LIST_STR));
+	zm_uart_send(ATH_DEBUGGER_VERSION_STR,
+		     A_STRLEN(ATH_DEBUGGER_VERSION_STR));
+	zm_uart_send(ATH_COMMAND_LIST_STR,
+		     A_STRLEN(ATH_COMMAND_LIST_STR));
 
 	while (command_table[i].cmd_func)
 	{
-		zm_uart_send(command_table[i].cmd_str, strlen(command_table[i].cmd_str));
+		zm_uart_send(command_table[i].cmd_str,
+			     A_STRLEN(command_table[i].cmd_str));
 		zm_uart_send("\t", 1);
-		zm_uart_send(command_table[i].help_str, strlen(command_table[i].help_str));
+		zm_uart_send(command_table[i].help_str,
+			     A_STRLEN(command_table[i].help_str));
 		zm_uart_send("\n\r", 2);
 		i++;
 	}
@@ -458,9 +462,9 @@ int db_ldr_cmd(char* cmd, char* param1, char* param2, char* param3)
 		db_hex_to_ascii(val, val_str);
 		db_hex_to_ascii(addr, addr_str);
 
-		zm_uart_send(addr_str, strlen(addr_str));
+		zm_uart_send(addr_str, A_STRLEN(addr_str));
 		zm_uart_send(" : ", 3);
-		zm_uart_send(val_str, strlen(val_str));
+		zm_uart_send(val_str, A_STRLEN(val_str));
 		zm_uart_send("\n\r", 2);
 
 		return 0;
@@ -480,7 +484,7 @@ int db_str_cmd(char* cmd, char* param1, char* param2, char* param3)
 	char val_str[20];
 	char addr_str[20];
 
-	if ((strlen(param2) > 0) &&
+	if ((A_STRLEN(param2) > 0) &&
 	    (db_ascii_to_hex(param1, &addr) != -1) &&
 	    (db_ascii_to_hex(param2, &val) != -1))
 	{
@@ -510,9 +514,9 @@ int db_str_cmd(char* cmd, char* param1, char* param2, char* param3)
 		db_hex_to_ascii(val, val_str);
 		db_hex_to_ascii(addr, addr_str);
 
-		zm_uart_send(addr_str, strlen(addr_str));
+		zm_uart_send(addr_str, A_STRLEN(addr_str));
 		zm_uart_send(" : ", 3);
-		zm_uart_send(val_str, strlen(val_str));
+		zm_uart_send(val_str, A_STRLEN(val_str));
 		zm_uart_send("\n\r", 2);
 
 		return 0;
@@ -609,12 +613,6 @@ int db_patch_cmd(char* cmd, char* param1, char* param2, char* param3)
 
 uint32_t delay = 0;
 
-LOCAL void cb_tick()
-{
-	;    
-}
-
-
 int db_intr_cmd(char* cmd, char* param1, char* param2, char* param3)
 {
 #if SYSTEM_MODULE_INTR
@@ -637,8 +635,7 @@ int db_intr_cmd(char* cmd, char* param1, char* param2, char* param3)
 
 		if (strcmp(param2, "on") == 0 )
 		{
-			A_ATTACH_ISR(A_INUM_XTTIMER, cb_tick, NULL);
-
+			/* TODO: this part is probably dead. */
 			pending_intrs = A_INTR_GET_INTRENABLE()|CMNOS_IMASK_XTTIMER;
 			A_INTR_SET_INTRENABLE(pending_intrs);
 			A_PRINTF("- intr [0x%08x]\n\r", pending_intrs);
@@ -742,7 +739,8 @@ int db_info_cmd(char* cmd, char* param1, char* param2, char* param3)
 	{
 		A_ALLOCRAM_DEBUG();
 	}
-#if SYSTEM_MODULE_SYS_MONITOR
+#if 0  /* TODO: SYSTEM_MODULE_SYS_MONITOR depends on _ROM_ or _RAM_ which
+	* is dead too */
 	else if(strcmp(param1, "cpu") == 0)
 		zfPrintCpuUtilization();
 #endif

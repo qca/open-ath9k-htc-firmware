@@ -2089,7 +2089,7 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 
 	__stats(sc, tx_bars);
 
-	memset(&series, 0, sizeof(series));
+	adf_os_mem_set(&series, 0, sizeof(series));
 
 	ath_aggr_pause_tid(sc, tid);
 
