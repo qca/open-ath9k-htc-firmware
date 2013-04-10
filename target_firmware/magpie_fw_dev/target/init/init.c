@@ -60,7 +60,7 @@ uint32_t idle_cnt = 0;
 
 #if defined(PROJECT_K2)
 // save the ROM printf function point
-uint32_t save_cmnos_printf;
+int (* save_cmnos_printf)(const char * fmt, ...);
 #endif
 
 #define ATH_DATE_STRING     __DATE__" "__TIME__
