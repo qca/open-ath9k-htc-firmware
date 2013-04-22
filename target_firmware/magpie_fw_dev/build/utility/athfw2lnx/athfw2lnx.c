@@ -35,14 +35,35 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdint.h>
+#include <string.h>
 
 /* These names may vary but this is typical */
 extern const uint32_t zcFwImage[];
 extern const uint32_t zcFwImageSize;
 
+#define WLAN_BUILD_VER_MAJOR 1
+#define WLAN_BUILD_VER_MINOR 1
+#define WLAN_BUILD_VER_TAG 1
+
+struct build_info {
+	uint32_t	major;
+	uint32_t	minor;
+	uint32_t	tag;
+	char		commit_id[40];
+	char		user_name[32];
+};
 int main()
 {
 	uint32_t i;
+	struct build_info binfo;
+
+	binfo.major	= WLAN_BUILD_VER_MAJOR;
+	binfo.minor	= WLAN_BUILD_VER_MINOR;
+	binfo.tag	= WLAN_BUILD_VER_TAG;
+	memcpy(binfo.user_name, HOSTNAME, strlen(HOSTNAME));
+	memcpy(binfo.commit_id, COMMIT_HASH, strlen(COMMIT_HASH));
+	write(1, &binfo, sizeof(binfo));
+
 	for (i = 0; i < zcFwImageSize/4; i++)
 		write(1, &zcFwImage[i], 4);
 }
