@@ -48,16 +48,11 @@ int db_help_cmd(char *, char*, char*, char*);
 int db_ldr_cmd(char*, char*, char*, char*);
 int db_str_cmd(char*, char*, char*, char*);
 int db_info_cmd(char*, char*, char*, char*);
-int db_cmd_dbg(char*, char*, char*, char*);
 int db_usb_cmd(char*, char*, char*, char*);
 int db_intr_cmd(char*, char*, char*, char*);
-int db_patch_cmd(char*, char*, char*, char*);
 
-int db_cmd_memtest(char* cmd, char* param1, char* param2, char* param3);
-int db_cmd_dmips(char* cmd, char* param1, char* param2, char* param3);
 int db_cmd_starthtc(char* cmd, char* param1, char* param2, char* param3);
 
-int db_eeprom_cmd(char* cmd, char* param1, char* param2, char* param3);
 int db_wdt_cmd(char* cmd, char* param1, char* param2, char* param3);
 
 #if defined(PROJECT_K2)
@@ -100,12 +95,8 @@ const struct DB_COMMAND_STRUCT command_table[] =
 	{"INFO",   ", Print debug information", db_info_cmd},
 	{"USB",   ", usb releated command", db_usb_cmd},
 	{"INTR",   ", intr releated command", db_intr_cmd},
-	{"PATCH",   ", patch function releated command", db_patch_cmd},
-	{"DBG",    ", mute all print msg", db_cmd_dbg},
 	{"CLOCK",    ", change the clock...", db_clock_cmd},
-	{"MEMTEST",    "<Hex addr> <Number of bytes> test memory", db_cmd_memtest},
 	{"HTCR", "Issue HTC ready to host", db_cmd_starthtc},
-	{"EEP",   ", eeprom r/w debug command", db_eeprom_cmd},
 	{"WDT",   ", wdt debug command", db_wdt_cmd},
 #if defined(PROJECT_K2)
 #if SYSTEM_MODULE_SFLASH
@@ -518,12 +509,6 @@ LOCAL void dbg_timer_func(A_HANDLE alarm, void *data)
 	A_PRINTF("this is a timer alarm function 0x%08x\n\r", xthal_get_ccount());
 }
 
-int db_patch_cmd(char* cmd, char* param1, char* param2, char* param3)
-{
-
-	return 0;
-}
-
 uint32_t delay = 0;
 
 int db_intr_cmd(char* cmd, char* param1, char* param2, char* param3)
@@ -724,28 +709,10 @@ int db_info_cmd(char* cmd, char* param1, char* param2, char* param3)
 	return 1;
 }
 
-int db_cmd_dbg(char* cmd, char* param1, char* param2, char* param3)
-{
-}
-
-int db_cmd_dmips(char* cmd, char* param1, char* param2, char* param3)
-{
-
-}
-
 int db_cmd_starthtc(char* cmd, char* param1, char* param2, char* param3)
 {
     extern htc_handle_t htc_handle;
     HTC_Ready(htc_handle);
-}
-
-int db_cmd_memtest(char* cmd, char* param1, char* param2, char* param3)
-{
-}
-
-
-void eep_test()
-{
 }
 
 #define WRITE_USB_DESC(pDesc, Offset)					\
@@ -782,11 +749,6 @@ extern uint16_t String00Descriptor[];
 extern uint16_t String10Descriptor[];
 extern uint16_t String20Descriptor[];
 extern uint16_t String30Descriptor[];
-
-int db_eeprom_cmd(char* cmd, char* param1, char* param2, char* param3)
-{
-	
-}
 
 int db_wdt_cmd(char* cmd, char* param1, char* param2, char* param3)
 {
