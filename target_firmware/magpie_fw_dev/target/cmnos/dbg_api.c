@@ -699,7 +699,7 @@ static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
         if ( strcmp(param1, "rst") == 0 )
         {
-		A_PRINTF(" reseting.....................\n\n\r");
+		A_PRINTF(" reseting...\n\n\r");
 		A_WDT_RESET();
         }
         else if( strcmp(param1, "on") == 0 )
@@ -712,23 +712,24 @@ static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
         }
         else if ( strcmp(param1, "boot") == 0 )
         {
+		A_PRINTF("Last BOOT is ");
 		if (ENUM_WDT_BOOT == A_WDT_LASTBOOT() )
-			A_PRINTF("LAST BOOT IS %s", "wdt");
+			A_PRINTF("wdt");
 		else
-			A_PRINTF("LAST BOOT IS %s", "normal boot");
+			A_PRINTF("normal boot");
         }
         else if (strcmp(param1, "loop") == 0 )
         {
 		T_WDT_CMD wdt_cmd;
 		uint32_t time_offset;
-		A_PRINTF(" doing the wdt reseting................\n\n\r");
+		A_PRINTF(" doing the wdt reseting...");
 
 		if( db_ascii_to_hex(param2, &time_offset)!=0 )
 		{
 			if( time_offset < 0 || time_offset >0xffffffff )
 				time_offset = 0xffffff;
 		}
-		A_PRINTF(" doing the wdt reseting (wdt tick: 0x%08x................\n\n\r", time_offset);
+		A_PRINTF(" (wdt tick: 0x%08x...\n\n\r", time_offset);
 		wdt_cmd.cmd = WDT_TIMEOUT;
 		wdt_cmd.timeout = time_offset;
 
@@ -739,14 +740,14 @@ static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
         {
 		T_WDT_CMD wdt_cmd;
 		uint32_t time_offset;
-		A_PRINTF(" doing the wdt reseting................\n\n\r");
+		A_PRINTF(" doing the wdt reseting...");
 
 		if( db_ascii_to_hex(param3, &time_offset)!=0 )
 		{
 			if( time_offset < 0 || time_offset >0xffffffff )
 				time_offset = 0xffffff;
 		}
-		A_PRINTF(" doing the wdt reseting (wdt tick: 0x%08x................\n\n\r", time_offset);
+		A_PRINTF(" (wdt tick: 0x%08x...\n\n\r", time_offset);
 
 		wdt_cmd.cmd = WDT_TIMEOUT;
 		wdt_cmd.timeout = time_offset;
