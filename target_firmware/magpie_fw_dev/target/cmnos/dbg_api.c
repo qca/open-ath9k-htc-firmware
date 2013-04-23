@@ -47,7 +47,6 @@
 int db_help_cmd(char *, char*, char*, char*);
 int db_ldr_cmd(char*, char*, char*, char*);
 int db_str_cmd(char*, char*, char*, char*);
-int db_dump_memory(char* cmd, char* param1, char* param2, char* param3);
 int db_info_cmd(char*, char*, char*, char*);
 int db_cmd_dbg(char*, char*, char*, char*);
 int db_usb_cmd(char*, char*, char*, char*);
@@ -98,7 +97,6 @@ const struct DB_COMMAND_STRUCT command_table[] =
 	{"STR",    "<Hex addr> <Hex value>, Store word", db_str_cmd},
 	{"STRH",   "<Hex addr> <Hex value>, Store half word", db_str_cmd},
 	{"STRB",   "<Hex addr> <Hex value>, Store byte", db_str_cmd},
-	{"DUMP",   "<Hex addr>, Dump memory", db_dump_memory},
 	{"INFO",   ", Print debug information", db_info_cmd},
 	{"USB",   ", usb releated command", db_usb_cmd},
 	{"INTR",   ", intr releated command", db_intr_cmd},
@@ -513,76 +511,6 @@ int db_str_cmd(char* cmd, char* param1, char* param2, char* param3)
 
 		return -1;
 	}
-}
-
-// macro extension the address to dump the memory
-#define FOUR_BYTE_HEX_DUMP(addr) (" %02x %02x %02x %02x",		\
-				  *(uint8_t*)((addr)+3), *(uint8_t*)((addr)+2), \
-				  *(uint8_t*)((addr)+1), *(uint8_t*)((addr)))
-
-
-int db_dump_memory(char* cmd, char* param1, char* param2, char* param3)
-{
-	unsigned long addr;
-	unsigned long length;
-	unsigned long ptrAddr;
-	int i;
-
-	if (db_ascii_to_hex(param1, &addr) != -1 &&
-	    (db_ascii_to_int(param2, &length) != -1))
-	{
-		// if no length, default is 128 bytes to dump
-		if( length == 0 )
-			length = 128;
-		addr &= 0xfffffffc;
-
-		A_PRINTF("length: %d\n\r", length);
-
-		A_PRINTF("           15 14 13 12 11 10 09 08   07 06 05 04 03 02 01 00\n\r");
-		A_PRINTF("------------------------------------------------------------\n\r");
-		for (i=0; i<length/16; i++)
-		{
-			//zfUartSendHex((unsigned long)addr);
-			A_PRINTF("%08x: ", (unsigned long)addr);
-
-			ptrAddr = (unsigned long *)addr;
-
-			// dump from MSB to LSB
-			A_PRINTF FOUR_BYTE_HEX_DUMP(ptrAddr+12);
-			A_PRINTF FOUR_BYTE_HEX_DUMP(ptrAddr+8);
-			A_PRINTF(" -");
-			A_PRINTF FOUR_BYTE_HEX_DUMP(ptrAddr+4);
-			A_PRINTF FOUR_BYTE_HEX_DUMP(ptrAddr);
-			A_PRINTF("\n\r");
-			addr+=16;
-		}
-
-		// the rest of the byte to dump
-		if( (length %16)!=0 )
-		{
-			A_PRINTF("%08x: ", (unsigned long)addr);
-
-			// make the space, since we dump MSB first
-			for(i=0; i<(16-(length %16)); i++)
-				A_PRINTF("   ");
-
-			// if less than 8 bytes, add 2 more space for " -"
-			if( (length%16) < 8 )
-				A_PRINTF("  ");
-
-			for(i=0; i<length%16; i++)
-			{
-				// MSB first,
-				A_PRINTF(" %02x", *(uint8_t*)((addr+(length%16)-1)-i));
-
-				if((16-(length%16))+i==7)
-					A_PRINTF(" -");
-			}
-		}
-		A_PRINTF("\n\r");
-		return 0;
-	}
-	return -1;
 }
 
 LOCAL void dbg_timer_func(A_HANDLE alarm, void *data)
