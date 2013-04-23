@@ -379,17 +379,9 @@ void wlan_task(void)
 		A_TASKLET_RUN();
 		A_TIMER_RUN();
 
-		/* Low priority tasks */
-		if ((loop_low & 0xf) == 0) {
-		}
-
 		/* Very low priority tasks */
-		if ((loop_low & 0xfff) == 0x7) {
-			if ((loop_low & 0x1000) == 0) {
-				A_DBG_TASK();
-			} else {
-			}
-		}
+		if ((loop_low & 0x1fff) == 0x7)
+			A_DBG_TASK();
 
 		idle_task();
 	}
