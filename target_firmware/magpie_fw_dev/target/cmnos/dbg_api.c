@@ -197,12 +197,12 @@ void zfDebugTask(void)
 		}
 		if (cmd_not_found)
 		{
-			zm_uart_send("Error, HELP for command list.\n\r", 31);
+			A_PRINTF("Error, HELP for command list.\n\r");
 		}
 
 	}
 
-	zm_uart_send(">", 1);
+	A_PRINTF(">");
 	return;
 }
 
@@ -235,14 +235,14 @@ uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t* i)
 		{
 			A_STRCPY(cmd_line, cmd_buffer[cmd_buf_loc]);
 			*i = A_STRLEN(cmd_buffer[cmd_buf_loc]);
-			zm_uart_send("\r>", 2);
-			zm_uart_send(cmd_line, *i);
+			A_PRINTF("\r>");
+			A_PRINTF("%s", cmd_line);
 		}
 		break;
 	case 13 : /* Return */
 		pressed_time = 0;
 		cmd_line[*i] = 0;
-		zm_uart_send("\n\r", 2);
+		A_PRINTF("\n\r");
 		if (*i != 0)
 		{
 			//Filter duplicated string in command history
@@ -262,7 +262,7 @@ uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t* i)
 		if (*i > 0)
 		{
 			*i = *i-1;
-			zm_uart_send("\b \b", 3);
+			A_PRINTF("\b \b");
 		}
 		break;
 	case 0 : //None
@@ -281,14 +281,14 @@ uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t* i)
 					//}
 					cmd_line[*i] = ch;
 					*i = *i + 1;
-					zm_uart_send(&ch, 1);
+					A_PRINTF("%c", ch);
 				}
 			}
 		}
 		else
 		{
 			ch = 7; /* Beep */
-			zm_uart_send(&ch, 1);
+			A_PRINTF("%c", ch);
 		}
 		break;
 	} /* end of switch */
@@ -411,19 +411,12 @@ int db_help_cmd(char* cmd, char* param1, char* param2, char* param3)
 
 	i = 0;
 
-	zm_uart_send(ATH_DEBUGGER_VERSION_STR,
-		     A_STRLEN(ATH_DEBUGGER_VERSION_STR));
-	zm_uart_send(ATH_COMMAND_LIST_STR,
-		     A_STRLEN(ATH_COMMAND_LIST_STR));
+	A_PRINTF("%s %s\n", ATH_DEBUGGER_VERSION_STR, ATH_COMMAND_LIST_STR);
 
 	while (command_table[i].cmd_func)
 	{
-		zm_uart_send(command_table[i].cmd_str,
-			     A_STRLEN(command_table[i].cmd_str));
-		zm_uart_send("\t", 1);
-		zm_uart_send(command_table[i].help_str,
-			     A_STRLEN(command_table[i].help_str));
-		zm_uart_send("\n\r", 2);
+		A_PRINTF("%s\t%s\n\r", command_table[i].cmd_str,
+				       command_table[i].help_str);
 		i++;
 	}
 	return i;
@@ -440,7 +433,8 @@ int db_ldr_cmd(char* cmd, char* param1, char* param2, char* param3)
 	{
 		if( addr == 0 )
 		{
-			zm_uart_send("Error! bad address 0x%08x.\n\r", (unsigned long)addr);
+			A_PRINTF("Error! bad address 0x%08x.\n\r",
+				 (unsigned long)addr);
 			return -1;
 		}
 		if (strcmp(cmd, "LDR") == 0)
@@ -462,16 +456,12 @@ int db_ldr_cmd(char* cmd, char* param1, char* param2, char* param3)
 		db_hex_to_ascii(val, val_str);
 		db_hex_to_ascii(addr, addr_str);
 
-		zm_uart_send(addr_str, A_STRLEN(addr_str));
-		zm_uart_send(" : ", 3);
-		zm_uart_send(val_str, A_STRLEN(val_str));
-		zm_uart_send("\n\r", 2);
-
+		A_PRINTF("%s : %s\n\r", addr_str, val_str);
 		return 0;
 	}
 	else
 	{
-		zm_uart_send("Error! Incorrect format.\n\r", 26);
+		A_PRINTF("Error! Incorrect format.\n\r");
 
 		return -1;
 	}
@@ -514,16 +504,12 @@ int db_str_cmd(char* cmd, char* param1, char* param2, char* param3)
 		db_hex_to_ascii(val, val_str);
 		db_hex_to_ascii(addr, addr_str);
 
-		zm_uart_send(addr_str, A_STRLEN(addr_str));
-		zm_uart_send(" : ", 3);
-		zm_uart_send(val_str, A_STRLEN(val_str));
-		zm_uart_send("\n\r", 2);
-
+		A_PRINTF("%s : %s\n\r", addr_str, val_str);
 		return 0;
 	}
 	else
 	{
-		zm_uart_send("Error! Incorrect format.\n\r", 26);
+		A_PRINTF("Error! Incorrect format.\n\r");
 
 		return -1;
 	}
@@ -552,7 +538,6 @@ int db_dump_memory(char* cmd, char* param1, char* param2, char* param3)
 
 		A_PRINTF("length: %d\n\r", length);
 
-		//zm_uart_send("                     7 6 5 4  3 2 1 0\n\r", 28);
 		A_PRINTF("           15 14 13 12 11 10 09 08   07 06 05 04 03 02 01 00\n\r");
 		A_PRINTF("------------------------------------------------------------\n\r");
 		for (i=0; i<length/16; i++)
