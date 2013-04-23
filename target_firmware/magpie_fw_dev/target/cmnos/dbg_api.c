@@ -44,36 +44,36 @@
 #if defined(SYSTEM_MODULE_DBG)
 
 /* Function prototypes */
-int db_help_cmd(char *, char*, char*, char*);
-int db_ldr_cmd(char*, char*, char*, char*);
-int db_str_cmd(char*, char*, char*, char*);
-int db_info_cmd(char*, char*, char*, char*);
-int db_usb_cmd(char*, char*, char*, char*);
-int db_intr_cmd(char*, char*, char*, char*);
+static int db_help_cmd(char *, char *, char *, char *);
+static int db_ldr_cmd(char *, char *, char *, char *);
+static int db_str_cmd(char *, char *, char *, char *);
+static int db_info_cmd(char *, char *, char *, char *);
+static int db_usb_cmd(char *, char *, char *, char *);
+static int db_intr_cmd(char *, char *, char *, char *);
 
-int db_cmd_starthtc(char* cmd, char* param1, char* param2, char* param3);
+static int db_cmd_starthtc(char *cmd, char *param1, char *param2, char *param3);
 
-int db_wdt_cmd(char* cmd, char* param1, char* param2, char* param3);
+static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3);
 
 #if defined(PROJECT_K2)
 #if SYSTEM_MODULE_SFLASH
-int db_cmd_sferase(char* cmd, char* param1, char* param2, char* param3);
-int db_cmd_sfpg(char* cmd, char* param1, char* param2, char* param3);
-int db_cmd_sfru(char* cmd, char* param1, char* param2, char* param3);
-int db_cmd_sfrm(char* cmd, char* param1, char* param2, char* param3);
-int db_cmd_sfrdsr(char* cmd, char* param1, char* param2, char* param3);
+static int db_cmd_sferase(char *cmd, char *param1, char *param2, char *param3);
+static int db_cmd_sfpg(char *cmd, char *param1, char *param2, char *param3);
+static int db_cmd_sfru(char *cmd, char *param1, char *param2, char *param3);
+static int db_cmd_sfrm(char *cmd, char *param1, char *param2, char *param3);
+static int db_cmd_sfrdsr(char *cmd, char *param1, char *param2, char *param3);
 #endif
 #endif /* #if defined(PROJECT_K2) */
-int db_cmd_memcmp(char* cmd, char* param1, char* param2, char* param3);
-int db_cmd_memdump(char* cmd, char* param1, char* param2, char* param3);
+static int db_cmd_memcmp(char *cmd, char *param1, char *param2, char *param3);
+static int db_cmd_memdump(char *cmd, char *param1, char *param2, char *param3);
 
-int db_clock_cmd(char* cmd, char* param1, char* param2, char* param3);
+static int db_clock_cmd(char *cmd, char *param1, char *param2, char *param3);
 
-uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t* i);
-int db_formalize_command(char*, char*);
-int db_ascii_to_hex(char*, unsigned long*);
-int db_hex_to_ascii(unsigned long, char*);
-void zfDebugTask(void);
+static uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t *i);
+static int db_formalize_command(char *, char *);
+static int db_ascii_to_hex(char *, unsigned long *);
+static int db_hex_to_ascii(unsigned long, char *);
+static void zf_debug_task(void);
 
 int db_info_intr(char* cmd, char* param1, char* param2, char* param3);
 
@@ -135,7 +135,7 @@ t_reg_elem reg_buffer[MAX_REG_NUM];
 
 //////////////////////////////////////////////////
 
-void zfDebugInit(void)
+static void zf_debug_init(void)
 {
 	uint8_t ch;
 
@@ -150,7 +150,7 @@ void zfDebugInit(void)
 	pressed_time = 0;
 }
 
-void zfDebugTask(void)
+static void zf_debug_task(void)
 {
 	int i;
 	uint8_t ch;
@@ -195,7 +195,7 @@ void zfDebugTask(void)
 	return;
 }
 
-uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t* i)
+static uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t *i)
 {
 	int cmd_buf_loc;
 
@@ -286,7 +286,7 @@ uint16_t db_get_cmd_line(uint8_t ch, char *cmd_line, uint16_t* i)
 
 }
 
-int db_formalize_command(char* raw_str,  char* cmd_str)
+static int db_formalize_command(char *raw_str,  char *cmd_str)
 {
 	int i = 0;
 	int j;
@@ -321,7 +321,7 @@ int db_formalize_command(char* raw_str,  char* cmd_str)
 	return (int)A_STRLEN(cmd_str);
 }
 
-int db_ascii_to_hex(char* num_str, unsigned long* hex_num)
+static int db_ascii_to_hex(char *num_str, unsigned long *hex_num)
 {
 	int i = 0;
 
@@ -352,7 +352,7 @@ int db_ascii_to_hex(char* num_str, unsigned long* hex_num)
 	return 0;
 }
 
-int db_ascii_to_int(char* num_str, unsigned long* int_num)
+int db_ascii_to_int(char *num_str, unsigned long *int_num)
 {
 	int i = 0;
 
@@ -373,7 +373,7 @@ int db_ascii_to_int(char* num_str, unsigned long* int_num)
 	return 0;
 }
 
-int db_hex_to_ascii(unsigned long hex_num, char* num_str)
+static int db_hex_to_ascii(unsigned long hex_num, char *num_str)
 {
 	int i;
 	unsigned long four_bits;
@@ -394,7 +394,7 @@ int db_hex_to_ascii(unsigned long hex_num, char* num_str)
 	return 0;
 }
 
-int db_help_cmd(char* cmd, char* param1, char* param2, char* param3)
+int db_help_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
 	int i;
 
@@ -411,7 +411,7 @@ int db_help_cmd(char* cmd, char* param1, char* param2, char* param3)
 	return i;
 }
 
-int db_ldr_cmd(char* cmd, char* param1, char* param2, char* param3)
+static int db_ldr_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
 	unsigned long val;
 	unsigned long addr;
@@ -456,7 +456,7 @@ int db_ldr_cmd(char* cmd, char* param1, char* param2, char* param3)
 	}
 }
 
-int db_str_cmd(char* cmd, char* param1, char* param2, char* param3)
+static int db_str_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
 	unsigned long val;
 	unsigned long addr;
@@ -511,7 +511,7 @@ LOCAL void dbg_timer_func(A_HANDLE alarm, void *data)
 
 uint32_t delay = 0;
 
-int db_intr_cmd(char* cmd, char* param1, char* param2, char* param3)
+static int db_intr_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
 #if SYSTEM_MODULE_INTR
 	uint32_t pending_intrs;
@@ -569,7 +569,7 @@ int db_intr_cmd(char* cmd, char* param1, char* param2, char* param3)
 
 uint32_t usb_swap_flag = 0; //default
 uint32_t usb_swap_flag_changed = 0;
-int db_usb_cmd(char* cmd, char* param1, char* param2, char* param3)
+static int db_usb_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
 	A_PRINTF("THIS IS USB COMMAND\n\r");
 
@@ -616,7 +616,7 @@ static void clk_change(uint32_t clk, uint32_t ratio, uint32_t baud)
 
 }
 
-int db_clock_cmd(char* cmd, char* param1, char* param2, char* param3)
+static int db_clock_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
 	uint32_t ratio = 1;
 	uint32_t baud = 19200;
@@ -629,7 +629,7 @@ int db_clock_cmd(char* cmd, char* param1, char* param2, char* param3)
 	}
 }
 
-int db_info_cmd(char* cmd, char* param1, char* param2, char* param3)
+static int db_info_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
 #if 1
 
@@ -709,7 +709,7 @@ int db_info_cmd(char* cmd, char* param1, char* param2, char* param3)
 	return 1;
 }
 
-int db_cmd_starthtc(char* cmd, char* param1, char* param2, char* param3)
+static int db_cmd_starthtc(char *cmd, char *param1, char *param2, char *param3)
 {
     extern htc_handle_t htc_handle;
     HTC_Ready(htc_handle);
@@ -750,7 +750,7 @@ extern uint16_t String10Descriptor[];
 extern uint16_t String20Descriptor[];
 extern uint16_t String30Descriptor[];
 
-int db_wdt_cmd(char* cmd, char* param1, char* param2, char* param3)
+static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
         if ( strcmp(param1, "rst") == 0 )
         {
@@ -837,7 +837,7 @@ int db_wdt_cmd(char* cmd, char* param1, char* param2, char* param3)
 #if defined(PROJECT_K2)
 #if SYSTEM_MODULE_SFLASH
 /* Serial Flash -> Chip Erase, Sector Erase, Block Erase */
-int db_cmd_sferase(char* cmd, char* param1, char* param2, char* param3)
+static int db_cmd_sferase(char *cmd, char *param1, char *param2, char *param3)
 {
 	unsigned long       addr;
 
@@ -888,7 +888,7 @@ int db_cmd_sferase(char* cmd, char* param1, char* param2, char* param3)
 }
 
 /* Serial Flash -> Program */
-int db_cmd_sfpg(char* cmd, char* param1, char* param2, char* param3)
+static int db_cmd_sfpg(char *cmd, char *param1, char *param2, char *param3)
 {
 	unsigned long       addr, len, buf;
 
@@ -912,7 +912,7 @@ int db_cmd_sfpg(char* cmd, char* param1, char* param2, char* param3)
 }
 
 /* Serial Flash -> Read, Fast Read to UART */
-int db_cmd_sfru(char* cmd, char* param1, char* param2, char* param3)
+static int db_cmd_sfru(char *cmd, char *param1, char *param2, char *param3)
 {
 	A_UINT32            i;
 	unsigned long       addr1, addr2, t_addr;
@@ -956,7 +956,7 @@ int db_cmd_sfru(char* cmd, char* param1, char* param2, char* param3)
 }
 
 /* Serial Flash -> Read, Fast Read to Memory */
-int db_cmd_sfrm(char* cmd, char* param1, char* param2, char* param3)
+static int db_cmd_sfrm(char *cmd, char *param1, char *param2, char *param3)
 {
 	A_UINT32            i;
 	unsigned long       addr1, addr2, t_addr;
@@ -994,7 +994,7 @@ int db_cmd_sfrm(char* cmd, char* param1, char* param2, char* param3)
 }
 
 /* Serial Flash -> Read Status Register */
-int db_cmd_sfrdsr(char* cmd, char* param1, char* param2, char* param3)
+static int db_cmd_sfrdsr(char *cmd, char *param1, char *param2, char *param3)
 {
 	A_PRINTF("0x%02X\n\r", A_SFLASH_RDSR());
 	return 0;
@@ -1003,7 +1003,7 @@ int db_cmd_sfrdsr(char* cmd, char* param1, char* param2, char* param3)
 #endif /* #if defined(PROJECT_K2) */
 
 /* Memory Comparison */
-int db_cmd_memcmp(char* cmd, char* param1, char* param2, char* param3)
+static int db_cmd_memcmp(char *cmd, char *param1, char *param2, char *param3)
 {
 	unsigned long       addr1, addr2, len;
 	A_UINT8             *buf1, *buf2;
@@ -1027,7 +1027,7 @@ int db_cmd_memcmp(char* cmd, char* param1, char* param2, char* param3)
 }
 
 /* Memory Dump */
-int db_cmd_memdump(char* cmd, char* param1, char* param2, char* param3)
+static int db_cmd_memdump(char *cmd, char *param1, char *param2, char *param3)
 {
 	A_UINT32            i;
 	unsigned long       addr1, addr2, t_addr;
@@ -1058,8 +1058,8 @@ int db_cmd_memdump(char* cmd, char* param1, char* param2, char* param3)
 }
 void cmnos_dbg_module_install(struct dbg_api *apis)
 {
-	apis->_dbg_init = zfDebugInit;
-	apis->_dbg_task = zfDebugTask;
+	apis->_dbg_init = zf_debug_init;
+	apis->_dbg_task = zf_debug_task;
 }
 
 #endif 	/* SYSTEM_MODULE_DBG */
