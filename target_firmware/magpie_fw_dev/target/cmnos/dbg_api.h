@@ -64,7 +64,6 @@ struct DB_COMMAND_STRUCT
     int (*cmd_func)(char *, char*, char*, char*);  /* Command function */
 };
 
-#define zm_uart_send(x, y) A_PUTS(x)
 #define zm_get_char(x)     A_GETC(x)
 
 /******** hardware API table structure (API descriptions below) *************/
