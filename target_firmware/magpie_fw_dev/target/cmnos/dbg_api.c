@@ -118,6 +118,11 @@ int cmd_not_found;
 uint16_t gvLen;
 int pressed_time;
 
+static void db_incorect_format(void)
+{
+	A_PRINTF("Error! Incorrect format.\n\r");
+}
+
 static void zf_debug_init(void)
 {
 	uint8_t ch;
@@ -431,12 +436,9 @@ static int db_ldr_cmd(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("%s : %s\n\r", addr_str, val_str);
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
 
-		return -1;
-	}
+	db_incorect_format();
+	return -1;
 }
 
 static int db_str_cmd(char *cmd, char *param1, char *param2, char *param3)
@@ -479,12 +481,9 @@ static int db_str_cmd(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("%s : %s\n\r", addr_str, val_str);
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
 
-		return -1;
-	}
+	db_incorect_format();
+	return -1;
 }
 
 LOCAL void dbg_timer_func(A_HANDLE alarm, void *data)
@@ -797,11 +796,9 @@ static int db_cmd_sferase(char *cmd, char *param1, char *param2, char *param3)
 
 			return 0;
 		}
-		else
-		{
-			A_PRINTF("Error! Incorrect format.\n\r");
-			return -1;
-		}
+
+		db_incorect_format();
+		return -1;
 	}
 	else if (strcmp(param2, "b") == 0)
 	{
@@ -813,11 +810,10 @@ static int db_cmd_sferase(char *cmd, char *param1, char *param2, char *param3)
 
 			return 0;
 		}
-		else
-		{
-			A_PRINTF("Error! Incorrect format.\n\r");
-			return -1;
-		}
+
+		db_incorect_format();
+		return -1;
+
 	}
 	else if (strcmp(param1, "c") == 0)
 	{
@@ -850,11 +846,9 @@ static int db_cmd_sfpg(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("\n\r");
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 
 /* Serial Flash -> Read, Fast Read to UART */
@@ -894,11 +888,9 @@ static int db_cmd_sfru(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("\n\r");
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 
 /* Serial Flash -> Read, Fast Read to Memory */
@@ -932,11 +924,9 @@ static int db_cmd_sfrm(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("\n\r");
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 
 /* Serial Flash -> Read Status Register */
@@ -965,11 +955,9 @@ static int db_cmd_memcmp(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("memcmp(buf1, buf2, len) = %d\n\r", A_MEMCMP(buf1, buf2, len));
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 
 /* Memory Dump */
@@ -996,11 +984,9 @@ static int db_cmd_memdump(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("\n\r");
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 void cmnos_dbg_module_install(struct dbg_api *apis)
 {
