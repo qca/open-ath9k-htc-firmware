@@ -75,10 +75,6 @@ static int db_ascii_to_hex(char *, unsigned long *);
 static int db_hex_to_ascii(unsigned long, char *);
 static void zf_debug_task(void);
 
-int db_info_intr(char* cmd, char* param1, char* param2, char* param3);
-
-extern u32_t this_is_global_variables;
-
 /* Console debug command table */
 const struct DB_COMMAND_STRUCT command_table[] =
 {
@@ -121,19 +117,6 @@ char cmd_str[DB_MAX_COMMAND_LENGTH*4];
 int cmd_not_found;
 uint16_t gvLen;
 int pressed_time;
-
-//////////////////////////////////////////////////
-#define MAX_REG_NUM 16
-
-typedef struct reg_elem {
-	unsigned char valid;
-	unsigned char mode;     // byte, half-word word
-	unsigned long reg_addr;
-} t_reg_elem;
-
-t_reg_elem reg_buffer[MAX_REG_NUM];
-
-//////////////////////////////////////////////////
 
 static void zf_debug_init(void)
 {
@@ -567,8 +550,6 @@ static int db_intr_cmd(char *cmd, char *param1, char *param2, char *param3)
 	return 0;
 }
 
-uint32_t usb_swap_flag = 0; //default
-uint32_t usb_swap_flag_changed = 0;
 static int db_usb_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
 	A_PRINTF("THIS IS USB COMMAND\n\r");
@@ -714,41 +695,6 @@ static int db_cmd_starthtc(char *cmd, char *param1, char *param2, char *param3)
     extern htc_handle_t htc_handle;
     HTC_Ready(htc_handle);
 }
-
-#define WRITE_USB_DESC(pDesc, Offset)					\
-	{								\
-		uint16_t *pSrc = 0;					\
-		uint16_t mSize = 0;					\
-		pSrc = (uint16_t *)(pDesc);				\
-		mSize = (*pSrc&0xff)/2;					\
-		A_PRINTF("0x%04x, 0x%04x, 0x%08x\n", Offset, mSize, pSrc); \
-		A_EEP_WRITE(Offset, mSize, pSrc);			\
-		A_DELAY_USECS(500);					\
-	}
-
-#define READ_USB_DESC(pDesc, Offset, Size)				\
-	{								\
-		uint16_t *pDst;						\
-		uint16_t mSize;						\
-		pDst = (uint16_t *)pDesc;				\
-		A_EEP_READ(Offset, 1, &mSize);				\
-		mSize = mSize &0xff;					\
-		mSize = mSize/2;					\
-		if( mSize > Size)					\
-			mSize = Size;					\
-		A_PRINTF("0x%04x, 0x%04x, 0x%08x\n", Offset, mSize, pDst); \
-		A_EEP_READ(Offset, mSize, pDst);			\
-		A_DELAY_USECS(500);					\
-	}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-extern uint16_t UsbDeviceDescriptor[];
-extern uint16_t String00Descriptor[];
-extern uint16_t String10Descriptor[];
-extern uint16_t String20Descriptor[];
-extern uint16_t String30Descriptor[];
 
 static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
