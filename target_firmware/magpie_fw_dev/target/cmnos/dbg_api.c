@@ -123,6 +123,11 @@ static void db_incorect_format(void)
 	A_PRINTF("Error! Incorrect format.\n\r");
 }
 
+static void db_unknown_command(void)
+{
+	A_PRINTF("Error! Unknown command.\n\r");
+}
+
 static void zf_debug_init(void)
 {
 	uint8_t ch;
@@ -823,11 +828,9 @@ static int db_cmd_sferase(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("\n\r");
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Unknown command.\n\r");
-		return -1;
-	}
+
+	db_unknown_command();
+	return -1;
 }
 
 /* Serial Flash -> Program */
@@ -865,7 +868,7 @@ static int db_cmd_sfru(char *cmd, char *param1, char *param2, char *param3)
 		fast = 1;
 	else
 	{
-		A_PRINTF("Error! Unknown command.\n\r");
+		db_unknown_command();
 		return -1;
 	}
 
@@ -908,7 +911,7 @@ static int db_cmd_sfrm(char *cmd, char *param1, char *param2, char *param3)
 		fast = 1;
 	else
 	{
-		A_PRINTF("Error! Unknown command.\n\r");
+		db_unknown_command();
 		return -1;
 	}
 
