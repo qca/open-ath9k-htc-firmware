@@ -712,7 +712,7 @@ BOOLEAN bGet_descriptor_patch(void)
         uint8_t *p = (uint8_t *)u8ConfigDescriptorEX;
 
         /* Copy ConfigDescriptor */
-        memcpy(ConfigDescriptorPatch, p, sizeof(ConfigDescriptorPatch));
+	ath_hal_memcpy(ConfigDescriptorPatch, p, sizeof(ConfigDescriptorPatch));
 
         p = (uint8_t *)ConfigDescriptorPatch;
 
