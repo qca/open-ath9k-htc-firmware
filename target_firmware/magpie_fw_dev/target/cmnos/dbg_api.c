@@ -128,6 +128,37 @@ static void db_unknown_command(void)
 	A_PRINTF("Error! Unknown command.\n\r");
 }
 
+static void db_print_dump(const char *mem1, const char *mem2)
+{
+	unsigned int i = 0;
+	const char *tmp;
+
+	do {
+		if (i == 0) {
+			A_PRINTF("\n\r%06x: ", mem1);
+			tmp = mem1;
+		}
+
+		A_PRINTF("%04x ", *(uint16_t *)mem1);
+
+		mem1 += 2;
+		i++;
+
+		if (i == 8) {
+			A_PRINTF(" ");
+			do {
+				if (*tmp > 0x20 && *tmp < 0x7e)
+					A_PRINTF("%c", *tmp);
+				else
+					A_PRINTF(".");
+				tmp++;
+			} while (tmp < mem1);
+			i = 0;
+		}
+	} while (mem1 < mem2);
+	A_PRINTF("\n\r");
+}
+
 static void zf_debug_init(void)
 {
 	uint8_t ch;
@@ -967,25 +998,11 @@ static int db_cmd_memcmp(char *cmd, char *param1, char *param2, char *param3)
 /* Memory Dump */
 static int db_cmd_memdump(char *cmd, char *param1, char *param2, char *param3)
 {
-	A_UINT32            i;
-	unsigned long       addr1, addr2, t_addr;
-	A_UINT32            *val;
+	unsigned long       addr1, addr2;
 
 	if (db_ascii_to_hex(param1, &addr1) != -1 && db_ascii_to_hex(param2, &addr2) != -1 && addr1 < addr2 && addr1%4 == 0)
 	{
-		A_PRINTF("addr    data     data     data     data     data     data     data     data\n\r");
-		A_PRINTF("======  ======== ======== ======== ======== ======== ======== ======== ========");
-
-		for (i = 0, t_addr = addr1; t_addr < addr2; i++, t_addr += 4)
-		{
-			if ((i%8) == 0)
-				A_PRINTF("\n\r%06X  ", t_addr);
-
-			val = (A_UINT32 *)t_addr;
-			A_PRINTF("%08X ", *val);
-		}
-
-		A_PRINTF("\n\r");
+		db_print_dump((const char *)addr1, (const char *)addr2);
 		return 0;
 	}
 
