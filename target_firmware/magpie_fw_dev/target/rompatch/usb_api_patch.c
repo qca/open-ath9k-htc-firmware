@@ -791,7 +791,7 @@ BOOLEAN bGet_descriptor_patch(void)
 		uint8_t *p = (uint8_t *)u8UsbDeviceDescriptor;
 		uint32_t u32Tmp=0;
 		/* Copy Usb Device Descriptor */
-		memcpy(UsbDeviceDescriptorPatch, p, sizeof(UsbDeviceDescriptorPatch));
+		ath_hal_memcpy(UsbDeviceDescriptorPatch, p, sizeof(UsbDeviceDescriptorPatch));
 
 		A_SFLASH_READ_4B(u32Tmp, FLASH_SIZE - EE_DATA_RESERVED_LEN + FLASH_USB_VENDOR_ID_OFFSET*2);
 		UsbDeviceDescriptorPatch[VENDOR_ID_OFFSET] = mSWAP_BYTE(mLOW_WORD0(u32Tmp));
@@ -812,7 +812,7 @@ BOOLEAN bGet_descriptor_patch(void)
 		uint8_t *p = (uint8_t *)u8ConfigDescriptorEX;
 
 		/* Copy ConfigDescriptor */
-		memcpy(ConfigDescriptorPatch, p, sizeof(ConfigDescriptorPatch));
+		ath_hal_memcpy(ConfigDescriptorPatch, p, sizeof(ConfigDescriptorPatch));
 
 		p = (uint8_t *)ConfigDescriptorPatch;
 
