@@ -132,7 +132,4 @@ ieee80211_tgt_crypto_encap(struct ieee80211_frame *wh,
 #undef CRYPTO_KEY_TYPE_WAPI
 #undef IEEE80211_WLAN_HDR_LEN
 }
-
-adf_os_export_symbol(ieee80211_tgt_crypto_encap);
-
 #undef  IEEE80211_ADDR_LEN     
