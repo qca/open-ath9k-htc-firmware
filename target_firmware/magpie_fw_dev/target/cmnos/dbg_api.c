@@ -118,6 +118,47 @@ int cmd_not_found;
 uint16_t gvLen;
 int pressed_time;
 
+static void db_incorect_format(void)
+{
+	A_PRINTF("Error! Incorrect format.\n\r");
+}
+
+static void db_unknown_command(void)
+{
+	A_PRINTF("Error! Unknown command.\n\r");
+}
+
+static void db_print_dump(const char *mem1, const char *mem2)
+{
+	unsigned int i = 0;
+	const char *tmp;
+
+	do {
+		if (i == 0) {
+			A_PRINTF("\n\r%06x: ", mem1);
+			tmp = mem1;
+		}
+
+		A_PRINTF("%04x ", *(uint16_t *)mem1);
+
+		mem1 += 2;
+		i++;
+
+		if (i == 8) {
+			A_PRINTF(" ");
+			do {
+				if (*tmp > 0x20 && *tmp < 0x7e)
+					A_PRINTF("%c", *tmp);
+				else
+					A_PRINTF(".");
+				tmp++;
+			} while (tmp < mem1);
+			i = 0;
+		}
+	} while (mem1 < mem2);
+	A_PRINTF("\n\r");
+}
+
 static void zf_debug_init(void)
 {
 	uint8_t ch;
@@ -431,12 +472,9 @@ static int db_ldr_cmd(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("%s : %s\n\r", addr_str, val_str);
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
 
-		return -1;
-	}
+	db_incorect_format();
+	return -1;
 }
 
 static int db_str_cmd(char *cmd, char *param1, char *param2, char *param3)
@@ -479,12 +517,9 @@ static int db_str_cmd(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("%s : %s\n\r", addr_str, val_str);
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
 
-		return -1;
-	}
+	db_incorect_format();
+	return -1;
 }
 
 LOCAL void dbg_timer_func(A_HANDLE alarm, void *data)
@@ -700,7 +735,7 @@ static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
         if ( strcmp(param1, "rst") == 0 )
         {
-		A_PRINTF(" reseting.....................\n\n\r");
+		A_PRINTF(" reseting...\n\n\r");
 		A_WDT_RESET();
         }
         else if( strcmp(param1, "on") == 0 )
@@ -713,23 +748,24 @@ static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
         }
         else if ( strcmp(param1, "boot") == 0 )
         {
+		A_PRINTF("Last BOOT is ");
 		if (ENUM_WDT_BOOT == A_WDT_LASTBOOT() )
-			A_PRINTF("LAST BOOT IS %s", "wdt");
+			A_PRINTF("wdt");
 		else
-			A_PRINTF("LAST BOOT IS %s", "normal boot");
+			A_PRINTF("normal boot");
         }
         else if (strcmp(param1, "loop") == 0 )
         {
 		T_WDT_CMD wdt_cmd;
 		uint32_t time_offset;
-		A_PRINTF(" doing the wdt reseting................\n\n\r");
+		A_PRINTF(" doing the wdt reseting...");
 
 		if( db_ascii_to_hex(param2, &time_offset)!=0 )
 		{
 			if( time_offset < 0 || time_offset >0xffffffff )
 				time_offset = 0xffffff;
 		}
-		A_PRINTF(" doing the wdt reseting (wdt tick: 0x%08x................\n\n\r", time_offset);
+		A_PRINTF(" (wdt tick: 0x%08x...\n\n\r", time_offset);
 		wdt_cmd.cmd = WDT_TIMEOUT;
 		wdt_cmd.timeout = time_offset;
 
@@ -740,14 +776,14 @@ static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
         {
 		T_WDT_CMD wdt_cmd;
 		uint32_t time_offset;
-		A_PRINTF(" doing the wdt reseting................\n\n\r");
+		A_PRINTF(" doing the wdt reseting...");
 
 		if( db_ascii_to_hex(param3, &time_offset)!=0 )
 		{
 			if( time_offset < 0 || time_offset >0xffffffff )
 				time_offset = 0xffffff;
 		}
-		A_PRINTF(" doing the wdt reseting (wdt tick: 0x%08x................\n\n\r", time_offset);
+		A_PRINTF(" (wdt tick: 0x%08x...\n\n\r", time_offset);
 
 		wdt_cmd.cmd = WDT_TIMEOUT;
 		wdt_cmd.timeout = time_offset;
@@ -797,11 +833,9 @@ static int db_cmd_sferase(char *cmd, char *param1, char *param2, char *param3)
 
 			return 0;
 		}
-		else
-		{
-			A_PRINTF("Error! Incorrect format.\n\r");
-			return -1;
-		}
+
+		db_incorect_format();
+		return -1;
 	}
 	else if (strcmp(param2, "b") == 0)
 	{
@@ -813,11 +847,10 @@ static int db_cmd_sferase(char *cmd, char *param1, char *param2, char *param3)
 
 			return 0;
 		}
-		else
-		{
-			A_PRINTF("Error! Incorrect format.\n\r");
-			return -1;
-		}
+
+		db_incorect_format();
+		return -1;
+
 	}
 	else if (strcmp(param1, "c") == 0)
 	{
@@ -826,11 +859,9 @@ static int db_cmd_sferase(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("\n\r");
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Unknown command.\n\r");
-		return -1;
-	}
+
+	db_unknown_command();
+	return -1;
 }
 
 /* Serial Flash -> Program */
@@ -850,11 +881,9 @@ static int db_cmd_sfpg(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("\n\r");
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 
 /* Serial Flash -> Read, Fast Read to UART */
@@ -870,7 +899,7 @@ static int db_cmd_sfru(char *cmd, char *param1, char *param2, char *param3)
 		fast = 1;
 	else
 	{
-		A_PRINTF("Error! Unknown command.\n\r");
+		db_unknown_command();
 		return -1;
 	}
 
@@ -894,11 +923,9 @@ static int db_cmd_sfru(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("\n\r");
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 
 /* Serial Flash -> Read, Fast Read to Memory */
@@ -915,7 +942,7 @@ static int db_cmd_sfrm(char *cmd, char *param1, char *param2, char *param3)
 		fast = 1;
 	else
 	{
-		A_PRINTF("Error! Unknown command.\n\r");
+		db_unknown_command();
 		return -1;
 	}
 
@@ -932,11 +959,9 @@ static int db_cmd_sfrm(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("\n\r");
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 
 /* Serial Flash -> Read Status Register */
@@ -965,42 +990,24 @@ static int db_cmd_memcmp(char *cmd, char *param1, char *param2, char *param3)
 		A_PRINTF("memcmp(buf1, buf2, len) = %d\n\r", A_MEMCMP(buf1, buf2, len));
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 
 /* Memory Dump */
 static int db_cmd_memdump(char *cmd, char *param1, char *param2, char *param3)
 {
-	A_UINT32            i;
-	unsigned long       addr1, addr2, t_addr;
-	A_UINT32            *val;
+	unsigned long       addr1, addr2;
 
 	if (db_ascii_to_hex(param1, &addr1) != -1 && db_ascii_to_hex(param2, &addr2) != -1 && addr1 < addr2 && addr1%4 == 0)
 	{
-		A_PRINTF("addr    data     data     data     data     data     data     data     data\n\r");
-		A_PRINTF("======  ======== ======== ======== ======== ======== ======== ======== ========");
-
-		for (i = 0, t_addr = addr1; t_addr < addr2; i++, t_addr += 4)
-		{
-			if ((i%8) == 0)
-				A_PRINTF("\n\r%06X  ", t_addr);
-
-			val = (A_UINT32 *)t_addr;
-			A_PRINTF("%08X ", *val);
-		}
-
-		A_PRINTF("\n\r");
+		db_print_dump((const char *)addr1, (const char *)addr2);
 		return 0;
 	}
-	else
-	{
-		A_PRINTF("Error! Incorrect format.\n\r");
-		return -1;
-	}
+
+	db_incorect_format();
+	return -1;
 }
 void cmnos_dbg_module_install(struct dbg_api *apis)
 {
