@@ -97,8 +97,6 @@ typedef enum {
 #define WLAN_RC_40_FLAG         (0x02)
 #define WLAN_RC_HT40_SGI_FLAG   (0x04)
 #define WLAN_RC_HT_FLAG         (0x08)
-#define WLAN_RC_STBC_FLAG       (0x30)  /* 2 bits */
-#define WLAN_RC_STBC_FLAG_S     (   4)
 #define WLAN_RC_WEP_TKIP_FLAG   (0x100)
 
 /* Index into the rate table */

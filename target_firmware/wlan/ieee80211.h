@@ -797,8 +797,6 @@ struct vendor_ie_htcap {
 #define	IEEE80211_HTCAP_C_GREENFIELD	          0x0010
 #define IEEE80211_HTCAP_C_SHORTGI20		  0x0020
 #define IEEE80211_HTCAP_C_SHORTGI40     	  0x0040
-#define IEEE80211_HTCAP_C_TXSTBC        	  0x0080
-#define IEEE80211_HTCAP_C_RXSTBC        	  0x0100  /* 2 bits */
 #define IEEE80211_HTCAP_C_DELAYEDBLKACK 	  0x0400
 #define IEEE80211_HTCAP_C_MAXAMSDUSIZE  	  0x0800  /* 1 = 8K, 0 = 3839B */
 #define IEEE80211_HTCAP_C_DSSSCCK40     	  0x1000  
@@ -936,8 +934,6 @@ enum {
 };
 
 /* misc flags */
-#define IEEE80211_HTINFO_BASICSTBCMCS    0x007F    /* B0-6 basic STBC MCS */
-#define IEEE80211_HTINFO_DUALSTBCPROT    0x0080    /* B7   dual stbc protection */
 #define IEEE80211_HTINFO_SECONDARYBEACON 0x0100    /* B8   secondary beacon */
 #define IEEE80211_HTINFO_LSIGTXOPPROT    0x0200    /* B9   lsig txop prot full support */
 #define IEEE80211_HTINFO_PCOACTIVE       0x0400    /* B10  pco active */
