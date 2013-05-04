@@ -57,8 +57,7 @@ struct ath_ratectrl {
 #define ATH_RC_HT_FLAG               0x08
 #define ATH_RC_RTSCTS_FLAG           0x10
 #define ATH_RC_TX_STBC_FLAG          0x20    /* TX STBC */
-#define ATH_RC_RX_STBC_FLAG          0xC0    /* RX STBC ,2 bits */
-#define ATH_RC_RX_STBC_FLAG_S        6   
+#define ATH_RC_RX_STBC_FLAG          0x40    /* RX STBC , use only one bit. */
 #define ATH_RC_WEP_TKIP_FLAG         0x100    /* WEP/TKIP encryption */
 
 enum ath_rc_cwmode{
