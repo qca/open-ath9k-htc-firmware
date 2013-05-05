@@ -75,8 +75,6 @@ typedef enum {
 	HAL_CAP_VEOL        = 0,
 	HAL_CAP_BSSIDMASK   = 1,
 	HAL_CAP_TSF_ADJUST  = 2,
-	HAL_CAP_RX_STBC     = 3,
-	HAL_CAP_TX_STBC     = 4,
 	HAL_CAP_HT          = 5,
 	HAL_CAP_RTS_AGGR_LIMIT = 6,
 } HAL_CAPABILITY_TYPE;
