@@ -158,20 +158,6 @@ typedef struct {
 } RATE_TABLE_11N;
 
 /*
- *  Update the SIB's rate control information
- *
- *  This should be called when the supported rates change
- *  (e.g. SME operation, wireless mode change)
- *
- *  It will determine which rates are valid for use.
- */
-void rcSibUpdate_11n(struct ath_softc_tgt *,
-		     struct ath_node_target *,
-		     A_UINT32 capflag, 
-		     A_BOOL keepState,
-		     struct ieee80211_rate *rs);
-
-/*
  * Determines and returns the new Tx rate index.
  */ 
 void rcRateFind_11n(struct ath_softc_tgt *sc,
