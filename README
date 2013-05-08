@@ -61,7 +61,7 @@ You're in for a treat.
 
   * Linux:
 
-  $ ./build
+  $ make firmware
 
   * FreeBSD:
 
@@ -70,7 +70,7 @@ You're in for a treat.
   $ ./build
 
 You will end up with two .fw files - one for the AR7010 and one for
-the AR9271.
+the AR9271 in the target_firmware directory.
 
 
 Then what?
