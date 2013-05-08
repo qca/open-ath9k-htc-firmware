@@ -19,7 +19,7 @@ BINUTILS_TAR=binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_DIR=binutils-$(BINUTILS_VER)
 BINUTILS_PATCHES=local/patches/binutils.patch
 
-GCC_VER=4.7.2
+GCC_VER=4.8.0
 GCC_URL=http://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.bz2
 GCC_TAR=gcc-$(GCC_VER).tar.bz2
 GCC_DIR=gcc-$(GCC_VER)
