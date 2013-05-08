@@ -17,7 +17,7 @@ BINUTILS_VER=2.23.1
 BINUTILS_URL=http://ftp.gnu.org/gnu/binutils/binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_TAR=binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_DIR=binutils-$(BINUTILS_VER)
-BINUTILS_PATCHES=local/patches/binutils.patch
+BINUTILS_PATCHES=local/patches/binutils.patch local/patches/binutils-elf32-xtensa-sec_cache.patch
 
 GCC_VER=4.8.0
 GCC_URL=http://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.bz2
