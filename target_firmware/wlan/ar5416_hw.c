@@ -299,30 +299,8 @@ HAL_STATUS ar5416GetCapability(struct ath_hal *ah, HAL_CAPABILITY_TYPE type,
 
 {
         HAL_CAPABILITIES *pCap = &AH_PRIVATE(ah)->ah_caps;
-#ifndef MAGPIE_MERLIN // K2
-        pCap->halRxStbcSupport = 1;  /* K2 supports STBC Rx only */
-        pCap->halTxStbcSupport = 0;
-#else
-        pCap->halRxStbcSupport = 1;  /* number of streams for STBC recieve. */
-        pCap->halTxStbcSupport = 1;
-#endif
 
-	switch (type) {
-#ifdef MAGPIE_MERLIN
-	case HAL_CAP_RX_STBC:
-	{
-		*result = pCap->halRxStbcSupport;
-		return HAL_OK;
-	}
-	case HAL_CAP_TX_STBC:
-	{
-		*result = pCap->halTxStbcSupport;
-		return HAL_OK;
-	}
-#endif
-        default:
-                return ath_hal_getcapability(ah, type, capability, result);
-	}
+	return ath_hal_getcapability(ah, type, capability, result);
 }
 
 /****************/
