@@ -50,10 +50,8 @@
 #include <adf_os_irq.h>
 
 #include <if_ath_pci.h>
-#include "if_ethersubr.h"
 #include "if_llc.h"
 #include "ieee80211_var.h"
-#include "ieee80211_proto.h"
 #include "if_athrate.h"
 #include "if_athvar.h"
 #include "ah_desc.h"
