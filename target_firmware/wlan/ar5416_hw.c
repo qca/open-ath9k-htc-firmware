@@ -38,7 +38,6 @@
 #include "ah_internal.h"
 #include "ar5416.h"
 #include "ar5416reg.h"
-#include "ar5416phy.h"
 #include "ar5416desc.h"
 
 #define N(a) (sizeof(a)/sizeof(a[0]))
