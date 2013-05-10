@@ -47,7 +47,6 @@
 #include <adf_net.h>
 #include <adf_net_wcmd.h>
 
-#include "if_ethersubr.h"
 #include "if_llc.h"
 
 #ifdef USE_HEADERLEN_RESV
@@ -58,7 +57,6 @@
 #include "if_athrate.h"
 #include "if_athvar.h"
 #include "ah_desc.h"
-#include "if_ath_pci.h"
 
 #define ath_tgt_free_skb  adf_nbuf_free
 
