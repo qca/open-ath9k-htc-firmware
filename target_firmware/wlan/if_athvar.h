@@ -366,8 +366,6 @@ struct ath_softc_tgt
 	struct ath_ratectrl    *sc_rc;
 
 	a_uint32_t            sc_invalid : 1,
-		sc_txstbcsupport       : 1,
-		sc_rxstbcsupport       : 2,
 		sc_tx_draining         : 1,
 		sc_enable_coex         : 1;
 
@@ -547,10 +545,6 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
     ((*(_ah)->ah_stopPcuReceive)((_ah)))
 #define ath_hal_htsupported(_ah) \
     (ath_hal_getcapability(_ah, HAL_CAP_HT, 0, NULL) == HAL_OK)
-#define ath_hal_rxstbcsupport(_ah, _rxstbc) \
-    (ath_hal_getcapability(_ah, HAL_CAP_RX_STBC, 0, _rxstbc) == HAL_OK)
-#define ath_hal_txstbcsupport(_ah, _txstbc) \
-    (ath_hal_getcapability(_ah, HAL_CAP_TX_STBC, 0, _txstbc) == HAL_OK)
 #define ath_hal_getrtsaggrlimit(_ah, _pv) \
     (ath_hal_getcapability(_ah, HAL_CAP_RTS_AGGR_LIMIT, 0, _pv) == HAL_OK)
 #define ath_hal_puttxbuf(_ah, _q, _bufaddr) \
