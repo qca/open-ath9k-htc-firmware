@@ -48,7 +48,6 @@
 #include <adf_os_atomic.h>
 #include <adf_nbuf.h>
 #include <adf_net.h>
-#include <adf_net_types.h>
 
 #include "ah.h"
 #include<ah_internal.h>
