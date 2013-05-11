@@ -499,8 +499,6 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
     ((*(_ah)->ah_setupRxDesc)((_ah), (_ds), (_size), (_intreq)))
 #define ath_hal_rxprocdescfast(_ah, _ds, _dspa, _dsnext, _rx_stats) \
     ((*(_ah)->ah_procRxDescFast)((_ah), (_ds), (_dspa), (_dsnext), (_rx_stats)))
-#define ath_hal_stoptxdma(_ah, _qnum) \
-    ((*(_ah)->ah_stopTxDma)((_ah), (_qnum)))
 #define ath_hal_aborttxdma(_ah) \
     ((*(_ah)->ah_abortTxDma)(_ah))
 #define ath_hal_set11n_txdesc(_ah, _ds, _pktlen, _type, _txpower,\
