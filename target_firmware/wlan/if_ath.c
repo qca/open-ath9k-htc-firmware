@@ -96,11 +96,12 @@ static a_uint16_t adf_os_cpu_to_le16(a_uint16_t x)
  */
 static u_int64_t ath_extend_tsf(struct ath_softc_tgt *sc, u_int32_t rstamp)
 {
+	struct ath_hal *ah = sc->sc_ah;
 	u_int64_t tsf;
 	u_int32_t tsf_low;
 	u_int64_t tsf64;
 
-	tsf = ath_hal_gettsf64(sc->sc_ah);
+	tsf = ah->ah_getTsf64(ah);
 	tsf_low = tsf & 0xffffffff;
 	tsf64 = (tsf & ~0xffffffffULL) | rstamp;
 
@@ -334,7 +335,7 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 	((struct ath_desc *)((caddr_t)(_sc)->sc_rxdma.dd_desc +		\
 			     ((_pa) - (_sc)->sc_rxdma.dd_desc_paddr)))
 
-	tsf = ath_hal_gettsf64(ah);
+	tsf = ah->ah_getTsf64(ah);
 	bf = asf_tailq_first(&sc->sc_rxbuf);
 
 	ds = asf_tailq_first(&sc->sc_rxdesc);
@@ -784,7 +785,7 @@ static void tgt_HTCRecv_cabhandler(HTC_ENDPOINT_ID EndPt, adf_nbuf_t hdr_buf,
 	a_uint32_t tmp;
 
 #ifdef ATH_ENABLE_CABQ
-	tsf = ath_hal_gettsf64(ah);
+	tsf = ah->ah_getTsf64(ah);
 	tmp = tsf - sc->sc_swba_tsf;
 
 	if ( tmp > ATH_CABQ_HANDLING_THRESHOLD ) {
@@ -1035,9 +1036,9 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 			WMI_SWBA_EVENT swbaEvt;
 			struct ath_txq *txq = ATH_TXQ(sc, 8);
 
-			swbaEvt.tsf = ath_hal_gettsf64(ah);
+			swbaEvt.tsf = ah->ah_getTsf64(ah);
 			swbaEvt.beaconPendingCount = ah->ah_numTxPending(ah, sc->sc_bhalq);
-			sc->sc_swba_tsf = ath_hal_gettsf64(ah);
+			sc->sc_swba_tsf = ah->ah_getTsf64(ah);
 
 			wmi_event(sc->tgt_wmi_handle,
 				  WMI_SWBA_EVENTID,

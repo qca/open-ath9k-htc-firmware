@@ -541,8 +541,6 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
     (ath_hal_getcapability(_ah, HAL_CAP_RTS_AGGR_LIMIT, 0, _pv) == HAL_OK)
 #define ath_hal_setrxfilter(_ah, _filter) \
     ((*(_ah)->ah_setRxFilter)((_ah), (_filter)))
-#define ath_hal_gettsf64(_ah) \
-    ((*(_ah)->ah_getTsf64)((_ah)))
 #define ath_hal_intrset(_ah, _mask) \
     ((*(_ah)->ah_setInterrupts)((_ah), (_mask)))
 #define ath_hal_set11n_aggr_first(_ah, _ds, _aggrlen, _numdelims) \
