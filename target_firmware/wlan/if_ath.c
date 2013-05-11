@@ -386,7 +386,7 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 			continue;
 		}
 
-		retval = ath_hal_rxprocdescfast(ah, ds, ds->ds_daddr,
+		retval = ah->ah_procRxDescFast(ah, ds, ds->ds_daddr,
 						PA2DESC(sc, ds->ds_link), &bf->bf_rx_status);
 		if (HAL_EINPROGRESS == retval) {
 			break;
