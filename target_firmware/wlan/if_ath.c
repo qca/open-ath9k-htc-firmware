@@ -266,7 +266,7 @@ static a_int32_t ath_rxdesc_init(struct ath_softc_tgt *sc, struct ath_rx_desc *d
 	ds->ds_link = 0;
 	adf_nbuf_peek_header(ds->ds_nbuf, &anbdata, &anblen);
 
-	ath_hal_setuprxdesc(ah, ds,
+	ah->ah_setupRxDesc(ah, ds,
 			    adf_nbuf_tailroom(ds->ds_nbuf),
 			    0);
 

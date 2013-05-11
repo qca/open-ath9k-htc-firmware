@@ -489,8 +489,6 @@ typedef enum {
 
 a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *avp);
 
-#define ath_hal_setuprxdesc(_ah, _ds, _size, _intreq) \
-    ((*(_ah)->ah_setupRxDesc)((_ah), (_ds), (_size), (_intreq)))
 #define ath_hal_rxprocdescfast(_ah, _ds, _dspa, _dsnext, _rx_stats) \
     ((*(_ah)->ah_procRxDescFast)((_ah), (_ds), (_dspa), (_dsnext), (_rx_stats)))
 #define ath_hal_set11n_virtualmorefrag(_ah, _ds, _vmf) \
