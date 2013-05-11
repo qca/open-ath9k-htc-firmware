@@ -237,6 +237,7 @@ static void ath_dma_unmap(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 static void ath_filltxdesc(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	struct ath_tx_desc *ds0, *ds = bf->bf_desc;
+	struct ath_hal *ah = sc->sc_ah;
 	a_uint8_t i;
 
 	ds0 = ds;
@@ -252,7 +253,7 @@ static void ath_filltxdesc(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		} else
 			ds->ds_link = ATH_BUF_GET_DESC_PHY_ADDR_WITH_IDX(bf, i+1);
 
-		ath_hal_filltxdesc(sc->sc_ah, ds
+		ah->ah_fillTxDesc(ah, ds
 				   , bf->bf_dmamap_info.dma_segs[i].len
 				   , i == 0
 				   , i == (bf->bf_dmamap_info.nsegs - 1)
