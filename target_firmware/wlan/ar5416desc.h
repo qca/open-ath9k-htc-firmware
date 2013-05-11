@@ -455,7 +455,6 @@ extern  void ar5416StopPcuReceive(struct ath_hal *ah);
 extern  void ar5416AbortPcuReceive(struct ath_hal *ah);
 extern  void ar5416SetMulticastFilter(struct ath_hal *ah,
         a_uint32_t filter0, a_uint32_t filter1);
-extern  HAL_BOOL ar5416ClrMulticastFilterIndex(struct ath_hal *, a_uint32_t ix);
 extern  HAL_BOOL ar5416SetMulticastFilterIndex(struct ath_hal *, a_uint32_t ix);
 extern  a_uint32_t ar5416GetRxFilter(struct ath_hal *ah);
 extern  void ar5416SetRxFilter(struct ath_hal *ah, a_uint32_t bits);

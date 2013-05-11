@@ -298,22 +298,6 @@ void ar5416SetMulticastFilter(struct ath_hal *ah, a_uint32_t filter0, a_uint32_t
 	OS_REG_WRITE(ah, AR_MCAST_FIL1, filter1);
 }
 
-HAL_BOOL ar5416ClrMulticastFilterIndex(struct ath_hal *ah, a_uint32_t ix)
-{
-	a_uint32_t val;
-
-	if (ix >= 64)
-		return AH_FALSE;
-	if (ix >= 32) {
-		val = OS_REG_READ(ah, AR_MCAST_FIL1);
-		OS_REG_WRITE(ah, AR_MCAST_FIL1, (val &~ (1<<(ix-32))));
-	} else {
-		val = OS_REG_READ(ah, AR_MCAST_FIL0);
-		OS_REG_WRITE(ah, AR_MCAST_FIL0, (val &~ (1<<ix)));
-	}
-	return AH_TRUE;
-}
-
 HAL_BOOL ar5416StopDmaReceive(struct ath_hal *ah)
 {
 	OS_REG_WRITE(ah, AR_CR, AR_CR_RXD); /* Set receive disable bit */
