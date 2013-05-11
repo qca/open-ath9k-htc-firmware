@@ -919,7 +919,7 @@ void ar5416Set11nBurstDuration_20(struct ath_tx_desc *ds,
 	ads->ds_ctl2 |= SM(burstDuration, AR_BurstDur);
 }
 
-void ar5416Set11nVirtualMoreFrag_20(struct ath_hal *ah, struct ath_tx_desc *ds,
+void ar5416Set11nVirtualMoreFrag_20(struct ath_tx_desc *ds,
 				    a_uint32_t vmf)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
