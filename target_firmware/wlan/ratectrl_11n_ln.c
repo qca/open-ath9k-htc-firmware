@@ -1041,12 +1041,6 @@ ath_rate_attach(struct ath_softc_tgt *sc)
 }
 
 void
-ath_rate_detach(struct ath_ratectrl *rc)
-{
-	adf_os_mem_free(rc);
-}
-
-void
 ath_rate_findrate(struct ath_softc_tgt *sc,
                   struct ath_node_target *an,
                   int shortPreamble,
