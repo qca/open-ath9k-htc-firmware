@@ -255,9 +255,7 @@ static a_int32_t ath_rxdesc_init(struct ath_softc_tgt *sc, struct ath_rx_desc *d
 	ds->ds_link = 0;
 	adf_nbuf_peek_header(ds->ds_nbuf, &anbdata, &anblen);
 
-	ah->ah_setupRxDesc(ah, ds,
-			    adf_nbuf_tailroom(ds->ds_nbuf),
-			    0);
+	ah->ah_setupRxDesc(ds, adf_nbuf_tailroom(ds->ds_nbuf), 0);
 
 	if (sc->sc_rxlink == NULL) {
 		ah->ah_setRxDP(ah, ds->ds_daddr);
