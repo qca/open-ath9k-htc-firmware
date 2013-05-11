@@ -1619,7 +1619,7 @@ static void ath_stoprecv_tgt(void *Context, A_UINT16 Command,
 
 	ath_hal_stoppcurecv(ah);
 	ah->ah_setRxFilter(ah, 0);
-	ath_hal_stopdmarecv(ah);
+	ah->ah_stopDmaReceive(ah);
 
 	sc->sc_rxlink = NULL;
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
