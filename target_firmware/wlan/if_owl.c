@@ -443,7 +443,7 @@ static void ath_buf_set_rate(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
     rtsctsrate = rt->info[cix].rateCode |
 	    (bf->bf_shpream ? rt->info[cix].shortPreamble : 0);
 
-    ath_hal_set11n_ratescenario(ah, ds, 1,
+    ah->ah_set11nRateScenario(ah, ds, 1,
 				rtsctsrate, ctsduration,
 				series, 4,
 				flags);
@@ -1231,7 +1231,7 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 		series[i].ChSel = sc->sc_ic.ic_tx_chainmask;
 		series[i].RateFlags = 0;
 	}
-	ath_hal_set11n_ratescenario(ah, ds, 0, ctsrate, ctsduration, series, 4, 0);
+	ah->ah_set11nRateScenario(ah, ds, 0, ctsrate, ctsduration, series, 4, 0);
 	ath_tgt_txqaddbuf(sc, txq, bf, bf->bf_lastds);
 
 	return;
@@ -2081,6 +2081,7 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 	struct ieee80211_frame_bar *bar;
 	u_int8_t min_rate;
 	struct ath_tx_desc *ds, *ds0;
+	struct ath_hal *ah = sc->sc_ah;
 	HAL_11N_RATE_SERIES series[4];
 	int i = 0;
 	adf_nbuf_queue_t skbhead;
@@ -2152,6 +2153,6 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 		series[i].ChSel = sc->sc_ic.ic_tx_chainmask;
 	}
 
-	ath_hal_set11n_ratescenario(sc->sc_ah, bf->bf_desc, 0, 0, 0, series, 4, 4);
+	ah->ah_set11nRateScenario(ah, bf->bf_desc, 0, 0, 0, series, 4, 4);
 	ath_tgt_txq_add_ucast(sc, bf);
 }

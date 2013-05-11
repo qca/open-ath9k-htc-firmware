@@ -580,7 +580,7 @@ static void ath_beacon_setup(struct ath_softc_tgt *sc,
 	series[0].Rate = rate;
 	series[0].ChSel = sc->sc_ic.ic_tx_chainmask;
 	series[0].RateFlags = 0;
-	ath_hal_set11n_ratescenario(ah, ds, 0, 0, 0, series, 4, 0);
+	ah->ah_set11nRateScenario(ah, ds, 0, 0, 0, series, 4, 0);
 }
 
 static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
