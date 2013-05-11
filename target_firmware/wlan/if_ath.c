@@ -55,6 +55,7 @@
 #include "if_athrate.h"
 #include "if_athvar.h"
 #include "ah_desc.h"
+#include "ah.h"
 
 static a_int32_t ath_numrxbufs = -1;
 static a_int32_t ath_numrxdescs = -1;
@@ -119,10 +120,10 @@ static a_int32_t ath_rate_setup(struct ath_softc_tgt *sc, a_uint32_t mode)
 
 	switch (mode) {
 	case IEEE80211_MODE_11NA:
-		sc->sc_rates[mode] = ath_hal_getratetable(ah, HAL_MODE_11NA);
+		sc->sc_rates[mode] = ah->ah_getRateTable(ah, HAL_MODE_11NA);
 		break;
 	case IEEE80211_MODE_11NG:
-		sc->sc_rates[mode] = ath_hal_getratetable(ah, HAL_MODE_11NG);
+		sc->sc_rates[mode] = ah->ah_getRateTable(ah, HAL_MODE_11NG);
 		break;
 	default:
 		return 0;
