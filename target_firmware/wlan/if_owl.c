@@ -651,6 +651,7 @@ void owltgt_tx_processq(struct ath_softc_tgt *sc, struct ath_txq *txq,
 {
 	struct ath_tx_buf *bf;
 	struct ath_tx_desc *ds;
+	struct ath_hal *ah = sc->sc_ah;
 	HAL_STATUS status;
 
 	for (;;) {
@@ -663,7 +664,7 @@ void owltgt_tx_processq(struct ath_softc_tgt *sc, struct ath_txq *txq,
 		bf = asf_tailq_first(&txq->axq_q);
 
 		ds = bf->bf_lastds;
-		status = ath_hal_txprocdesc(sc->sc_ah, ds);
+		status = ah->ah_procTxDesc(ah, ds);
 
 		if (status == HAL_EINPROGRESS) {
 			if (txqstate == OWL_TXQ_ACTIVE)
@@ -886,7 +887,7 @@ static void ath_tgt_txq_add_ucast(struct ath_softc_tgt *sc, struct ath_tx_buf *b
 
 	txq = bf->bf_txq;
 
-	status = ath_hal_txprocdesc(sc->sc_ah, bf->bf_lastds);
+	status = ah->ah_procTxDesc(ah, bf->bf_lastds);
 
 	ATH_TXQ_INSERT_TAIL(txq, bf, bf_list);
 

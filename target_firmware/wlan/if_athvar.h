@@ -491,8 +491,6 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
 
 #define ath_hal_set11n_virtualmorefrag(_ah, _ds, _vmf) \
     ((*(_ah)->ah_set11nVirtualMoreFrag)(_ah, _ds, _vmf))
-#define ath_hal_txprocdesc(_ah, _ds) \
-    ((*(_ah)->ah_procTxDesc)((_ah), (_ds)))
 #define ath_hal_htsupported(_ah) \
     (ath_hal_getcapability(_ah, HAL_CAP_HT, 0, NULL) == HAL_OK)
 #define ath_hal_getrtsaggrlimit(_ah, _pv) \
