@@ -1067,7 +1067,7 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 
 		if (status & HAL_INT_TXURN) {
 			sc->sc_int_stats.ast_txurn++;
-			ath_hal_updatetxtriglevel(ah, AH_TRUE);
+			ah->ah_updateTxTrigLevel(ah, AH_TRUE);
 		}
 
 		ATH_SCHEDULE_TQUEUE(sc->sc_dev, &sc->sc_txtq);
