@@ -37,8 +37,8 @@
 #include "ah_internal.h"
 #include <asf_bitmap.h>
 
-extern struct ath_hal *ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
-				    a_uint32_t flags, HAL_STATUS *status);
+extern struct ath_hal *ar5416Attach(HAL_SOFTC sc, adf_os_device_t dev,
+									HAL_STATUS *status);
 
 struct ath_hal*
 ath_hal_attach_tgt(a_uint32_t devid,HAL_SOFTC sc,
@@ -47,8 +47,7 @@ ath_hal_attach_tgt(a_uint32_t devid,HAL_SOFTC sc,
 {
 	struct ath_hal *ah = AH_NULL;
 
-	devid = AR5416_DEVID_PCIE;
-	ah = ar5416Attach(devid, sc, dev, flags, error);
+	ah = ar5416Attach(sc, dev, error);
 
 	return ah;
 }

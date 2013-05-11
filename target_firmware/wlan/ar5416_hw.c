@@ -88,8 +88,7 @@ void ar5416Detach(struct ath_hal *ah)
 }
 
 struct ath_hal *
-ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
-	     a_uint32_t flags, HAL_STATUS *status)
+ar5416Attach(HAL_SOFTC sc, adf_os_device_t dev, HAL_STATUS *status)
 {
 	struct ath_hal_5416 *ahp;
 	struct ath_hal *ah;
