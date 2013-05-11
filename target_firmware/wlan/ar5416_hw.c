@@ -292,12 +292,6 @@ void ar5416SetRxDP(struct ath_hal *ah, a_uint32_t rxdp)
 	HALASSERT(OS_REG_READ(ah, AR_RXDP) == rxdp);
 }
 
-void ar5416SetMulticastFilter(struct ath_hal *ah, a_uint32_t filter0, a_uint32_t filter1)
-{
-	OS_REG_WRITE(ah, AR_MCAST_FIL0, filter0);
-	OS_REG_WRITE(ah, AR_MCAST_FIL1, filter1);
-}
-
 HAL_BOOL ar5416StopDmaReceive(struct ath_hal *ah)
 {
 	OS_REG_WRITE(ah, AR_CR, AR_CR_RXD); /* Set receive disable bit */
