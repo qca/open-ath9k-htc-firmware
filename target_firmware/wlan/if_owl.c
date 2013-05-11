@@ -1220,7 +1220,7 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 	 */
 	if (iswep && (keyix != HAL_TXKEYIX_INVALID) &&
 			(wh->i_fc[0] & IEEE80211_FC0_SUBTYPE_MASK) == IEEE80211_FC0_SUBTYPE_AUTH)
-		ah->ah_fillKeyTxDesc(ah, ds, mh->keytype);
+		ah->ah_fillKeyTxDesc(ds, mh->keytype);
 
 	ath_filltxdesc(sc, bf);
 

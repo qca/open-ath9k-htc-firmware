@@ -701,7 +701,7 @@ HAL_BOOL ar5416FillTxDesc_20(struct ath_tx_desc *ds,
         return AH_TRUE;
 }
 
-HAL_BOOL ar5416FillKeyTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
+HAL_BOOL ar5416FillKeyTxDesc_20(struct ath_tx_desc *ds,
 				HAL_KEY_TYPE keyType)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
