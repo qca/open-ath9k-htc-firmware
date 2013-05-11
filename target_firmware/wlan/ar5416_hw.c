@@ -903,7 +903,7 @@ void ar5416Set11nAggrLast_20(struct ath_tx_desc *ds)
 	ads->ds_ctl6 &= ~AR_PadDelim;
 }
 
-void ar5416Clr11nAggr_20(struct ath_hal *ah, struct ath_tx_desc *ds)
+void ar5416Clr11nAggr_20(struct ath_tx_desc *ds)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
 

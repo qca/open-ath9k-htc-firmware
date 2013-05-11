@@ -987,7 +987,7 @@ ath_tx_freebuf(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 	struct ath_hal *ah = sc->sc_ah;
 
 	for (bfd = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; bfd++, i++) {
-		ah->ah_clr11nAggr(ah, bfd);
+		ah->ah_clr11nAggr(bfd);
 		ah->ah_set11nBurstDuration(ah, bfd, 0);
 		ah->ah_set11nVirtualMoreFrag(ah, bfd, 0);
 	}
@@ -1408,7 +1408,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 			bf->bf_next = NULL;
 
 			for(ds = bf->bf_desc; ds <= bf->bf_lastds; ds++)
-				ah->ah_clr11nAggr(ah, ds);
+				ah->ah_clr11nAggr(ds);
 
 			ath_buf_set_rate(sc, bf);
 			bf->bf_txq_add(sc, bf);
@@ -1807,7 +1807,7 @@ ath_tx_retry_subframe(struct ath_softc_tgt *sc, struct ath_tx_buf *bf,
 	__stats(sc, txaggr_compretries);
 
 	for(ds = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; ds++, i++) {
-		ah->ah_clr11nAggr(ah, ds);
+		ah->ah_clr11nAggr(ds);
 		ah->ah_set11nBurstDuration(ah, ds, 0);
 		ah->ah_set11nVirtualMoreFrag(ah, ds, 0);
 	}
@@ -2141,7 +2141,7 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 	bf->bf_next = NULL;
 
 	for (ds0 = ds, i=0; i < bf->bf_dmamap_info.nsegs; ds0++, i++) {
-		ah->ah_clr11nAggr(ah, ds0);
+		ah->ah_clr11nAggr(ds0);
 	}
 
 	ath_filltxdesc(sc, bf);
