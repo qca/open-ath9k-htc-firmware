@@ -877,7 +877,7 @@ void ar5416Set11nAggrFirst_20(struct ath_tx_desc *ds, a_uint32_t aggrLen,
 		SM(numDelims, AR_PadDelim);
 }
 
-void ar5416Set11nAggrMiddle_20(struct ath_hal *ah, struct ath_tx_desc *ds, a_uint32_t numDelims)
+void ar5416Set11nAggrMiddle_20(struct ath_tx_desc *ds, a_uint32_t numDelims)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
 	a_uint32_t ctl6;

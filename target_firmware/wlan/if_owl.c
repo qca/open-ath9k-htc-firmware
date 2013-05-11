@@ -1572,7 +1572,7 @@ int ath_tgt_tx_form_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid,
 		bf_prev = bf;
 
 		for(ds = bf->bf_desc; ds <= bf->bf_lastds; ds++)
-			ah->ah_set11nAggrMiddle(ah, ds, bf->bf_ndelim);
+			ah->ah_set11nAggrMiddle(ds, bf->bf_ndelim);
 
 	} while (!asf_tailq_empty(&tid->buf_q));
 
