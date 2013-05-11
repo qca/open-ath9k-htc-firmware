@@ -454,7 +454,6 @@ struct ath_hal
 						struct ath_desc *nds, 
 						struct ath_rx_status *rx_stats);
 	HAL_BOOL  __ahdecl(*ah_stopDmaReceive)(struct ath_hal*);
-	void      __ahdecl(*ah_startPcuReceive)(struct ath_hal*);
 	void      __ahdecl(*ah_stopPcuReceive)(struct ath_hal*);
 	void      __ahdecl(*ah_enableReceive)(struct ath_hal*);
            
