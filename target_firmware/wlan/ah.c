@@ -71,29 +71,6 @@ ath_hal_getcapability(struct ath_hal *ah, HAL_CAPABILITY_TYPE type,
 	}
 }
 
-void
-ath_hal_setupratetable(struct ath_hal *ah, HAL_RATE_TABLE *rt)
-{
-	a_int32_t i;
-
-	if (rt->rateCodeToIndex[0] != 0)
-		return;
-
-	for (i = 0; i < 32; i++)
-		rt->rateCodeToIndex[i] = (a_uint8_t) -1;
-	for (i = 0; i < rt->rateCount; i++) {
-		a_uint8_t code = rt->info[i].rateCode;
-		a_uint8_t cix = rt->info[i].controlRate;
-
-		rt->rateCodeToIndex[code] = i;
-		rt->rateCodeToIndex[code | rt->info[i].shortPreamble] = i;
-		rt->info[i].lpAckDuration = ath_hal_computetxtime(ah, rt,
-					  WLAN_CTRL_FRAME_SIZE, cix, AH_FALSE);
-		rt->info[i].spAckDuration = ath_hal_computetxtime(ah, rt,
-					  WLAN_CTRL_FRAME_SIZE, cix, AH_TRUE);
-	}
-}
-
 #define CCK_SIFS_TIME        10
 #define CCK_PREAMBLE_BITS   144
 #define CCK_PLCP_BITS        48
