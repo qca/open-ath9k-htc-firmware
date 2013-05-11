@@ -442,7 +442,6 @@ struct ath_hal
 						   a_uint32_t filter0, a_uint32_t filter1);
 
 	u_int64_t __ahdecl(*ah_getTsf64)(struct ath_hal*);
-	void      __ahdecl(*ah_resetTsf)(struct ath_hal*);
            
 	/* Target receive Functions */
 	a_uint32_t __ahdecl(*ah_getRxDP)(struct ath_hal*);
