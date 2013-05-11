@@ -623,7 +623,7 @@ static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
 	adf_nbuf_dmamap_info(bf->bf_dmamap,&bf->bf_dmamap_info);
 
 	ath_beacon_setup(sc, bf, &sc->sc_vap[vap_index]);
-	ath_hal_stoptxdma(ah, sc->sc_bhalq);
+	ah->ah_stopTxDma(ah, sc->sc_bhalq);
 	ah->ah_setTxDP(ah, sc->sc_bhalq, ATH_BUF_GET_DESC_PHY_ADDR(bf));
 	ah->ah_startTxDma(ah, sc->sc_bhalq);
 }
@@ -636,7 +636,7 @@ static void ath_tx_stopdma(struct ath_softc_tgt *sc, struct ath_txq *txq)
 {
 	struct ath_hal *ah = sc->sc_ah;
 
-	(void) ath_hal_stoptxdma(ah, txq->axq_qnum);
+	ah->ah_stopTxDma(ah, txq->axq_qnum);
 }
 
 static void owltgt_txq_drain(struct ath_softc_tgt *sc, struct ath_txq *txq)
@@ -659,7 +659,7 @@ static void ath_draintxq(struct ath_softc_tgt *sc, HAL_BOOL drain_softq)
 	ath_tx_status_clear(sc);
 	sc->sc_tx_draining = 1;
 
-	(void) ath_hal_stoptxdma(ah, sc->sc_bhalq);
+	ah->ah_stopTxDma(ah, sc->sc_bhalq);
 
 	for (i = 0; i < HAL_NUM_TX_QUEUES; i++)
 		if (ATH_TXQ_SETUP(sc, i))
@@ -1595,7 +1595,7 @@ static void ath_stop_tx_dma_tgt(void *Context, A_UINT16 Command,
 		q = *(a_uint32_t *)data;
 
 	q = adf_os_ntohl(q);
-	ath_hal_stoptxdma(ah, q);
+	ah->ah_stopTxDma(ah, q);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
