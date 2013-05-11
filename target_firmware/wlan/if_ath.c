@@ -624,7 +624,7 @@ static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
 
 	ath_beacon_setup(sc, bf, &sc->sc_vap[vap_index]);
 	ath_hal_stoptxdma(ah, sc->sc_bhalq);
-	ath_hal_puttxbuf(ah, sc->sc_bhalq, ATH_BUF_GET_DESC_PHY_ADDR(bf));
+	ah->ah_setTxDP(ah, sc->sc_bhalq, ATH_BUF_GET_DESC_PHY_ADDR(bf));
 	ath_hal_txstart(ah, sc->sc_bhalq);
 }
 

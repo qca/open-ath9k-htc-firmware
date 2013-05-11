@@ -888,13 +888,13 @@ static void ath_tgt_txq_add_ucast(struct ath_softc_tgt *sc, struct ath_tx_buf *b
 	ATH_TXQ_INSERT_TAIL(txq, bf, bf_list);
 
 	if (txq->axq_link == NULL) {
-		ath_hal_puttxbuf(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
+		ah->ah_setTxDP(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
 	} else {
 		*txq->axq_link = ATH_BUF_GET_DESC_PHY_ADDR(bf);
 
 		txe_val = OS_REG_READ(ah, 0x840);
 		if (!(txe_val & (1<< txq->axq_qnum)))
-			ath_hal_puttxbuf(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
+			ah->ah_setTxDP(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
 	}
 
 	txq->axq_link = &bf->bf_lastds->ds_link;
@@ -1248,7 +1248,7 @@ ath_tgt_txqaddbuf(struct ath_softc_tgt *sc,
 	ATH_TXQ_INSERT_TAIL(txq, bf, bf_list);
 
 	if (txq->axq_link == NULL) {
-		ath_hal_puttxbuf(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
+		ah->ah_setTxDP(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
 	} else {
 		*txq->axq_link = ATH_BUF_GET_DESC_PHY_ADDR(bf);
 	}
