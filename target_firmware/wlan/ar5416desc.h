@@ -479,7 +479,7 @@ extern void ar5416Set11nAggrFirst_20(struct ath_tx_desc *ds,
        a_uint32_t aggrLen, a_uint32_t numDelims);
 extern void ar5416Set11nAggrMiddle_20(struct ath_tx_desc *ds,
        a_uint32_t numDelims);
-extern void ar5416Set11nAggrLast_20(struct ath_hal *ah, struct ath_tx_desc *ds);
+extern void ar5416Set11nAggrLast_20(struct ath_tx_desc *ds);
 extern void ar5416Clr11nAggr_20(struct ath_hal *ah, struct ath_tx_desc *ds);
 extern void ar5416Set11nBurstDuration_20(struct ath_hal *ah, struct ath_tx_desc *ds,
        a_uint32_t burstDuration);

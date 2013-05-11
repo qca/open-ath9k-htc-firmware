@@ -894,7 +894,7 @@ void ar5416Set11nAggrMiddle_20(struct ath_tx_desc *ds, a_uint32_t numDelims)
 	ads->ds_ctl6 = ctl6;
 }
 
-void ar5416Set11nAggrLast_20(struct ath_hal *ah, struct ath_tx_desc *ds)
+void ar5416Set11nAggrLast_20(struct ath_tx_desc *ds)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);
 
