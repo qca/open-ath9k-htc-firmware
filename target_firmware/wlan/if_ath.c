@@ -1618,7 +1618,7 @@ static void ath_stoprecv_tgt(void *Context, A_UINT16 Command,
 	struct ath_hal *ah = sc->sc_ah;
 
 	ath_hal_stoppcurecv(ah);
-	ath_hal_setrxfilter(ah, 0);
+	ah->ah_setRxFilter(ah, 0);
 	ath_hal_stopdmarecv(ah);
 
 	sc->sc_rxlink = NULL;
