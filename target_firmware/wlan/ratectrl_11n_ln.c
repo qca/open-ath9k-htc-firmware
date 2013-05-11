@@ -1164,33 +1164,3 @@ ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int 
 		rcSibUpdate_ht(sc, an, capflag, 0, rs);
 	}
 }
-
-void ath_rate_mcs2rate(struct ath_softc_tgt *sc,a_uint8_t sgi, a_uint8_t ht40, 
-		       a_uint8_t rateCode, a_uint32_t *txrate, a_uint32_t *rxrate)
-{
-	int idx;
-	struct atheros_softc *asc = (struct atheros_softc*)sc->sc_rc;
-	RATE_TABLE_11N *pRateTable = (RATE_TABLE_11N *)asc->hwRateTable[sc->sc_curmode];
-	a_uint32_t rateKbps = 0;
-   
-	*txrate = asc->currentTxRateKbps;
-
-	/* look  11NA table for rateKbps*/
-	for (idx = 0; idx < pRateTable->rateCount && !rateKbps; ++idx) {   
-		if (pRateTable->info[idx].rateCode == rateCode) {
-			if(ht40 && sgi) {
-				if(pRateTable->info[idx].valid == TRUE_40 &&
-				   pRateTable->info[idx].phy == WLAN_RC_PHY_HT_40_DS_HGI)
-					rateKbps = pRateTable->info[idx].rateKbps;
-			} else if (ht40) {
-				if (pRateTable->info[idx].valid == TRUE_40)/* HT40 only*/
-					rateKbps = pRateTable->info[idx].rateKbps;
-			} else { 
-				if (pRateTable->info[idx].valid != FALSE)
-					rateKbps = pRateTable->info[idx].rateKbps;
-			}
-		}
-	}
-    
-	*rxrate = rateKbps;
-}
