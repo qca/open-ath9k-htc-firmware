@@ -493,10 +493,6 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
     ((*(_ah)->ah_setupRxDesc)((_ah), (_ds), (_size), (_intreq)))
 #define ath_hal_rxprocdescfast(_ah, _ds, _dspa, _dsnext, _rx_stats) \
     ((*(_ah)->ah_procRxDescFast)((_ah), (_ds), (_dspa), (_dsnext), (_rx_stats)))
-#define ath_hal_set11n_txdesc(_ah, _ds, _pktlen, _type, _txpower,\
-			     _keyix, _keytype, _flags) \
-    ((*(_ah)->ah_set11nTxDesc)(_ah, _ds, _pktlen, _type, _txpower, _keyix,\
-			       _keytype, _flags))
 #define ath_hal_set11n_ratescenario(_ah, _ds, _durupdate, _rtsctsrate, _rtsctsduration, \
 				    _series, _nseries, _flags)         \
     ((*(_ah)->ah_set11nRateScenario)(_ah, _ds, _durupdate, _rtsctsrate, _rtsctsduration,\

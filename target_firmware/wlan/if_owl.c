@@ -263,6 +263,7 @@ static void ath_filltxdesc(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 static void ath_tx_tgt_setds(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	struct ath_tx_desc *ds = bf->bf_desc;
+	struct ath_hal *ah = sc->sc_ah;
 
 	switch (bf->bf_protmode) {
     	case IEEE80211_PROT_RTSCTS:
@@ -275,7 +276,7 @@ static void ath_tx_tgt_setds(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		break;
 	}
 
-	ath_hal_set11n_txdesc(sc->sc_ah, ds
+	ah->ah_set11nTxDesc(ah, ds
 			      , bf->bf_pktlen
 			      , bf->bf_atype
 			      , 60
