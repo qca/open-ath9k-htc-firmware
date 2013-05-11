@@ -70,12 +70,6 @@ _ath_hal_attach_tgt(a_uint32_t devid, HAL_SOFTC sc,
 	return ah;
 }
 
-void
-ath_hal_detach(struct ath_hal *ah)
-{
-	(*ah->ah_detach)(ah);
-}
-
 extern void *global_hdl;
 
 /*

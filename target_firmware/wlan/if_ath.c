@@ -1644,7 +1644,7 @@ static void ath_detach_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo,
 	struct ath_hal *ah = sc->sc_ah;
 
 	ath_desc_free(sc);
-	ath_hal_detach(ah);
+	ah->ah_detach(ah);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 	adf_os_mem_free(sc);
 }
@@ -1936,7 +1936,7 @@ bad:
 bad2:
 	ath_desc_free(sc);
 	if (ah)
-		ath_hal_detach(ah);
+		ah->ah_detach(ah);
 }
 
 static void tgt_hif_htc_wmi_shutdown(struct ath_softc_tgt *sc)
