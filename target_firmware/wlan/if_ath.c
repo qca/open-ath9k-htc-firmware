@@ -1132,7 +1132,7 @@ static void ath_init_tgt(void *Context, A_UINT16 Command,
 
 	sc->sc_imask |= HAL_INT_GTT;
 
-	if (ath_hal_htsupported(ah))
+	if (ath_hal_getcapability(ah, HAL_CAP_HT))
 		sc->sc_imask |= HAL_INT_CST;
 
 	adf_os_setup_intr(sc->sc_dev, ath_intr);

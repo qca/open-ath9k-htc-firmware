@@ -260,8 +260,7 @@ extern void ath_hal_free(void *);
  * this routine to support chip-specific capabilities.
  */
 extern HAL_STATUS ath_hal_getcapability(struct ath_hal *ah,
-		HAL_CAPABILITY_TYPE type, a_uint32_t capability,
-		a_uint32_t *result);
+		HAL_CAPABILITY_TYPE type);
 extern HAL_BOOL ath_hal_setcapability(struct ath_hal *ah,
 	      HAL_CAPABILITY_TYPE type, a_uint32_t capability,
 	      a_uint32_t setting, HAL_STATUS *status);

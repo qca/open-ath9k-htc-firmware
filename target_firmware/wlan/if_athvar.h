@@ -489,9 +489,4 @@ typedef enum {
 
 a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *avp);
 
-#define ath_hal_htsupported(_ah) \
-    (ath_hal_getcapability(_ah, HAL_CAP_HT, 0, NULL) == HAL_OK)
-#define ath_hal_getrtsaggrlimit(_ah, _pv) \
-    (ath_hal_getcapability(_ah, HAL_CAP_RTS_AGGR_LIMIT, 0, _pv) == HAL_OK)
-
 #endif /* _DEV_ATH_ATHVAR_H */

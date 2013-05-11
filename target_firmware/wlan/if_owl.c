@@ -387,7 +387,7 @@ static void ath_buf_set_rate(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 	    cix = rt->info[sc->sc_protrix].controlRate;
 	    prot_mode = AH_TRUE;
     } else {
-	    if (ath_hal_htsupported(ah) && (!bf->bf_ismcast))
+	    if (ath_hal_getcapability(ah, HAL_CAP_HT) && (!bf->bf_ismcast))
 		    flags = HAL_TXDESC_RTSENA;
 
 	    for (i = 4; i--;) {

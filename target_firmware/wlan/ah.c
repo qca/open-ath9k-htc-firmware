@@ -54,9 +54,7 @@ ath_hal_attach_tgt(a_uint32_t devid,HAL_SOFTC sc,
 }
 
 HAL_STATUS
-ath_hal_getcapability(struct ath_hal *ah, HAL_CAPABILITY_TYPE type,
-		      a_uint32_t capability, a_uint32_t *result)
-
+ath_hal_getcapability(struct ath_hal *ah, HAL_CAPABILITY_TYPE type)
 {
 	const HAL_CAPABILITIES *pCap = &AH_PRIVATE(ah)->ah_caps;
 	switch (type) {
@@ -113,7 +111,7 @@ ath_hal_computetxtime(struct ath_hal *ah,
 		numBits = frameLen << 3;
 		txTime = phyTime + ((numBits * 1000)/kbps);
 		/* TODO: make sure the same value of txTime can use in all device */
-		if (ath_hal_getcapability(ah, HAL_CAP_HT, 0, AH_NULL) != HAL_OK)
+		if (ath_hal_getcapability(ah, HAL_CAP_HT) != HAL_OK)
 			txTime = txTime + CCK_SIFS_TIME;
 		break;
 	case IEEE80211_T_OFDM:
@@ -125,7 +123,7 @@ ath_hal_computetxtime(struct ath_hal *ah,
 		numSymbols = asf_howmany(numBits, bitsPerSymbol);
 		txTime = OFDM_PREAMBLE_TIME + (numSymbols * OFDM_SYMBOL_TIME);
 		/* TODO: make sure the same value of txTime can use in all device */
-		if (ath_hal_getcapability(ah, HAL_CAP_HT, 0, AH_NULL) != HAL_OK)
+		if (ath_hal_getcapability(ah, HAL_CAP_HT) != HAL_OK)
 			txTime = txTime + OFDM_SIFS_TIME;
 		break;
 	default:
@@ -180,7 +178,7 @@ ath_hal_wait(struct ath_hal *ah, a_uint32_t reg, a_uint32_t mask, a_uint32_t val
 
 	a_int32_t i;
 
-	if (ath_hal_getcapability(ah, HAL_CAP_HT, 0, AH_NULL) == HAL_OK) {
+	if (ath_hal_getcapability(ah, HAL_CAP_HT) == HAL_OK) {
 		for (i = 0; i < AH_TIMEOUT_11N; i++) {
 			if ((OS_REG_READ(ah, reg) & mask) == val)
 				return AH_TRUE;
