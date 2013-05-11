@@ -491,8 +491,6 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
 
 #define ath_hal_intrset(_ah, _mask) \
     ((*(_ah)->ah_setInterrupts)((_ah), (_mask)))
-#define ath_hal_intrpend(_ah) \
-    ((*(_ah)->ah_isInterruptPending)((_ah)))
 #define ath_hal_getisr(_ah, _pmask) \
     ((*(_ah)->ah_getPendingInterrupts)((_ah), (_pmask)))
 #define ath_hal_setuprxdesc(_ah, _ds, _size, _intreq) \
