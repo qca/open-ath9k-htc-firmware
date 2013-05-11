@@ -394,8 +394,7 @@ struct ath_hal
 					     a_uint32_t txPower, a_uint32_t keyIx,
 					     HAL_KEY_TYPE keyType,
 					     a_uint32_t flags);
-	void      __ahdecl(*ah_set11nRateScenario)(struct ath_hal *ah,
-						   struct ath_tx_desc *ds,
+	void      __ahdecl(*ah_set11nRateScenario)(struct ath_tx_desc *ds,
 						   a_uint32_t durUpdateEn,
 						   a_uint32_t rtsctsRate,
 						   a_uint32_t rtsctsDuration,

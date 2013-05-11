@@ -811,7 +811,7 @@ void ar5416Set11nTxDesc_20(struct ath_tx_desc *ds,
 
 #ifdef MAGPIE_MERLIN
 
-void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_tx_desc *ds,
+void ar5416Set11nRateScenario_20(struct ath_tx_desc *ds,
 				 a_uint32_t durUpdateEn, a_uint32_t rtsctsRate,
 				 a_uint32_t rtsctsDuration,
 				 HAL_11N_RATE_SERIES series[], a_uint32_t nseries,
@@ -868,7 +868,7 @@ void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_tx_desc *ds,
 
 #else
 
-void ar5416Set11nRateScenario_20(struct ath_hal *ah, struct ath_tx_desc *ds,
+void ar5416Set11nRateScenario_20(struct ath_tx_desc *ds,
 				 a_uint32_t durUpdateEn, a_uint32_t rtsctsRate,
 				 a_uint32_t rtsctsDuration,
 				 HAL_11N_RATE_SERIES series[], a_uint32_t nseries,
