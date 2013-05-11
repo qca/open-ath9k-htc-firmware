@@ -983,9 +983,10 @@ ath_tx_freebuf(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	a_int32_t i ;
 	struct ath_tx_desc *bfd = NULL;
+	struct ath_hal *ah = sc->sc_ah;
 
 	for (bfd = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; bfd++, i++) {
-		ath_hal_clr11n_aggr(sc->sc_ah, bfd);
+		ah->ah_clr11nAggr(sc->sc_ah, bfd);
 		ath_hal_set11n_burstduration(sc->sc_ah, bfd, 0);
 		ath_hal_set11n_virtualmorefrag(sc->sc_ah, bfd, 0);
 	}
@@ -1410,7 +1411,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 			bf->bf_next = NULL;
 
 			for(ds = bf->bf_desc; ds <= bf->bf_lastds; ds++)
-				ath_hal_clr11n_aggr(sc->sc_ah, ds);
+				ah->ah_clr11nAggr(ah, ds);
 
 			ath_buf_set_rate(sc, bf);
 			bf->bf_txq_add(sc, bf);
@@ -1803,12 +1804,13 @@ ath_tx_retry_subframe(struct ath_softc_tgt *sc, struct ath_tx_buf *bf,
 	struct ath_node_target *an = ATH_NODE_TARGET(bf->bf_node);
 	ath_atx_tid_t *tid = ATH_AN_2_TID(an, bf->bf_tidno);
 	struct ath_tx_desc *ds = NULL;
+	struct ath_hal *ah = sc->sc_ah;
 	int i = 0;
 
 	__stats(sc, txaggr_compretries);
 
 	for(ds = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; ds++, i++) {
-		ath_hal_clr11n_aggr(sc->sc_ah, ds);
+		ah->ah_clr11nAggr(ah, ds);
 		ath_hal_set11n_burstduration(sc->sc_ah, ds, 0);
 		ath_hal_set11n_virtualmorefrag(sc->sc_ah, ds, 0);
 	}
@@ -2144,7 +2146,7 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 	bf->bf_next = NULL;
 
 	for (ds0 = ds, i=0; i < bf->bf_dmamap_info.nsegs; ds0++, i++) {
-		ath_hal_clr11n_aggr(sc->sc_ah, ds0);
+		ah->ah_clr11nAggr(ah, ds0);
 	}
 
 	ath_filltxdesc(sc, bf);
