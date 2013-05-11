@@ -77,7 +77,6 @@ static const struct ath_hal_private ar5416hal_10 = {{
 		/* Interrupt Functions */
 		.ah_isInterruptPending   = ar5416IsInterruptPending,
 		.ah_getPendingInterrupts = ar5416GetPendingInterrupts,
-		.ah_getInterrupts        = ar5416GetInterrupts,
 		.ah_setInterrupts        = ar5416SetInterrupts,
 	},
 };
@@ -220,11 +219,6 @@ HAL_BOOL ar5416GetPendingInterrupts(struct ath_hal *ah, HAL_INT *masked)
 	}
 #endif
 	return AH_TRUE;
-}
-
-HAL_INT ar5416GetInterrupts(struct ath_hal *ah)
-{
-	return AH5416(ah)->ah_maskReg;
 }
 
 HAL_INT

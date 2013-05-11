@@ -460,7 +460,6 @@ struct ath_hal
 	/* Interrupt functions */
 	HAL_BOOL  __ahdecl(*ah_isInterruptPending)(struct ath_hal*);
 	HAL_BOOL  __ahdecl(*ah_getPendingInterrupts)(struct ath_hal*, HAL_INT*);
-	HAL_INT   __ahdecl(*ah_getInterrupts)(struct ath_hal*);
 	HAL_INT   __ahdecl(*ah_setInterrupts)(struct ath_hal*, HAL_INT);
 };
 
