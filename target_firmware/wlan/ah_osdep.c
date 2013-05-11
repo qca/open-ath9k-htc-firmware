@@ -149,4 +149,3 @@ enum {
 
 adf_os_module_dep(hal, adf_net);
 adf_os_module_dep(hal, hal);
-adf_os_virt_module_name(hal);
