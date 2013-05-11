@@ -476,9 +476,6 @@ extern struct ath_hal * __ahdecl ath_hal_attach_tgt(a_uint32_t devid, HAL_SOFTC,
 						    adf_os_device_t dev,
 						    a_uint32_t flags, HAL_STATUS* status);
 
-extern const HAL_RATE_TABLE * __ahdecl ath_hal_getratetable(struct ath_hal *,
-							    a_uint32_t mode);
-
 extern a_uint16_t __ahdecl ath_hal_computetxtime(struct ath_hal *,
 						 const HAL_RATE_TABLE *rates,
 						 a_uint32_t frameLen,
