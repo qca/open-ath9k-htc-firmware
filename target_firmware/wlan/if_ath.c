@@ -277,7 +277,7 @@ static a_int32_t ath_rxdesc_init(struct ath_softc_tgt *sc, struct ath_rx_desc *d
 		*sc->sc_rxlink = ds->ds_daddr;
 	}
 	sc->sc_rxlink = &ds->ds_link;
-	ath_hal_rxena(ah);
+	ah->ah_enableReceive(ah);
 
 	return 0;
 }

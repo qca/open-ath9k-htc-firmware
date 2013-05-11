@@ -527,8 +527,6 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
     ((*(_ah)->ah_fillTxDesc)((_ah), (_ds), (_l), (_first), (_last), (_ds0)))
 #define ath_hal_txprocdesc(_ah, _ds) \
     ((*(_ah)->ah_procTxDesc)((_ah), (_ds)))
-#define ath_hal_rxena(_ah) \
-    ((*(_ah)->ah_enableReceive)((_ah)))
 #define ath_hal_stoppcurecv(_ah) \
     ((*(_ah)->ah_stopPcuReceive)((_ah)))
 #define ath_hal_htsupported(_ah) \
