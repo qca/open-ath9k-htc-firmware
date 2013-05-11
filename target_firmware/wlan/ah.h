@@ -378,11 +378,6 @@ struct ath_hal
            
 	/* Misc Functions */
 	void      __ahdecl(*ah_setDefAntenna)(struct ath_hal*, a_uint32_t);	
-           
-	HAL_BOOL  __ahdecl(*ah_updateCTSForBursting)(struct ath_hal *,
-						     struct ath_desc *, struct ath_desc *,
-						     struct ath_desc *, struct ath_desc *,
-						     a_uint32_t, a_uint32_t);
 	void      __ahdecl(*ah_setRxFilter)(struct ath_hal*, a_uint32_t);
            
                       

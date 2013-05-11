@@ -118,7 +118,6 @@ ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
 		ah->ah_set11nBurstDuration = ar5416Set11nBurstDuration_20;
 		ah->ah_setupRxDesc         = ar5416SetupRxDesc_20;
 		ah->ah_procRxDescFast      = ar5416ProcRxDescFast_20;
-		ah->ah_updateCTSForBursting = NULL;
 		ah->ah_setupTxDesc         = ar5416SetupTxDesc_20;
 		ah->ah_reqTxIntrDesc       = ar5416IntrReqTxDesc_20;
 		ah->ah_fillTxDesc          = ar5416FillTxDesc_20;
