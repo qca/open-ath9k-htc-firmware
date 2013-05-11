@@ -48,7 +48,6 @@
 #include <adf_os_atomic.h>
 #include <adf_nbuf.h>
 #include <adf_net.h>
-#include <adf_net_types.h>
 
 #include "ah.h"
 #include<ah_internal.h>
@@ -69,12 +68,6 @@ _ath_hal_attach_tgt(a_uint32_t devid, HAL_SOFTC sc,
 	adf_os_print(" ath_hal = %p \n",ah);
 	*(HAL_STATUS *)s = status;
 	return ah;
-}
-
-void
-ath_hal_detach(struct ath_hal *ah)
-{
-	(*ah->ah_detach)(ah);
 }
 
 extern void *global_hdl;

@@ -75,8 +75,6 @@ typedef enum {
 	HAL_CAP_VEOL        = 0,
 	HAL_CAP_BSSIDMASK   = 1,
 	HAL_CAP_TSF_ADJUST  = 2,
-	HAL_CAP_RX_STBC     = 3,
-	HAL_CAP_TX_STBC     = 4,
 	HAL_CAP_HT          = 5,
 	HAL_CAP_RTS_AGGR_LIMIT = 6,
 } HAL_CAPABILITY_TYPE;
@@ -379,21 +377,11 @@ struct ath_hal
 						  HAL_BOOL incTrigLevel);
            
 	/* Misc Functions */
-	HAL_STATUS __ahdecl(*ah_getCapability)(struct ath_hal *,
-					       HAL_CAPABILITY_TYPE, a_uint32_t capability,
-					       a_uint32_t *result);
 	void      __ahdecl(*ah_setDefAntenna)(struct ath_hal*, a_uint32_t);	
-           
-	HAL_BOOL  __ahdecl(*ah_updateCTSForBursting)(struct ath_hal *,
-						     struct ath_desc *, struct ath_desc *,
-						     struct ath_desc *, struct ath_desc *,
-						     a_uint32_t, a_uint32_t);
 	void      __ahdecl(*ah_setRxFilter)(struct ath_hal*, a_uint32_t);
            
                       
 	/* Target Transmit Functions */
-           
-	a_uint32_t __ahdecl(*ah_getTxDP)(struct ath_hal*, a_uint32_t);
 	HAL_BOOL  __ahdecl(*ah_setTxDP)(struct ath_hal*, a_uint32_t, a_uint32_t txdp);
 	a_uint32_t __ahdecl(*ah_numTxPending)(struct ath_hal *, a_uint32_t q);           
 	HAL_BOOL  __ahdecl(*ah_startTxDma)(struct ath_hal*, a_uint32_t);
@@ -442,19 +430,14 @@ struct ath_hal
 					   HAL_BOOL lastSeg, const struct ath_tx_desc *);
 	HAL_BOOL  __ahdecl (*ah_fillKeyTxDesc) (struct ath_hal *, struct ath_tx_desc *, HAL_KEY_TYPE);
 	HAL_STATUS __ahdecl(*ah_procTxDesc)(struct ath_hal *, struct ath_tx_desc *);
-	void		__ahdecl(*ah_getTxIntrQueue)(struct ath_hal *, a_uint32_t *);
-	void	   __ahdecl(*ah_reqTxIntrDesc)(struct ath_hal *, struct ath_desc*);    
 	HAL_BOOL  __ahdecl(*ah_setBssIdMask)(struct ath_hal *, const a_uint8_t*);
 	void      __ahdecl(*ah_setPCUConfig)(struct ath_hal *);
 	void      __ahdecl(*ah_setMulticastFilter)(struct ath_hal*,
 						   a_uint32_t filter0, a_uint32_t filter1);
-           
-	a_uint32_t __ahdecl(*ah_getTsf32)(struct ath_hal*);
+
 	u_int64_t __ahdecl(*ah_getTsf64)(struct ath_hal*);
-	void      __ahdecl(*ah_resetTsf)(struct ath_hal*);
            
 	/* Target receive Functions */
-	a_uint32_t __ahdecl(*ah_getRxDP)(struct ath_hal*);
 	void	   __ahdecl(*ah_setRxDP)(struct ath_hal*, a_uint32_t rxdp);
 	HAL_BOOL  __ahdecl(*ah_setupRxDesc)(struct ath_hal *, struct ath_rx_desc *,
 					    a_uint32_t size, a_uint32_t flags);
@@ -465,14 +448,12 @@ struct ath_hal
 						struct ath_desc *nds, 
 						struct ath_rx_status *rx_stats);
 	HAL_BOOL  __ahdecl(*ah_stopDmaReceive)(struct ath_hal*);
-	void      __ahdecl(*ah_startPcuReceive)(struct ath_hal*);
 	void      __ahdecl(*ah_stopPcuReceive)(struct ath_hal*);
 	void      __ahdecl(*ah_enableReceive)(struct ath_hal*);
            
 	/* Interrupt functions */
 	HAL_BOOL  __ahdecl(*ah_isInterruptPending)(struct ath_hal*);
 	HAL_BOOL  __ahdecl(*ah_getPendingInterrupts)(struct ath_hal*, HAL_INT*);
-	HAL_INT   __ahdecl(*ah_getInterrupts)(struct ath_hal*);
 	HAL_INT   __ahdecl(*ah_setInterrupts)(struct ath_hal*, HAL_INT);
 };
 
@@ -480,9 +461,6 @@ struct ath_hal
 extern struct ath_hal * __ahdecl ath_hal_attach_tgt(a_uint32_t devid, HAL_SOFTC,
 						    adf_os_device_t dev,
 						    a_uint32_t flags, HAL_STATUS* status);
-
-extern const HAL_RATE_TABLE * __ahdecl ath_hal_getratetable(struct ath_hal *,
-							    a_uint32_t mode);
 
 extern a_uint16_t __ahdecl ath_hal_computetxtime(struct ath_hal *,
 						 const HAL_RATE_TABLE *rates,

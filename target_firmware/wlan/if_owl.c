@@ -47,7 +47,6 @@
 #include <adf_net.h>
 #include <adf_net_wcmd.h>
 
-#include "if_ethersubr.h"
 #include "if_llc.h"
 
 #ifdef USE_HEADERLEN_RESV
@@ -58,7 +57,6 @@
 #include "if_athrate.h"
 #include "if_athvar.h"
 #include "ah_desc.h"
-#include "if_ath_pci.h"
 
 #define ath_tgt_free_skb  adf_nbuf_free
 
@@ -239,6 +237,7 @@ static void ath_dma_unmap(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 static void ath_filltxdesc(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	struct ath_tx_desc *ds0, *ds = bf->bf_desc;
+	struct ath_hal *ah = sc->sc_ah;
 	a_uint8_t i;
 
 	ds0 = ds;
@@ -254,7 +253,7 @@ static void ath_filltxdesc(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		} else
 			ds->ds_link = ATH_BUF_GET_DESC_PHY_ADDR_WITH_IDX(bf, i+1);
 
-		ath_hal_filltxdesc(sc->sc_ah, ds
+		ah->ah_fillTxDesc(ah, ds
 				   , bf->bf_dmamap_info.dma_segs[i].len
 				   , i == 0
 				   , i == (bf->bf_dmamap_info.nsegs - 1)
@@ -265,6 +264,7 @@ static void ath_filltxdesc(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 static void ath_tx_tgt_setds(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	struct ath_tx_desc *ds = bf->bf_desc;
+	struct ath_hal *ah = sc->sc_ah;
 
 	switch (bf->bf_protmode) {
     	case IEEE80211_PROT_RTSCTS:
@@ -277,7 +277,7 @@ static void ath_tx_tgt_setds(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		break;
 	}
 
-	ath_hal_set11n_txdesc(sc->sc_ah, ds
+	ah->ah_set11nTxDesc(ah, ds
 			      , bf->bf_pktlen
 			      , bf->bf_atype
 			      , 60
@@ -444,7 +444,7 @@ static void ath_buf_set_rate(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
     rtsctsrate = rt->info[cix].rateCode |
 	    (bf->bf_shpream ? rt->info[cix].shortPreamble : 0);
 
-    ath_hal_set11n_ratescenario(ah, ds, 1,
+    ah->ah_set11nRateScenario(ah, ds, 1,
 				rtsctsrate, ctsduration,
 				series, 4,
 				flags);
@@ -618,9 +618,10 @@ void ath_tx_status_send(struct ath_softc_tgt *sc)
 
 static void owltgt_tx_process_cabq(struct ath_softc_tgt *sc, struct ath_txq *txq)
 {
-	ath_hal_intrset(sc->sc_ah, sc->sc_imask & ~HAL_INT_SWBA);
+	struct ath_hal *ah = sc->sc_ah;
+	ah->ah_setInterrupts(ah, sc->sc_imask & ~HAL_INT_SWBA);
 	owltgt_tx_processq(sc, txq, OWL_TXQ_ACTIVE);
-	ath_hal_intrset(sc->sc_ah, sc->sc_imask);
+	ah->ah_setInterrupts(ah, sc->sc_imask);
 }
 
 void owl_tgt_tx_tasklet(TQUEUE_ARG data)
@@ -650,6 +651,7 @@ void owltgt_tx_processq(struct ath_softc_tgt *sc, struct ath_txq *txq,
 {
 	struct ath_tx_buf *bf;
 	struct ath_tx_desc *ds;
+	struct ath_hal *ah = sc->sc_ah;
 	HAL_STATUS status;
 
 	for (;;) {
@@ -662,7 +664,7 @@ void owltgt_tx_processq(struct ath_softc_tgt *sc, struct ath_txq *txq,
 		bf = asf_tailq_first(&txq->axq_q);
 
 		ds = bf->bf_lastds;
-		status = ath_hal_txprocdesc(sc->sc_ah, ds);
+		status = ah->ah_procTxDesc(ah, ds);
 
 		if (status == HAL_EINPROGRESS) {
 			if (txqstate == OWL_TXQ_ACTIVE)
@@ -885,22 +887,22 @@ static void ath_tgt_txq_add_ucast(struct ath_softc_tgt *sc, struct ath_tx_buf *b
 
 	txq = bf->bf_txq;
 
-	status = ath_hal_txprocdesc(sc->sc_ah, bf->bf_lastds);
+	status = ah->ah_procTxDesc(ah, bf->bf_lastds);
 
 	ATH_TXQ_INSERT_TAIL(txq, bf, bf_list);
 
 	if (txq->axq_link == NULL) {
-		ath_hal_puttxbuf(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
+		ah->ah_setTxDP(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
 	} else {
 		*txq->axq_link = ATH_BUF_GET_DESC_PHY_ADDR(bf);
 
 		txe_val = OS_REG_READ(ah, 0x840);
 		if (!(txe_val & (1<< txq->axq_qnum)))
-			ath_hal_puttxbuf(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
+			ah->ah_setTxDP(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
 	}
 
 	txq->axq_link = &bf->bf_lastds->ds_link;
-	ath_hal_txstart(ah, txq->axq_qnum);
+	ah->ah_startTxDma(ah, txq->axq_qnum);
 }
 
 static a_int32_t ath_tgt_txbuf_setup(struct ath_softc_tgt *sc,
@@ -983,11 +985,12 @@ ath_tx_freebuf(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	a_int32_t i ;
 	struct ath_tx_desc *bfd = NULL;
+	struct ath_hal *ah = sc->sc_ah;
 
 	for (bfd = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; bfd++, i++) {
-		ath_hal_clr11n_aggr(sc->sc_ah, bfd);
-		ath_hal_set11n_burstduration(sc->sc_ah, bfd, 0);
-		ath_hal_set11n_virtualmorefrag(sc->sc_ah, bfd, 0);
+		ah->ah_clr11nAggr(ah, bfd);
+		ah->ah_set11nBurstDuration(ah, bfd, 0);
+		ah->ah_set11nVirtualMoreFrag(ah, bfd, 0);
 	}
 
 	ath_dma_unmap(sc, bf);
@@ -1198,7 +1201,7 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 
 	flags |= HAL_TXDESC_INTREQ;
 
-	ath_hal_setuptxdesc(ah, ds
+	ah->ah_setupTxDesc(ah, ds
 			    , pktlen
 			    , hdrlen
 			    , atype
@@ -1220,8 +1223,8 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 	 * in Auth frame 3 of Shared Authentication, owl needs this.
 	 */
 	if (iswep && (keyix != HAL_TXKEYIX_INVALID) &&
-	    (wh->i_fc[0] & IEEE80211_FC0_SUBTYPE_MASK) == IEEE80211_FC0_SUBTYPE_AUTH)
-		ath_hal_fillkeytxdesc(ah, ds, mh->keytype);
+			(wh->i_fc[0] & IEEE80211_FC0_SUBTYPE_MASK) == IEEE80211_FC0_SUBTYPE_AUTH)
+		ah->ah_fillKeyTxDesc(ah, ds, mh->keytype);
 
 	ath_filltxdesc(sc, bf);
 
@@ -1231,7 +1234,7 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 		series[i].ChSel = sc->sc_ic.ic_tx_chainmask;
 		series[i].RateFlags = 0;
 	}
-	ath_hal_set11n_ratescenario(ah, ds, 0, ctsrate, ctsduration, series, 4, 0);
+	ah->ah_set11nRateScenario(ah, ds, 0, ctsrate, ctsduration, series, 4, 0);
 	ath_tgt_txqaddbuf(sc, txq, bf, bf->bf_lastds);
 
 	return;
@@ -1250,13 +1253,13 @@ ath_tgt_txqaddbuf(struct ath_softc_tgt *sc,
 	ATH_TXQ_INSERT_TAIL(txq, bf, bf_list);
 
 	if (txq->axq_link == NULL) {
-		ath_hal_puttxbuf(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
+		ah->ah_setTxDP(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
 	} else {
 		*txq->axq_link = ATH_BUF_GET_DESC_PHY_ADDR(bf);
 	}
 
 	txq->axq_link = &lastds->ds_link;
-	ath_hal_txstart(ah, txq->axq_qnum);
+	ah->ah_startTxDma(ah, txq->axq_qnum);
 }
 
 void ath_tgt_handle_normal(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
@@ -1379,6 +1382,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 	ath_tx_bufhead bf_q;
 	struct ath_txq *txq = TID_TO_ACTXQ(tid->tidno);
 	struct ath_tx_desc *ds = NULL;
+	struct ath_hal *ah = sc->sc_ah;
 	int i;
 
 
@@ -1409,7 +1413,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 			bf->bf_next = NULL;
 
 			for(ds = bf->bf_desc; ds <= bf->bf_lastds; ds++)
-				ath_hal_clr11n_aggr(sc->sc_ah, ds);
+				ah->ah_clr11nAggr(ah, ds);
 
 			ath_buf_set_rate(sc, bf);
 			bf->bf_txq_add(sc, bf);
@@ -1423,12 +1427,12 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 
 		bf->bf_isaggr  = 1;
 		ath_buf_set_rate(sc, bf);
-		ath_hal_set11n_aggr_first(sc->sc_ah, bf->bf_desc, bf->bf_al,
+		ah->ah_set11nAggrFirst(ah, bf->bf_desc, bf->bf_al,
 					  bf->bf_ndelim);
 		bf->bf_lastds = bf_last->bf_lastds;
 
 		for (i = 0; i < bf_last->bf_dmamap_info.nsegs; i++)
-			ath_hal_set11n_aggr_last(sc->sc_ah, &bf_last->bf_descarr[i]);
+			ah->ah_set11nAggrLast(ah, &bf_last->bf_descarr[i]);
 
 		if (status == ATH_AGGR_8K_LIMITED) {
 			adf_os_assert(0);
@@ -1496,6 +1500,7 @@ int ath_tgt_tx_form_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid,
 	int nframes = 0, rl = 0;;
 	struct ath_tx_desc *ds = NULL;
 	struct ath_tx_buf *bf;
+	struct ath_hal *ah = sc->sc_ah;
 	u_int16_t aggr_limit =  (64*1024 -1), al = 0, bpad = 0, al_delta;
 	u_int16_t h_baw = tid->baw_size/2, prev_al = 0, prev_frames = 0;
 
@@ -1572,7 +1577,7 @@ int ath_tgt_tx_form_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid,
 		bf_prev = bf;
 
 		for(ds = bf->bf_desc; ds <= bf->bf_lastds; ds++)
-			ath_hal_set11n_aggr_middle(sc->sc_ah, ds, bf->bf_ndelim);
+			ah->ah_set11nAggrMiddle(ah, ds, bf->bf_ndelim);
 
 	} while (!asf_tailq_empty(&tid->buf_q));
 
@@ -1801,14 +1806,15 @@ ath_tx_retry_subframe(struct ath_softc_tgt *sc, struct ath_tx_buf *bf,
 	struct ath_node_target *an = ATH_NODE_TARGET(bf->bf_node);
 	ath_atx_tid_t *tid = ATH_AN_2_TID(an, bf->bf_tidno);
 	struct ath_tx_desc *ds = NULL;
+	struct ath_hal *ah = sc->sc_ah;
 	int i = 0;
 
 	__stats(sc, txaggr_compretries);
 
 	for(ds = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; ds++, i++) {
-		ath_hal_clr11n_aggr(sc->sc_ah, ds);
-		ath_hal_set11n_burstduration(sc->sc_ah, ds, 0);
-		ath_hal_set11n_virtualmorefrag(sc->sc_ah, ds, 0);
+		ah->ah_clr11nAggr(ah, ds);
+		ah->ah_set11nBurstDuration(ah, ds, 0);
+		ah->ah_set11nVirtualMoreFrag(ah, ds, 0);
 	}
 
 	if (bf->bf_retries >= OWLMAX_RETRIES) {
@@ -2081,6 +2087,7 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 	struct ieee80211_frame_bar *bar;
 	u_int8_t min_rate;
 	struct ath_tx_desc *ds, *ds0;
+	struct ath_hal *ah = sc->sc_ah;
 	HAL_11N_RATE_SERIES series[4];
 	int i = 0;
 	adf_nbuf_queue_t skbhead;
@@ -2122,7 +2129,7 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 	adf_nbuf_dmamap_info(bf->bf_dmamap, &bf->bf_dmamap_info);
 
 	ds = bf->bf_desc;
-	ath_hal_setuptxdesc(sc->sc_ah, ds
+	ah->ah_setupTxDesc(ah, ds
 			    , adf_nbuf_len(skb) + IEEE80211_CRC_LEN
 			    , 0
 			    , HAL_PKT_TYPE_NORMAL
@@ -2141,7 +2148,7 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 	bf->bf_next = NULL;
 
 	for (ds0 = ds, i=0; i < bf->bf_dmamap_info.nsegs; ds0++, i++) {
-		ath_hal_clr11n_aggr(sc->sc_ah, ds0);
+		ah->ah_clr11nAggr(ah, ds0);
 	}
 
 	ath_filltxdesc(sc, bf);
@@ -2152,6 +2159,6 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 		series[i].ChSel = sc->sc_ic.ic_tx_chainmask;
 	}
 
-	ath_hal_set11n_ratescenario(sc->sc_ah, bf->bf_desc, 0, 0, 0, series, 4, 4);
+	ah->ah_set11nRateScenario(ah, bf->bf_desc, 0, 0, 0, series, 4, 4);
 	ath_tgt_txq_add_ucast(sc, bf);
 }

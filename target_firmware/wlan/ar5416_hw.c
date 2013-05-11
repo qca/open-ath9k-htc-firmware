@@ -33,12 +33,10 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opt_ah.h"
 #include "ah.h"
 #include "ah_internal.h"
 #include "ar5416.h"
 #include "ar5416reg.h"
-#include "ar5416phy.h"
 #include "ar5416desc.h"
 
 #define N(a) (sizeof(a)/sizeof(a[0]))
@@ -59,34 +57,26 @@ static const struct ath_hal_private ar5416hal_10 = {{
 
 		/* Transmit functions */
 		.ah_updateTxTrigLevel   = ar5416UpdateTxTrigLevel,
-		.ah_getTxDP             = ar5416GetTxDP,
 		.ah_setTxDP             = ar5416SetTxDP,
 		.ah_numTxPending        = ar5416NumTxPending,    
 		.ah_startTxDma          = ar5416StartTxDma,
 		.ah_stopTxDma           = ar5416StopTxDma,
-        
-		.ah_getTxIntrQueue      = ar5416GetTxIntrQueue,
+
 		.ah_abortTxDma          = ar5416AbortTxDma,
 
 		/* Misc Functions */
-		.ah_getCapability       = ar5416GetCapability,
-		.ah_getTsf32            = ar5416GetTsf32,
 		.ah_getTsf64            = ar5416GetTsf64,
-		.ah_resetTsf            = ar5416ResetTsf,
 		.ah_setRxFilter         = ar5416SetRxFilter,
 
 		/* RX Functions */
-		.ah_getRxDP             = ar5416GetRxDP,
 		.ah_setRxDP             = ar5416SetRxDP,
 		.ah_stopDmaReceive      = ar5416StopDmaReceive,
 		.ah_enableReceive       = ar5416EnableReceive,
-		.ah_startPcuReceive     = ar5416StartPcuReceive,
 		.ah_stopPcuReceive      = ar5416StopPcuReceive,
 
 		/* Interrupt Functions */
 		.ah_isInterruptPending   = ar5416IsInterruptPending,
 		.ah_getPendingInterrupts = ar5416GetPendingInterrupts,
-		.ah_getInterrupts        = ar5416GetInterrupts,
 		.ah_setInterrupts        = ar5416SetInterrupts,
 	},
 };
@@ -115,27 +105,21 @@ ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
 
 	ah->ah_dev = dev;
 	ah->ah_sc = sc;
-	
-	/* If its a Owl 2.0 chip then change the hal structure to
-	   point to the Owl 2.0 ar5416_hal_20 structure */
-	if(1) {
-		ah->ah_set11nTxDesc        = ar5416Set11nTxDesc_20;
-		ah->ah_set11nRateScenario  = ar5416Set11nRateScenario_20;
-		ah->ah_set11nAggrFirst     = ar5416Set11nAggrFirst_20;
-		ah->ah_set11nAggrMiddle    = ar5416Set11nAggrMiddle_20;
-		ah->ah_set11nAggrLast      = ar5416Set11nAggrLast_20;
-		ah->ah_clr11nAggr          = ar5416Clr11nAggr_20;
-		ah->ah_set11nBurstDuration = ar5416Set11nBurstDuration_20;
-		ah->ah_setupRxDesc         = ar5416SetupRxDesc_20;
-		ah->ah_procRxDescFast      = ar5416ProcRxDescFast_20;
-		ah->ah_updateCTSForBursting = NULL;
-		ah->ah_setupTxDesc         = ar5416SetupTxDesc_20;
-		ah->ah_reqTxIntrDesc       = ar5416IntrReqTxDesc_20;
-		ah->ah_fillTxDesc          = ar5416FillTxDesc_20;
-		ah->ah_fillKeyTxDesc       = ar5416FillKeyTxDesc_20;
-		ah->ah_procTxDesc          = ar5416ProcTxDesc_20;
-		ah->ah_set11nVirtualMoreFrag = ar5416Set11nVirtualMoreFrag_20;
-	}
+
+	ah->ah_set11nTxDesc        = ar5416Set11nTxDesc_20;
+	ah->ah_set11nRateScenario  = ar5416Set11nRateScenario_20;
+	ah->ah_set11nAggrFirst     = ar5416Set11nAggrFirst_20;
+	ah->ah_set11nAggrMiddle    = ar5416Set11nAggrMiddle_20;
+	ah->ah_set11nAggrLast      = ar5416Set11nAggrLast_20;
+	ah->ah_clr11nAggr          = ar5416Clr11nAggr_20;
+	ah->ah_set11nBurstDuration = ar5416Set11nBurstDuration_20;
+	ah->ah_setupRxDesc         = ar5416SetupRxDesc_20;
+	ah->ah_procRxDescFast      = ar5416ProcRxDescFast_20;
+	ah->ah_setupTxDesc         = ar5416SetupTxDesc_20;
+	ah->ah_fillTxDesc          = ar5416FillTxDesc_20;
+	ah->ah_fillKeyTxDesc       = ar5416FillKeyTxDesc_20;
+	ah->ah_procTxDesc          = ar5416ProcTxDesc_20;
+	ah->ah_set11nVirtualMoreFrag = ar5416Set11nVirtualMoreFrag_20;
 
 	return ah;
 }
@@ -231,11 +215,6 @@ HAL_BOOL ar5416GetPendingInterrupts(struct ath_hal *ah, HAL_INT *masked)
 	return AH_TRUE;
 }
 
-HAL_INT ar5416GetInterrupts(struct ath_hal *ah)
-{
-	return AH5416(ah)->ah_maskReg;
-}
-
 HAL_INT
 ar5416SetInterrupts(struct ath_hal *ah, HAL_INT ints)
 {
@@ -291,41 +270,6 @@ ar5416SetInterrupts(struct ath_hal *ah, HAL_INT ints)
 }
 
 /****************/
-/* Capabilities */
-/****************/
-
-HAL_STATUS ar5416GetCapability(struct ath_hal *ah, HAL_CAPABILITY_TYPE type,
-			       a_uint32_t capability, a_uint32_t *result)
-
-{
-        HAL_CAPABILITIES *pCap = &AH_PRIVATE(ah)->ah_caps;
-#ifndef MAGPIE_MERLIN // K2
-        pCap->halRxStbcSupport = 1;  /* K2 supports STBC Rx only */
-        pCap->halTxStbcSupport = 0;
-#else
-        pCap->halRxStbcSupport = 1;  /* number of streams for STBC recieve. */
-        pCap->halTxStbcSupport = 1;
-#endif
-
-	switch (type) {
-#ifdef MAGPIE_MERLIN
-	case HAL_CAP_RX_STBC:
-	{
-		*result = pCap->halRxStbcSupport;
-		return HAL_OK;
-	}
-	case HAL_CAP_TX_STBC:
-	{
-		*result = pCap->halTxStbcSupport;
-		return HAL_OK;
-	}
-#endif
-        default:
-                return ath_hal_getcapability(ah, type, capability, result);
-	}
-}
-
-/****************/
 /* TSF Handling */
 /****************/
 
@@ -339,37 +283,9 @@ u_int64_t ar5416GetTsf64(struct ath_hal *ah)
         return tsf;
 }
 
-a_uint32_t ar5416GetTsf32(struct ath_hal *ah)
-{
-        return OS_REG_READ(ah, AR_TSF_L32);
-}
-
-void ar5416ResetTsf(struct ath_hal *ah)
-{
-	a_int32_t count;
-
-	count = 0;
-
-	while (OS_REG_READ(ah, AR_SLP32_MODE) & AR_SLP32_TSF_WRITE_STATUS) {
-		count++;
-		if (count > 10) {
-			break;
-		}
-		OS_DELAY(10);
-	}
-	OS_REG_WRITE(ah, AR_RESET_TSF, AR_RESET_TSF_ONCE);
-}
-
 /******/
 /* RX */
 /******/
-
-a_uint32_t ar5416GetRxDP(struct ath_hal *ath)
-{
-	return OS_REG_READ(ath, AR_RXDP);
-}
-
-
 void ar5416SetRxDP(struct ath_hal *ah, a_uint32_t rxdp)
 {
 	OS_REG_WRITE(ah, AR_RXDP, rxdp);
@@ -422,12 +338,6 @@ HAL_BOOL ar5416SetMulticastFilterIndex(struct ath_hal *ah, a_uint32_t ix)
 		OS_REG_WRITE(ah, AR_MCAST_FIL0, (val | (1<<ix)));
 	}
 	return AH_TRUE;
-}
-
-void ar5416StartPcuReceive(struct ath_hal *ah)
-{
-	OS_REG_CLR_BIT(ah, AR_DIAG_SW,
-		       (AR_DIAG_RX_DIS | AR_DIAG_RX_ABORT));
 }
 
 void ar5416SetRxFilter(struct ath_hal *ah, a_uint32_t bits)
@@ -605,12 +515,6 @@ HAL_BOOL ar5416UpdateTxTrigLevel(struct ath_hal *ah, HAL_BOOL bIncTrigLevel)
         return (newLevel != curLevel);
 }
 
-a_uint32_t ar5416GetTxDP(struct ath_hal *ah, a_uint32_t q)
-{
-        HALASSERT(q < AH_PRIVATE(ah)->ah_caps.halTotalQueues);
-        return OS_REG_READ(ah, AR_QTXDP(q));
-}
-
 HAL_BOOL ar5416SetTxDP(struct ath_hal *ah, a_uint32_t q, a_uint32_t txdp)
 {
         HALASSERT(q < AH_PRIVATE(ah)->ah_caps.halTotalQueues);
@@ -732,19 +636,6 @@ HAL_BOOL ar5416StopTxDma(struct ath_hal*ah, a_uint32_t q)
 
         OS_REG_WRITE(ah, AR_Q_TXD, 0);
         return (i != 0);
-}
-
-void ar5416GetTxIntrQueue(struct ath_hal *ah, a_uint32_t *txqs)
-{
-        struct ath_hal_5416 *ahp = AH5416(ah);
-        *txqs &= ahp->ah_intrTxqs;
-        ahp->ah_intrTxqs &= ~(*txqs);
-}
-
-void ar5416IntrReqTxDesc_20(struct ath_hal *ah, struct ath_desc *ds)
-{
-	struct ar5416_desc *ads = AR5416DESC(ds);
-	ads->ds_ctl0 |= AR_TxIntrReq;
 }
 
 HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,

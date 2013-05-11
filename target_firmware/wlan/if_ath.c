@@ -50,13 +50,12 @@
 #include <adf_os_irq.h>
 
 #include <if_ath_pci.h>
-#include "if_ethersubr.h"
 #include "if_llc.h"
 #include "ieee80211_var.h"
-#include "ieee80211_proto.h"
 #include "if_athrate.h"
 #include "if_athvar.h"
 #include "ah_desc.h"
+#include "ah.h"
 
 static a_int32_t ath_numrxbufs = -1;
 static a_int32_t ath_numrxdescs = -1;
@@ -97,11 +96,12 @@ static a_uint16_t adf_os_cpu_to_le16(a_uint16_t x)
  */
 static u_int64_t ath_extend_tsf(struct ath_softc_tgt *sc, u_int32_t rstamp)
 {
+	struct ath_hal *ah = sc->sc_ah;
 	u_int64_t tsf;
 	u_int32_t tsf_low;
 	u_int64_t tsf64;
 
-	tsf = ath_hal_gettsf64(sc->sc_ah);
+	tsf = ah->ah_getTsf64(ah);
 	tsf_low = tsf & 0xffffffff;
 	tsf64 = (tsf & ~0xffffffffULL) | rstamp;
 
@@ -121,10 +121,10 @@ static a_int32_t ath_rate_setup(struct ath_softc_tgt *sc, a_uint32_t mode)
 
 	switch (mode) {
 	case IEEE80211_MODE_11NA:
-		sc->sc_rates[mode] = ath_hal_getratetable(ah, HAL_MODE_11NA);
+		sc->sc_rates[mode] = ah->ah_getRateTable(ah, HAL_MODE_11NA);
 		break;
 	case IEEE80211_MODE_11NG:
-		sc->sc_rates[mode] = ath_hal_getratetable(ah, HAL_MODE_11NG);
+		sc->sc_rates[mode] = ah->ah_getRateTable(ah, HAL_MODE_11NG);
 		break;
 	default:
 		return 0;
@@ -266,18 +266,18 @@ static a_int32_t ath_rxdesc_init(struct ath_softc_tgt *sc, struct ath_rx_desc *d
 	ds->ds_link = 0;
 	adf_nbuf_peek_header(ds->ds_nbuf, &anbdata, &anblen);
 
-	ath_hal_setuprxdesc(ah, ds,
+	ah->ah_setupRxDesc(ah, ds,
 			    adf_nbuf_tailroom(ds->ds_nbuf),
 			    0);
 
 	if (sc->sc_rxlink == NULL) {
-		ath_hal_putrxbuf(ah, ds->ds_daddr);
+		ah->ah_setRxDP(ah, ds->ds_daddr);
 	}
 	else {
 		*sc->sc_rxlink = ds->ds_daddr;
 	}
 	sc->sc_rxlink = &ds->ds_link;
-	ath_hal_rxena(ah);
+	ah->ah_enableReceive(ah);
 
 	return 0;
 }
@@ -335,7 +335,7 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 	((struct ath_desc *)((caddr_t)(_sc)->sc_rxdma.dd_desc +		\
 			     ((_pa) - (_sc)->sc_rxdma.dd_desc_paddr)))
 
-	tsf = ath_hal_gettsf64(ah);
+	tsf = ah->ah_getTsf64(ah);
 	bf = asf_tailq_first(&sc->sc_rxbuf);
 
 	ds = asf_tailq_first(&sc->sc_rxdesc);
@@ -386,7 +386,7 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 			continue;
 		}
 
-		retval = ath_hal_rxprocdescfast(ah, ds, ds->ds_daddr,
+		retval = ah->ah_procRxDescFast(ah, ds, ds->ds_daddr,
 						PA2DESC(sc, ds->ds_link), &bf->bf_rx_status);
 		if (HAL_EINPROGRESS == retval) {
 			break;
@@ -472,7 +472,7 @@ static a_int32_t ath_startrecv(struct ath_softc_tgt *sc)
 	}
 
 	ds = asf_tailq_first(&sc->sc_rxdesc);
-	ath_hal_putrxbuf(ah, ds->ds_daddr);
+	ah->ah_setRxDP(ah, ds->ds_daddr);
 
 	return 0;
 }
@@ -522,7 +522,7 @@ static void ath_tgt_rx_tasklet(TQUEUE_ARG data)
 	} while(1);
 
 	sc->sc_imask |= HAL_INT_RX;
-	ath_hal_intrset(ah, sc->sc_imask);
+	ah->ah_setInterrupts(ah, sc->sc_imask);
 }
 
 /*******************/
@@ -555,7 +555,7 @@ static void ath_beacon_setup(struct ath_softc_tgt *sc,
 	rt  = sc->sc_currates;
 	rate = rt->info[rix].rateCode;
 
-	ath_hal_setuptxdesc(ah, ds
+	ah->ah_setupTxDesc(ah, ds
 			    , adf_nbuf_len(skb) + IEEE80211_CRC_LEN
 			    , sizeof(struct ieee80211_frame)
 			    , HAL_PKT_TYPE_BEACON
@@ -570,7 +570,7 @@ static void ath_beacon_setup(struct ath_softc_tgt *sc,
 			    , 0
 			    , ATH_COMP_PROC_NO_COMP_NO_CCS);
 
-	ath_hal_filltxdesc(ah, ds
+	ah->ah_fillTxDesc(ah, ds
 			   , asf_roundup(adf_nbuf_len(skb), 4)
 			   , AH_TRUE
 			   , AH_TRUE
@@ -580,7 +580,7 @@ static void ath_beacon_setup(struct ath_softc_tgt *sc,
 	series[0].Rate = rate;
 	series[0].ChSel = sc->sc_ic.ic_tx_chainmask;
 	series[0].RateFlags = 0;
-	ath_hal_set11n_ratescenario(ah, ds, 0, 0, 0, series, 4, 0);
+	ah->ah_set11nRateScenario(ah, ds, 0, 0, 0, series, 4, 0);
 }
 
 static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
@@ -624,9 +624,9 @@ static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
 	adf_nbuf_dmamap_info(bf->bf_dmamap,&bf->bf_dmamap_info);
 
 	ath_beacon_setup(sc, bf, &sc->sc_vap[vap_index]);
-	ath_hal_stoptxdma(ah, sc->sc_bhalq);
-	ath_hal_puttxbuf(ah, sc->sc_bhalq, ATH_BUF_GET_DESC_PHY_ADDR(bf));
-	ath_hal_txstart(ah, sc->sc_bhalq);
+	ah->ah_stopTxDma(ah, sc->sc_bhalq);
+	ah->ah_setTxDP(ah, sc->sc_bhalq, ATH_BUF_GET_DESC_PHY_ADDR(bf));
+	ah->ah_startTxDma(ah, sc->sc_bhalq);
 }
 
 /******/
@@ -637,7 +637,7 @@ static void ath_tx_stopdma(struct ath_softc_tgt *sc, struct ath_txq *txq)
 {
 	struct ath_hal *ah = sc->sc_ah;
 
-	(void) ath_hal_stoptxdma(ah, txq->axq_qnum);
+	ah->ah_stopTxDma(ah, txq->axq_qnum);
 }
 
 static void owltgt_txq_drain(struct ath_softc_tgt *sc, struct ath_txq *txq)
@@ -660,7 +660,7 @@ static void ath_draintxq(struct ath_softc_tgt *sc, HAL_BOOL drain_softq)
 	ath_tx_status_clear(sc);
 	sc->sc_tx_draining = 1;
 
-	(void) ath_hal_stoptxdma(ah, sc->sc_bhalq);
+	ah->ah_stopTxDma(ah, sc->sc_bhalq);
 
 	for (i = 0; i < HAL_NUM_TX_QUEUES; i++)
 		if (ATH_TXQ_SETUP(sc, i))
@@ -785,7 +785,7 @@ static void tgt_HTCRecv_cabhandler(HTC_ENDPOINT_ID EndPt, adf_nbuf_t hdr_buf,
 	a_uint32_t tmp;
 
 #ifdef ATH_ENABLE_CABQ
-	tsf = ath_hal_gettsf64(ah);
+	tsf = ah->ah_getTsf64(ah);
 	tmp = tsf - sc->sc_swba_tsf;
 
 	if ( tmp > ATH_CABQ_HANDLING_THRESHOLD ) {
@@ -1021,24 +1021,24 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 	if (sc->sc_invalid)
 		return ADF_OS_IRQ_NONE;
 
-	if (!ath_hal_intrpend(ah))
+	if (!ah->ah_isInterruptPending(ah))
 		return ADF_OS_IRQ_NONE;
 
-	ath_hal_getisr(ah, &status);
+	ah->ah_getPendingInterrupts(ah, &status);
 
 	status &= sc->sc_imask;
 
 	if (status & HAL_INT_FATAL) {
-		ath_hal_intrset(ah, 0);
+		ah->ah_setInterrupts(ah, 0);
 		ATH_SCHEDULE_TQUEUE(sc->sc_dev, &sc->sc_fataltq);
 	} else {
 		if (status & HAL_INT_SWBA) {
 			WMI_SWBA_EVENT swbaEvt;
 			struct ath_txq *txq = ATH_TXQ(sc, 8);
 
-			swbaEvt.tsf = ath_hal_gettsf64(ah);
-			swbaEvt.beaconPendingCount = ath_hal_numtxpending(ah, sc->sc_bhalq);
-			sc->sc_swba_tsf = ath_hal_gettsf64(ah);
+			swbaEvt.tsf = ah->ah_getTsf64(ah);
+			swbaEvt.beaconPendingCount = ah->ah_numTxPending(ah, sc->sc_bhalq);
+			sc->sc_swba_tsf = ah->ah_getTsf64(ah);
 
 			wmi_event(sc->tgt_wmi_handle,
 				  WMI_SWBA_EVENTID,
@@ -1061,14 +1061,14 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 			ath_uapsd_processtriggers(sc);
 
 			sc->sc_imask &= ~HAL_INT_RX;
-			ath_hal_intrset(ah, sc->sc_imask);
+			ah->ah_setInterrupts(ah, sc->sc_imask);
 
 			ATH_SCHEDULE_TQUEUE(sc->sc_dev, &sc->sc_rxtq);
 		}
 
 		if (status & HAL_INT_TXURN) {
 			sc->sc_int_stats.ast_txurn++;
-			ath_hal_updatetxtriglevel(ah, AH_TRUE);
+			ah->ah_updateTxTrigLevel(ah, AH_TRUE);
 		}
 
 		ATH_SCHEDULE_TQUEUE(sc->sc_dev, &sc->sc_txtq);
@@ -1127,7 +1127,7 @@ static void ath_enable_intr_tgt(void *Context, A_UINT16 Command,
 		sc->sc_imask |= HAL_INT_BMISS;
 	}
 
-	ath_hal_intrset(ah, sc->sc_imask);
+	ah->ah_setInterrupts(ah, sc->sc_imask);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo,NULL, 0);
 }
 
@@ -1146,18 +1146,8 @@ static void ath_init_tgt(void *Context, A_UINT16 Command,
 	if (ath_hal_htsupported(ah))
 		sc->sc_imask |= HAL_INT_CST;
 
-#ifdef MAGPIE_MERLIN
-	{
-		a_uint32_t stbcsupport;
-		if (ath_hal_txstbcsupport(ah, &stbcsupport))
-			sc->sc_txstbcsupport = stbcsupport;
-
-		if (ath_hal_rxstbcsupport(ah, &stbcsupport))
-			sc->sc_rxstbcsupport = stbcsupport;
-	}
-#endif
 	adf_os_setup_intr(sc->sc_dev, ath_intr);
-	ath_hal_intrset(ah, sc->sc_imask);
+	ah->ah_setInterrupts(ah, sc->sc_imask);
 
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
@@ -1526,7 +1516,7 @@ static void ath_disable_intr_tgt(void *Context, A_UINT16 Command,
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
 	struct ath_hal *ah = sc->sc_ah;
 
-	ath_hal_intrset(ah, 0);
+	ah->ah_setInterrupts(ah, 0);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo,NULL, 0);
 }
 
@@ -1575,8 +1565,9 @@ static void ath_aborttx_dma_tgt(void *Context, A_UINT16 Command,
 				A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen)
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
+	struct ath_hal *ah = sc->sc_ah;
 
-	ath_hal_aborttxdma(sc->sc_ah);
+	ah->ah_abortTxDma(sc->sc_ah);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
@@ -1606,7 +1597,7 @@ static void ath_stop_tx_dma_tgt(void *Context, A_UINT16 Command,
 		q = *(a_uint32_t *)data;
 
 	q = adf_os_ntohl(q);
-	ath_hal_stoptxdma(ah, q);
+	ah->ah_stopTxDma(ah, q);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
@@ -1626,9 +1617,9 @@ static void ath_stoprecv_tgt(void *Context, A_UINT16 Command,
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
 	struct ath_hal *ah = sc->sc_ah;
 
-	ath_hal_stoppcurecv(ah);
-	ath_hal_setrxfilter(ah, 0);
-	ath_hal_stopdmarecv(ah);
+	ah->ah_stopPcuReceive(ah);
+	ah->ah_setRxFilter(ah, 0);
+	ah->ah_stopDmaReceive(ah);
 
 	sc->sc_rxlink = NULL;
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
@@ -1655,7 +1646,7 @@ static void ath_detach_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo,
 	struct ath_hal *ah = sc->sc_ah;
 
 	ath_desc_free(sc);
-	ath_hal_detach(ah);
+	ah->ah_detach(ah);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 	adf_os_mem_free(sc);
 }
@@ -1940,14 +1931,14 @@ a_int32_t ath_tgt_attach(a_uint32_t devid, struct ath_softc_tgt *sc, adf_os_devi
 
 	ath_tgt_txq_setup(sc);
 	sc->sc_imask =0;
-	ath_hal_intrset(ah,0);
+	ah->ah_setInterrupts(ah, 0);
 
 	return 0;
 bad:
 bad2:
 	ath_desc_free(sc);
 	if (ah)
-		ath_hal_detach(ah);
+		ah->ah_detach(ah);
 }
 
 static void tgt_hif_htc_wmi_shutdown(struct ath_softc_tgt *sc)

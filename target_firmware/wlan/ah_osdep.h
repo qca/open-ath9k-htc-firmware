@@ -158,5 +158,4 @@ extern  a_uint32_t __ahdecl ath_hal_reg_read_target(struct ath_hal *ah, a_uint32
 #define AH_USE_EEPROM     0x00000001
 extern  struct ath_hal *_ath_hal_attach_tgt( a_uint32_t, HAL_SOFTC, adf_os_device_t,
        a_uint32_t flags, void* status);
-extern  void ath_hal_detach(struct ath_hal *);
 #endif /* _ATH_AH_OSDEP_H_ */

@@ -33,7 +33,6 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opt_ah.h"
 #include "ah.h"
 #include "ah_internal.h"
 #include <asf_bitmap.h>
@@ -67,12 +66,6 @@ ath_hal_getcapability(struct ath_hal *ah, HAL_CAPABILITY_TYPE type,
 		return pCap->halBssIdMaskSupport ? HAL_OK : HAL_ENOTSUPP;
 	case HAL_CAP_VEOL:
 		return pCap->halVEOLSupport ? HAL_OK : HAL_ENOTSUPP;
-#ifdef MAGPIE_MERLIN
-	case HAL_CAP_RX_STBC:
-		return HAL_ENOTSUPP;
-	case HAL_CAP_TX_STBC:
-		return HAL_ENOTSUPP;
-#endif
 	default:
 		return HAL_EINVAL;
 	}
