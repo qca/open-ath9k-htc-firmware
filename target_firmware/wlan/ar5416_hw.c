@@ -910,7 +910,7 @@ void ar5416Clr11nAggr_20(struct ath_tx_desc *ds)
 	ads->ds_ctl1 &= (~AR_IsAggr & ~AR_MoreAggr);
 }
 
-void ar5416Set11nBurstDuration_20(struct ath_hal *ah, struct ath_tx_desc *ds,
+void ar5416Set11nBurstDuration_20(struct ath_tx_desc *ds,
 				  a_uint32_t burstDuration)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);

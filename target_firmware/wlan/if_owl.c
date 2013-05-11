@@ -988,7 +988,7 @@ ath_tx_freebuf(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 
 	for (bfd = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; bfd++, i++) {
 		ah->ah_clr11nAggr(bfd);
-		ah->ah_set11nBurstDuration(ah, bfd, 0);
+		ah->ah_set11nBurstDuration(bfd, 0);
 		ah->ah_set11nVirtualMoreFrag(ah, bfd, 0);
 	}
 
@@ -1808,7 +1808,7 @@ ath_tx_retry_subframe(struct ath_softc_tgt *sc, struct ath_tx_buf *bf,
 
 	for(ds = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; ds++, i++) {
 		ah->ah_clr11nAggr(ds);
-		ah->ah_set11nBurstDuration(ah, ds, 0);
+		ah->ah_set11nBurstDuration(ds, 0);
 		ah->ah_set11nVirtualMoreFrag(ah, ds, 0);
 	}
 

@@ -404,8 +404,7 @@ struct ath_hal
 	void      __ahdecl(*ah_set11nAggrMiddle)(struct ath_tx_desc *ds, a_uint32_t numDelims);
 	void      __ahdecl(*ah_set11nAggrLast)(struct ath_tx_desc *ds);
 	void      __ahdecl(*ah_clr11nAggr)(struct ath_tx_desc *ds);
-	void      __ahdecl(*ah_set11nBurstDuration)(struct ath_hal *ah,
-						    struct ath_tx_desc *ds,
+	void      __ahdecl(*ah_set11nBurstDuration)(struct ath_tx_desc *ds,
 						    a_uint32_t burstDuration);
 	void      __ahdecl(*ah_set11nVirtualMoreFrag)(struct ath_hal *ah,
 						      struct ath_tx_desc *ds, a_uint32_t vmf);
