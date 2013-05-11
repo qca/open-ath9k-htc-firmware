@@ -377,9 +377,6 @@ struct ath_hal
 						  HAL_BOOL incTrigLevel);
            
 	/* Misc Functions */
-	HAL_STATUS __ahdecl(*ah_getCapability)(struct ath_hal *,
-					       HAL_CAPABILITY_TYPE, a_uint32_t capability,
-					       a_uint32_t *result);
 	void      __ahdecl(*ah_setDefAntenna)(struct ath_hal*, a_uint32_t);	
            
 	HAL_BOOL  __ahdecl(*ah_updateCTSForBursting)(struct ath_hal *,
