@@ -128,12 +128,6 @@ ath_hal_free(void* p)
 	adf_os_mem_free(p);
 }
 
-void __ahdecl
-ath_hal_memzero(void *dst, adf_os_size_t n)
-{
-	adf_os_mem_set(dst, 0, n);
-}
-
 void * __ahdecl
 ath_hal_memcpy(void *dst, const void *src, adf_os_size_t n)
 {
