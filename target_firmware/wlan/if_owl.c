@@ -1379,6 +1379,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 	ath_tx_bufhead bf_q;
 	struct ath_txq *txq = TID_TO_ACTXQ(tid->tidno);
 	struct ath_tx_desc *ds = NULL;
+	struct ath_hal *ah = sc->sc_ah;
 	int i;
 
 
@@ -1423,7 +1424,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 
 		bf->bf_isaggr  = 1;
 		ath_buf_set_rate(sc, bf);
-		ath_hal_set11n_aggr_first(sc->sc_ah, bf->bf_desc, bf->bf_al,
+		ah->ah_set11nAggrFirst(ah, bf->bf_desc, bf->bf_al,
 					  bf->bf_ndelim);
 		bf->bf_lastds = bf_last->bf_lastds;
 
