@@ -1052,7 +1052,7 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 	struct ath_vap_target *avp;
 	struct ath_hal *ah = sc->sc_ah;
 	a_uint8_t rix, txrate, ctsrate, cix = 0xff, *data;
-	a_uint32_t ivlen = 0, icvlen = 0, subtype, flags, ctsduration;
+	a_uint32_t subtype, flags, ctsduration;
 	a_int32_t i, iswep, ismcast, hdrlen, pktlen, try0, len;
 	struct ath_tx_desc *ds=NULL;
 	struct ath_txq *txq=NULL;
@@ -1201,20 +1201,16 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 
 	flags |= HAL_TXDESC_INTREQ;
 
-	ah->ah_setupTxDesc(ah, ds
+	ah->ah_setupTxDesc(ds
 			    , pktlen
 			    , hdrlen
 			    , atype
 			    , 60
 			    , txrate, try0
 			    , keyix
-			    , 0
 			    , flags
 			    , ctsrate
-			    , ctsduration
-			    , icvlen
-			    , ivlen
-			    , ATH_COMP_PROC_NO_COMP_NO_CCS);
+			    , ctsduration);
 
 	bf->bf_flags = flags;
 
@@ -2129,7 +2125,7 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 	adf_nbuf_dmamap_info(bf->bf_dmamap, &bf->bf_dmamap_info);
 
 	ds = bf->bf_desc;
-	ah->ah_setupTxDesc(ah, ds
+	ah->ah_setupTxDesc(ds
 			    , adf_nbuf_len(skb) + IEEE80211_CRC_LEN
 			    , 0
 			    , HAL_PKT_TYPE_NORMAL
@@ -2137,11 +2133,9 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 			    , min_rate
 			    , ATH_TXMAXTRY
 			    , bf->bf_keyix
-			    , 0
 			    , HAL_TXDESC_INTREQ
 			    | HAL_TXDESC_CLRDMASK
-			    , 0, 0, 0, 0
-			    , ATH_COMP_PROC_NO_COMP_NO_CCS);
+			    , 0, 0);
 
 	skbhead = bf->bf_skbhead;
 	bf->bf_isaggr = 0;

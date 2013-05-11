@@ -542,20 +542,16 @@ static void ath_beacon_setup(struct ath_softc_tgt *sc,
 	rt  = sc->sc_currates;
 	rate = rt->info[rix].rateCode;
 
-	ah->ah_setupTxDesc(ah, ds
+	ah->ah_setupTxDesc(ds
 			    , adf_nbuf_len(skb) + IEEE80211_CRC_LEN
 			    , sizeof(struct ieee80211_frame)
 			    , HAL_PKT_TYPE_BEACON
 			    , MAX_RATE_POWER
 			    , rate, 1
 			    , HAL_TXKEYIX_INVALID
-			    , 0
 			    , flags
 			    , 0
-			    , 0
-			    , 0
-			    , 0
-			    , ATH_COMP_PROC_NO_COMP_NO_CCS);
+			    , 0);
 
 	ah->ah_fillTxDesc(ah, ds
 			   , asf_roundup(adf_nbuf_len(skb), 4)
