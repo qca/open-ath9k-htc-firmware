@@ -67,7 +67,6 @@ static const struct ath_hal_private ar5416hal_10 = {{
 		.ah_abortTxDma          = ar5416AbortTxDma,
 
 		/* Misc Functions */
-		.ah_getCapability       = ar5416GetCapability,
 		.ah_getTsf32            = ar5416GetTsf32,
 		.ah_getTsf64            = ar5416GetTsf64,
 		.ah_resetTsf            = ar5416ResetTsf,
@@ -286,17 +285,6 @@ ar5416SetInterrupts(struct ath_hal *ah, HAL_INT ints)
 	OS_REG_WRITE(ah, AR_INTR_SYNC_ENABLE, AR_INTR_SYNC_ALL);
 
 	return omask;
-}
-
-/****************/
-/* Capabilities */
-/****************/
-
-HAL_STATUS ar5416GetCapability(struct ath_hal *ah, HAL_CAPABILITY_TYPE type,
-			       a_uint32_t capability, a_uint32_t *result)
-
-{
-	return ath_hal_getcapability(ah, type, capability, result);
 }
 
 /****************/
