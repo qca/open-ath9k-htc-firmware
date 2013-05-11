@@ -990,7 +990,7 @@ ath_tx_freebuf(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 	for (bfd = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; bfd++, i++) {
 		ah->ah_clr11nAggr(ah, bfd);
 		ah->ah_set11nBurstDuration(ah, bfd, 0);
-		ath_hal_set11n_virtualmorefrag(sc->sc_ah, bfd, 0);
+		ah->ah_set11nVirtualMoreFrag(ah, bfd, 0);
 	}
 
 	ath_dma_unmap(sc, bf);
@@ -1814,7 +1814,7 @@ ath_tx_retry_subframe(struct ath_softc_tgt *sc, struct ath_tx_buf *bf,
 	for(ds = bf->bf_desc, i = 0; i < bf->bf_dmamap_info.nsegs; ds++, i++) {
 		ah->ah_clr11nAggr(ah, ds);
 		ah->ah_set11nBurstDuration(ah, ds, 0);
-		ath_hal_set11n_virtualmorefrag(sc->sc_ah, ds, 0);
+		ah->ah_set11nVirtualMoreFrag(ah, ds, 0);
 	}
 
 	if (bf->bf_retries >= OWLMAX_RETRIES) {
