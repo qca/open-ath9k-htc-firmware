@@ -277,7 +277,7 @@ static void ath_tx_tgt_setds(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		break;
 	}
 
-	ah->ah_set11nTxDesc(ah, ds
+	ah->ah_set11nTxDesc(ds
 			      , bf->bf_pktlen
 			      , bf->bf_atype
 			      , 60

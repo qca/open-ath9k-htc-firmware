@@ -389,8 +389,7 @@ struct ath_hal
            
 	HAL_BOOL  __ahdecl(*ah_abortTxDma)(struct ath_hal *);
            
-	void      __ahdecl(*ah_set11nTxDesc)(struct ath_hal *ah,
-					     struct ath_tx_desc *ds,
+	void      __ahdecl(*ah_set11nTxDesc)(struct ath_tx_desc *ds,
 					     a_uint32_t pktLen, HAL_PKT_TYPE type,
 					     a_uint32_t txPower, a_uint32_t keyIx,
 					     HAL_KEY_TYPE keyType,
