@@ -1564,8 +1564,9 @@ static void ath_aborttx_dma_tgt(void *Context, A_UINT16 Command,
 				A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen)
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
+	struct ath_hal *ah = sc->sc_ah;
 
-	ath_hal_aborttxdma(sc->sc_ah);
+	ah->ah_abortTxDma(sc->sc_ah);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
