@@ -1024,7 +1024,7 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 	if (!ah->ah_isInterruptPending(ah))
 		return ADF_OS_IRQ_NONE;
 
-	ath_hal_getisr(ah, &status);
+	ah->ah_getPendingInterrupts(ah, &status);
 
 	status &= sc->sc_imask;
 
