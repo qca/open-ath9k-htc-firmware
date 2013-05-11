@@ -56,8 +56,6 @@
 #include "ratectrl.h"
 #include "ratectrl11n.h"
 
-INLINE A_RSSI median(A_RSSI a, A_RSSI b, A_RSSI c);
-
 static void ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew, 
 				  unsigned int capflag, struct ieee80211_rate *rs);
 
@@ -419,32 +417,6 @@ rcSibUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	pRc->maxValidRate = k;
 
 	rcSortValidRates(pRateTable, pRc);
-}
-
-
-
-/*
- * Return the median of three numbers
- */
-INLINE A_RSSI median(A_RSSI a, A_RSSI b, A_RSSI c)
-{
-	if (a >= b) {
-		if (b >= c) {
-			return b;
-		} else if (a > c) {
-			return c;
-		} else {
-			return a;
-		}
-	} else {
-		if (a >= c) {
-			return a;
-		} else if (b >= c) {
-			return c;
-		} else {
-			return b;
-		}
-	}
 }
 
 static A_UINT8
