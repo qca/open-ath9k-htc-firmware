@@ -898,7 +898,7 @@ static void ath_tgt_txq_add_ucast(struct ath_softc_tgt *sc, struct ath_tx_buf *b
 	}
 
 	txq->axq_link = &bf->bf_lastds->ds_link;
-	ath_hal_txstart(ah, txq->axq_qnum);
+	ah->ah_startTxDma(ah, txq->axq_qnum);
 }
 
 static a_int32_t ath_tgt_txbuf_setup(struct ath_softc_tgt *sc,
@@ -1254,7 +1254,7 @@ ath_tgt_txqaddbuf(struct ath_softc_tgt *sc,
 	}
 
 	txq->axq_link = &lastds->ds_link;
-	ath_hal_txstart(ah, txq->axq_qnum);
+	ah->ah_startTxDma(ah, txq->axq_qnum);
 }
 
 void ath_tgt_handle_normal(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
