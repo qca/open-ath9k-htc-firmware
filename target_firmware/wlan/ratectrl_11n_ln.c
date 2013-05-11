@@ -122,13 +122,6 @@ rcSetValidTxMask(TX_RATE_CTRL *pRc, A_UINT8 index, A_BOOL validTxRate)
 
 }
 
-static INLINE A_BOOL
-rcIsValidTxMask(TX_RATE_CTRL *pRc, A_UINT8 index)
-{
-	ASSERT(index < pRc->rateTableSize);
-	return (pRc->validRateIndex[index]);
-}
-
 /* Iterators for validTxRateMask */
 static INLINE A_BOOL
 rcGetNextValidTxRate(const RATE_TABLE_11N *pRateTable, TX_RATE_CTRL *pRc, 
