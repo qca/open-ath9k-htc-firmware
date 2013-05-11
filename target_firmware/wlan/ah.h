@@ -440,8 +440,7 @@ struct ath_hal
 	void      __ahdecl(*ah_setPCUConfig)(struct ath_hal *);
 	void      __ahdecl(*ah_setMulticastFilter)(struct ath_hal*,
 						   a_uint32_t filter0, a_uint32_t filter1);
-           
-	a_uint32_t __ahdecl(*ah_getTsf32)(struct ath_hal*);
+
 	u_int64_t __ahdecl(*ah_getTsf64)(struct ath_hal*);
 	void      __ahdecl(*ah_resetTsf)(struct ath_hal*);
            

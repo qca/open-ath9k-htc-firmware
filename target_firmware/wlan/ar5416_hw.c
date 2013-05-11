@@ -65,7 +65,6 @@ static const struct ath_hal_private ar5416hal_10 = {{
 		.ah_abortTxDma          = ar5416AbortTxDma,
 
 		/* Misc Functions */
-		.ah_getTsf32            = ar5416GetTsf32,
 		.ah_getTsf64            = ar5416GetTsf64,
 		.ah_resetTsf            = ar5416ResetTsf,
 		.ah_setRxFilter         = ar5416SetRxFilter,
@@ -297,11 +296,6 @@ u_int64_t ar5416GetTsf64(struct ath_hal *ah)
         tsf = (tsf << 32) | OS_REG_READ(ah, AR_TSF_L32);
 
         return tsf;
-}
-
-a_uint32_t ar5416GetTsf32(struct ath_hal *ah)
-{
-        return OS_REG_READ(ah, AR_TSF_L32);
 }
 
 void ar5416ResetTsf(struct ath_hal *ah)
