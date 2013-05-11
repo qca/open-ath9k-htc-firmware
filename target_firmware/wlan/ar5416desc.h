@@ -475,7 +475,7 @@ extern void ar5416Set11nTxDesc_20(struct ath_tx_desc *ds,
 extern void ar5416Set11nRateScenario_20(struct ath_tx_desc *ds,
        a_uint32_t durUpdateEn, a_uint32_t rtsctsRate, HAL_11N_RATE_SERIES series[], 
        a_uint32_t nseries, a_uint32_t flags);
-extern void ar5416Set11nAggrFirst_20(struct ath_hal *ah, struct ath_tx_desc *ds,
+extern void ar5416Set11nAggrFirst_20(struct ath_tx_desc *ds,
        a_uint32_t aggrLen, a_uint32_t numDelims);
 extern void ar5416Set11nAggrMiddle_20(struct ath_hal *ah, struct ath_tx_desc *ds,
        a_uint32_t numDelims);

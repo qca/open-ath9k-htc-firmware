@@ -399,8 +399,7 @@ struct ath_hal
 						   a_uint32_t rtsctsRate,
 						   HAL_11N_RATE_SERIES series[],
 						   a_uint32_t nseries, a_uint32_t flags);
-	void      __ahdecl(*ah_set11nAggrFirst)(struct ath_hal *ah,
-						struct ath_tx_desc *ds, a_uint32_t aggrLen,
+	void      __ahdecl(*ah_set11nAggrFirst)(struct ath_tx_desc *ds, a_uint32_t aggrLen,
 						a_uint32_t numDelims);
 	void      __ahdecl(*ah_set11nAggrMiddle)(struct ath_hal *ah,
 						 struct ath_tx_desc *ds, a_uint32_t numDelims);

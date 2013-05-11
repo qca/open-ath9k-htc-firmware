@@ -865,7 +865,7 @@ void ar5416Set11nRateScenario_20(struct ath_tx_desc *ds,
 				   | SM(rtsctsRate, AR_RTSCTSRate);
 }
 
-void ar5416Set11nAggrFirst_20(struct ath_hal *ah, struct ath_tx_desc *ds, a_uint32_t aggrLen,
+void ar5416Set11nAggrFirst_20(struct ath_tx_desc *ds, a_uint32_t aggrLen,
 			      a_uint32_t numDelims)
 {
 	struct ar5416_desc *ads = AR5416DESC(ds);

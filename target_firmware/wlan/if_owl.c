@@ -1422,7 +1422,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 
 		bf->bf_isaggr  = 1;
 		ath_buf_set_rate(sc, bf);
-		ah->ah_set11nAggrFirst(ah, bf->bf_desc, bf->bf_al,
+		ah->ah_set11nAggrFirst(bf->bf_desc, bf->bf_al,
 					  bf->bf_ndelim);
 		bf->bf_lastds = bf_last->bf_lastds;
 
