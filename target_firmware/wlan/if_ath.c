@@ -1617,7 +1617,7 @@ static void ath_stoprecv_tgt(void *Context, A_UINT16 Command,
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
 	struct ath_hal *ah = sc->sc_ah;
 
-	ath_hal_stoppcurecv(ah);
+	ah->ah_stopPcuReceive(ah);
 	ah->ah_setRxFilter(ah, 0);
 	ah->ah_stopDmaReceive(ah);
 
