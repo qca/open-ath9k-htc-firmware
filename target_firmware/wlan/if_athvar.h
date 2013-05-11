@@ -517,8 +517,6 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
     (ath_hal_getcapability(_ah, HAL_CAP_HT, 0, NULL) == HAL_OK)
 #define ath_hal_getrtsaggrlimit(_ah, _pv) \
     (ath_hal_getcapability(_ah, HAL_CAP_RTS_AGGR_LIMIT, 0, _pv) == HAL_OK)
-#define ath_hal_set11n_aggr_first(_ah, _ds, _aggrlen, _numdelims) \
-    ((*(_ah)->ah_set11nAggrFirst)(_ah, _ds, _aggrlen, _numdelims))
 #define ath_hal_set11n_aggr_middle(_ah, _ds, _numdelims) \
     ((*(_ah)->ah_set11nAggrMiddle)(_ah, _ds, _numdelims))
 #define ath_hal_set11n_aggr_last(_ah, _ds) \
