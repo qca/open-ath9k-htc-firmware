@@ -423,7 +423,7 @@ struct ath_hal
 					    a_uint32_t txRate0, a_uint32_t txTries0,
 					    a_uint32_t keyIx, a_uint32_t flags,
 					    a_uint32_t rtsctsRate, a_uint32_t rtsctsDuration);
-	HAL_BOOL  __ahdecl(*ah_fillTxDesc)(struct ath_hal *, struct ath_tx_desc *,
+	HAL_BOOL  __ahdecl(*ah_fillTxDesc)(struct ath_tx_desc *,
 					   a_uint32_t segLen, HAL_BOOL firstSeg,
 					   HAL_BOOL lastSeg, const struct ath_tx_desc *);
 	HAL_BOOL  __ahdecl (*ah_fillKeyTxDesc) (struct ath_hal *, struct ath_tx_desc *, HAL_KEY_TYPE);

@@ -253,7 +253,7 @@ static void ath_filltxdesc(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 		} else
 			ds->ds_link = ATH_BUF_GET_DESC_PHY_ADDR_WITH_IDX(bf, i+1);
 
-		ah->ah_fillTxDesc(ah, ds
+		ah->ah_fillTxDesc(ds
 				   , bf->bf_dmamap_info.dma_segs[i].len
 				   , i == 0
 				   , i == (bf->bf_dmamap_info.nsegs - 1)

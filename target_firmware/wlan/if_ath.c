@@ -553,7 +553,7 @@ static void ath_beacon_setup(struct ath_softc_tgt *sc,
 			    , 0
 			    , 0);
 
-	ah->ah_fillTxDesc(ah, ds
+	ah->ah_fillTxDesc(ds
 			   , asf_roundup(adf_nbuf_len(skb), 4)
 			   , AH_TRUE
 			   , AH_TRUE
