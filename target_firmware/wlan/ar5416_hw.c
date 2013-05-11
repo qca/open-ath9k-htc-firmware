@@ -61,8 +61,7 @@ static const struct ath_hal_private ar5416hal_10 = {{
 		.ah_numTxPending        = ar5416NumTxPending,    
 		.ah_startTxDma          = ar5416StartTxDma,
 		.ah_stopTxDma           = ar5416StopTxDma,
-        
-		.ah_getTxIntrQueue      = ar5416GetTxIntrQueue,
+
 		.ah_abortTxDma          = ar5416AbortTxDma,
 
 		/* Misc Functions */
@@ -687,13 +686,6 @@ HAL_BOOL ar5416StopTxDma(struct ath_hal*ah, a_uint32_t q)
 
         OS_REG_WRITE(ah, AR_Q_TXD, 0);
         return (i != 0);
-}
-
-void ar5416GetTxIntrQueue(struct ath_hal *ah, a_uint32_t *txqs)
-{
-        struct ath_hal_5416 *ahp = AH5416(ah);
-        *txqs &= ahp->ah_intrTxqs;
-        ahp->ah_intrTxqs &= ~(*txqs);
 }
 
 void ar5416IntrReqTxDesc_20(struct ath_hal *ah, struct ath_desc *ds)

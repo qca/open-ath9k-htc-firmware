@@ -435,7 +435,6 @@ struct ath_hal
 					   HAL_BOOL lastSeg, const struct ath_tx_desc *);
 	HAL_BOOL  __ahdecl (*ah_fillKeyTxDesc) (struct ath_hal *, struct ath_tx_desc *, HAL_KEY_TYPE);
 	HAL_STATUS __ahdecl(*ah_procTxDesc)(struct ath_hal *, struct ath_tx_desc *);
-	void		__ahdecl(*ah_getTxIntrQueue)(struct ath_hal *, a_uint32_t *);
 	void	   __ahdecl(*ah_reqTxIntrDesc)(struct ath_hal *, struct ath_desc*);    
 	HAL_BOOL  __ahdecl(*ah_setBssIdMask)(struct ath_hal *, const a_uint8_t*);
 	void      __ahdecl(*ah_setPCUConfig)(struct ath_hal *);
