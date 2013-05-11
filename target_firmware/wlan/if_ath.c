@@ -80,17 +80,6 @@ void owl_tgt_node_init(struct ath_node_target * an);
 void ath_tgt_tx_sched_normal(struct ath_softc_tgt *sc, struct ath_buf *bf);
 void ath_tgt_tx_sched_nonaggr(struct ath_softc_tgt *sc,struct ath_buf * bf_host);
 
-/*************/
-/* Utilities */
-/*************/
-
-#undef adf_os_cpu_to_le16
-
-static a_uint16_t adf_os_cpu_to_le16(a_uint16_t x)
-{
-	return ((((x) & 0xff00) >> 8) |   (((x) & 0x00ff) << 8));
-}
-
 /*
  * Extend a 32 bit TSF to 64 bit, taking wrapping into account.
  */
