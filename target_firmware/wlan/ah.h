@@ -387,8 +387,6 @@ struct ath_hal
            
                       
 	/* Target Transmit Functions */
-           
-	a_uint32_t __ahdecl(*ah_getTxDP)(struct ath_hal*, a_uint32_t);
 	HAL_BOOL  __ahdecl(*ah_setTxDP)(struct ath_hal*, a_uint32_t, a_uint32_t txdp);
 	a_uint32_t __ahdecl(*ah_numTxPending)(struct ath_hal *, a_uint32_t q);           
 	HAL_BOOL  __ahdecl(*ah_startTxDma)(struct ath_hal*, a_uint32_t);
