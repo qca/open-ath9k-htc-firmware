@@ -522,7 +522,7 @@ static void ath_tgt_rx_tasklet(TQUEUE_ARG data)
 	} while(1);
 
 	sc->sc_imask |= HAL_INT_RX;
-	ath_hal_intrset(ah, sc->sc_imask);
+	ah->ah_setInterrupts(ah, sc->sc_imask);
 }
 
 /*******************/
@@ -1029,7 +1029,7 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 	status &= sc->sc_imask;
 
 	if (status & HAL_INT_FATAL) {
-		ath_hal_intrset(ah, 0);
+		ah->ah_setInterrupts(ah, 0);
 		ATH_SCHEDULE_TQUEUE(sc->sc_dev, &sc->sc_fataltq);
 	} else {
 		if (status & HAL_INT_SWBA) {
@@ -1061,7 +1061,7 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 			ath_uapsd_processtriggers(sc);
 
 			sc->sc_imask &= ~HAL_INT_RX;
-			ath_hal_intrset(ah, sc->sc_imask);
+			ah->ah_setInterrupts(ah, sc->sc_imask);
 
 			ATH_SCHEDULE_TQUEUE(sc->sc_dev, &sc->sc_rxtq);
 		}
@@ -1127,7 +1127,7 @@ static void ath_enable_intr_tgt(void *Context, A_UINT16 Command,
 		sc->sc_imask |= HAL_INT_BMISS;
 	}
 
-	ath_hal_intrset(ah, sc->sc_imask);
+	ah->ah_setInterrupts(ah, sc->sc_imask);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo,NULL, 0);
 }
 
@@ -1147,7 +1147,7 @@ static void ath_init_tgt(void *Context, A_UINT16 Command,
 		sc->sc_imask |= HAL_INT_CST;
 
 	adf_os_setup_intr(sc->sc_dev, ath_intr);
-	ath_hal_intrset(ah, sc->sc_imask);
+	ah->ah_setInterrupts(ah, sc->sc_imask);
 
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
@@ -1516,7 +1516,7 @@ static void ath_disable_intr_tgt(void *Context, A_UINT16 Command,
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
 	struct ath_hal *ah = sc->sc_ah;
 
-	ath_hal_intrset(ah, 0);
+	ah->ah_setInterrupts(ah, 0);
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo,NULL, 0);
 }
 
@@ -1931,7 +1931,7 @@ a_int32_t ath_tgt_attach(a_uint32_t devid, struct ath_softc_tgt *sc, adf_os_devi
 
 	ath_tgt_txq_setup(sc);
 	sc->sc_imask =0;
-	ath_hal_intrset(ah,0);
+	ah->ah_setInterrupts(ah, 0);
 
 	return 0;
 bad:

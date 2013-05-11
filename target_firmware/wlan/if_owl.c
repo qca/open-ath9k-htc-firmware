@@ -616,9 +616,10 @@ void ath_tx_status_send(struct ath_softc_tgt *sc)
 
 static void owltgt_tx_process_cabq(struct ath_softc_tgt *sc, struct ath_txq *txq)
 {
-	ath_hal_intrset(sc->sc_ah, sc->sc_imask & ~HAL_INT_SWBA);
+	struct ath_hal *ah = sc->sc_ah;
+	ah->ah_setInterrupts(ah, sc->sc_imask & ~HAL_INT_SWBA);
 	owltgt_tx_processq(sc, txq, OWL_TXQ_ACTIVE);
-	ath_hal_intrset(sc->sc_ah, sc->sc_imask);
+	ah->ah_setInterrupts(ah, sc->sc_imask);
 }
 
 void owl_tgt_tx_tasklet(TQUEUE_ARG data)
