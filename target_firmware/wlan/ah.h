@@ -397,7 +397,6 @@ struct ath_hal
 	void      __ahdecl(*ah_set11nRateScenario)(struct ath_tx_desc *ds,
 						   a_uint32_t durUpdateEn,
 						   a_uint32_t rtsctsRate,
-						   a_uint32_t rtsctsDuration,
 						   HAL_11N_RATE_SERIES series[],
 						   a_uint32_t nseries, a_uint32_t flags);
 	void      __ahdecl(*ah_set11nAggrFirst)(struct ath_hal *ah,

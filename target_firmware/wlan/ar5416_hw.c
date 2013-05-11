@@ -809,26 +809,23 @@ void ar5416Set11nTxDesc_20(struct ath_tx_desc *ds,
         ads->ds_ctl6 = SM(keyType, AR_EncrType);
 }
 
-#ifdef MAGPIE_MERLIN
-
 void ar5416Set11nRateScenario_20(struct ath_tx_desc *ds,
 				 a_uint32_t durUpdateEn, a_uint32_t rtsctsRate,
-				 a_uint32_t rtsctsDuration,
 				 HAL_11N_RATE_SERIES series[], a_uint32_t nseries,
 				 a_uint32_t flags)
 {
-        struct ar5416_desc *ads = AR5416DESC(ds);
-        a_uint32_t ds_ctl0;
+	struct ar5416_desc *ads = AR5416DESC(ds);
+	a_uint32_t ds_ctl0;
 
-        HALASSERT(nseries == 4);
-        (void)nseries;
+	HALASSERT(nseries == 4);
+	(void)nseries;
 
-        /*
-         * Rate control settings override
-         */
+	/*
+	* Rate control settings override
+	*/
 	ds_ctl0 = ads->ds_ctl0;
 
-        if (flags & (HAL_TXDESC_RTSENA | HAL_TXDESC_CTSENA)) {
+	if (flags & (HAL_TXDESC_RTSENA | HAL_TXDESC_CTSENA)) {
 		if (flags & HAL_TXDESC_RTSENA) {
 			ds_ctl0 &= ~AR_CTSEnable;
 			ds_ctl0 |= AR_RTSEnable;
@@ -836,92 +833,37 @@ void ar5416Set11nRateScenario_20(struct ath_tx_desc *ds,
 			ds_ctl0 &= ~AR_RTSEnable;
 			ds_ctl0 |= AR_CTSEnable;
 		}
-        } else {
+	} else {
+		/* this line is only difference between merlin and k2
+		 * Current one is for merlin */
 		ds_ctl0 = (ds_ctl0 & ~(AR_RTSEnable | AR_CTSEnable));
-        }
+	}
 
 	ads->ds_ctl0 = ds_ctl0;
 
-        ads->ds_ctl2 = set11nTries(series, 0)
-		|  set11nTries(series, 1)
-		|  set11nTries(series, 2)
-		|  set11nTries(series, 3)
-		|  (durUpdateEn ? AR_DurUpdateEn : 0);
+	ads->ds_ctl2 = set11nTries(series, 0)
+				   | set11nTries(series, 1)
+				   | set11nTries(series, 2)
+				   | set11nTries(series, 3)
+				   | (durUpdateEn ? AR_DurUpdateEn : 0);
 
-        ads->ds_ctl3 = set11nRate(series, 0)
-		|  set11nRate(series, 1)
-		|  set11nRate(series, 2)
-		|  set11nRate(series, 3);
+	ads->ds_ctl3 = set11nRate(series, 0)
+				   | set11nRate(series, 1)
+				   | set11nRate(series, 2)
+				   | set11nRate(series, 3);
 
-        ads->ds_ctl4 = set11nPktDurRTSCTS(series, 0)
-		|  set11nPktDurRTSCTS(series, 1);
+	ads->ds_ctl4 = set11nPktDurRTSCTS(series, 0)
+				   | set11nPktDurRTSCTS(series, 1);
 
-        ads->ds_ctl5 = set11nPktDurRTSCTS(series, 2)
-		|  set11nPktDurRTSCTS(series, 3);
+	ads->ds_ctl5 = set11nPktDurRTSCTS(series, 2)
+				   | set11nPktDurRTSCTS(series, 3);
 
-        ads->ds_ctl7 = set11nRateFlags(series, 0)
-		|  set11nRateFlags(series, 1)
-		|  set11nRateFlags(series, 2)
-		|  set11nRateFlags(series, 3)
-		| SM(rtsctsRate, AR_RTSCTSRate);
+	ads->ds_ctl7 = set11nRateFlags(series, 0)
+				   | set11nRateFlags(series, 1)
+				   | set11nRateFlags(series, 2)
+				   | set11nRateFlags(series, 3)
+				   | SM(rtsctsRate, AR_RTSCTSRate);
 }
-
-#else
-
-void ar5416Set11nRateScenario_20(struct ath_tx_desc *ds,
-				 a_uint32_t durUpdateEn, a_uint32_t rtsctsRate,
-				 a_uint32_t rtsctsDuration,
-				 HAL_11N_RATE_SERIES series[], a_uint32_t nseries,
-				 a_uint32_t flags)
-{
-        struct ar5416_desc *ads = AR5416DESC(ds);
-        a_uint32_t ds_ctl0;
-
-        HALASSERT(nseries == 4);
-        (void)nseries;
-
-        /*
-         * Rate control settings override
-         */
-        if (flags & (HAL_TXDESC_RTSENA | HAL_TXDESC_CTSENA)) {
-		ds_ctl0 = ads->ds_ctl0;
-
-		if (flags & HAL_TXDESC_RTSENA) {
-			ds_ctl0 &= ~AR_CTSEnable;
-			ds_ctl0 |= AR_RTSEnable;
-		} else {
-			ds_ctl0 &= ~AR_RTSEnable;
-			ds_ctl0 |= AR_CTSEnable;
-		}
-
-		ads->ds_ctl0 = ds_ctl0;
-        }
-
-        ads->ds_ctl2 = set11nTries(series, 0)
-		|  set11nTries(series, 1)
-		|  set11nTries(series, 2)
-		|  set11nTries(series, 3)
-		|  (durUpdateEn ? AR_DurUpdateEn : 0);
-
-        ads->ds_ctl3 = set11nRate(series, 0)
-		|  set11nRate(series, 1)
-		|  set11nRate(series, 2)
-		|  set11nRate(series, 3);
-
-        ads->ds_ctl4 = set11nPktDurRTSCTS(series, 0)
-		|  set11nPktDurRTSCTS(series, 1);
-
-        ads->ds_ctl5 = set11nPktDurRTSCTS(series, 2)
-		|  set11nPktDurRTSCTS(series, 3);
-
-        ads->ds_ctl7 = set11nRateFlags(series, 0)
-		|  set11nRateFlags(series, 1)
-		|  set11nRateFlags(series, 2)
-		|  set11nRateFlags(series, 3)
-		| SM(rtsctsRate, AR_RTSCTSRate);
-}
-
-#endif
 
 void ar5416Set11nAggrFirst_20(struct ath_hal *ah, struct ath_tx_desc *ds, a_uint32_t aggrLen,
 			      a_uint32_t numDelims)
