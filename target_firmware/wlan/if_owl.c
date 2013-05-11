@@ -1199,7 +1199,7 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 
 	flags |= HAL_TXDESC_INTREQ;
 
-	ath_hal_setuptxdesc(ah, ds
+	ah->ah_setupTxDesc(ah, ds
 			    , pktlen
 			    , hdrlen
 			    , atype
@@ -2127,7 +2127,7 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 	adf_nbuf_dmamap_info(bf->bf_dmamap, &bf->bf_dmamap_info);
 
 	ds = bf->bf_desc;
-	ath_hal_setuptxdesc(sc->sc_ah, ds
+	ah->ah_setupTxDesc(ah, ds
 			    , adf_nbuf_len(skb) + IEEE80211_CRC_LEN
 			    , 0
 			    , HAL_PKT_TYPE_NORMAL
