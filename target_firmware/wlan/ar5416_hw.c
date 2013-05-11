@@ -72,7 +72,6 @@ static const struct ath_hal_private ar5416hal_10 = {{
 		.ah_setRxDP             = ar5416SetRxDP,
 		.ah_stopDmaReceive      = ar5416StopDmaReceive,
 		.ah_enableReceive       = ar5416EnableReceive,
-		.ah_startPcuReceive     = ar5416StartPcuReceive,
 		.ah_stopPcuReceive      = ar5416StopPcuReceive,
 
 		/* Interrupt Functions */
@@ -351,12 +350,6 @@ HAL_BOOL ar5416SetMulticastFilterIndex(struct ath_hal *ah, a_uint32_t ix)
 		OS_REG_WRITE(ah, AR_MCAST_FIL0, (val | (1<<ix)));
 	}
 	return AH_TRUE;
-}
-
-void ar5416StartPcuReceive(struct ath_hal *ah)
-{
-	OS_REG_CLR_BIT(ah, AR_DIAG_SW,
-		       (AR_DIAG_RX_DIS | AR_DIAG_RX_ABORT));
 }
 
 void ar5416SetRxFilter(struct ath_hal *ah, a_uint32_t bits)
