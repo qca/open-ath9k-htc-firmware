@@ -1497,6 +1497,7 @@ int ath_tgt_tx_form_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid,
 	int nframes = 0, rl = 0;;
 	struct ath_tx_desc *ds = NULL;
 	struct ath_tx_buf *bf;
+	struct ath_hal *ah = sc->sc_ah;
 	u_int16_t aggr_limit =  (64*1024 -1), al = 0, bpad = 0, al_delta;
 	u_int16_t h_baw = tid->baw_size/2, prev_al = 0, prev_frames = 0;
 
@@ -1573,7 +1574,7 @@ int ath_tgt_tx_form_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid,
 		bf_prev = bf;
 
 		for(ds = bf->bf_desc; ds <= bf->bf_lastds; ds++)
-			ath_hal_set11n_aggr_middle(sc->sc_ah, ds, bf->bf_ndelim);
+			ah->ah_set11nAggrMiddle(ah, ds, bf->bf_ndelim);
 
 	} while (!asf_tailq_empty(&tid->buf_q));
 
