@@ -1429,7 +1429,7 @@ ath_tgt_tx_sched_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid)
 		bf->bf_lastds = bf_last->bf_lastds;
 
 		for (i = 0; i < bf_last->bf_dmamap_info.nsegs; i++)
-			ath_hal_set11n_aggr_last(sc->sc_ah, &bf_last->bf_descarr[i]);
+			ah->ah_set11nAggrLast(ah, &bf_last->bf_descarr[i]);
 
 		if (status == ATH_AGGR_8K_LIMITED) {
 			adf_os_assert(0);
