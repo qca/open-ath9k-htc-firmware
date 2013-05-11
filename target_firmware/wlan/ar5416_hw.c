@@ -69,7 +69,6 @@ static const struct ath_hal_private ar5416hal_10 = {{
 		.ah_setRxFilter         = ar5416SetRxFilter,
 
 		/* RX Functions */
-		.ah_getRxDP             = ar5416GetRxDP,
 		.ah_setRxDP             = ar5416SetRxDP,
 		.ah_stopDmaReceive      = ar5416StopDmaReceive,
 		.ah_enableReceive       = ar5416EnableReceive,
@@ -300,13 +299,6 @@ u_int64_t ar5416GetTsf64(struct ath_hal *ah)
 /******/
 /* RX */
 /******/
-
-a_uint32_t ar5416GetRxDP(struct ath_hal *ath)
-{
-	return OS_REG_READ(ath, AR_RXDP);
-}
-
-
 void ar5416SetRxDP(struct ath_hal *ah, a_uint32_t rxdp)
 {
 	OS_REG_WRITE(ah, AR_RXDP, rxdp);
