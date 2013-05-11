@@ -1036,7 +1036,7 @@ adf_os_irq_resp_t ath_intr(adf_drv_handle_t hdl)
 			struct ath_txq *txq = ATH_TXQ(sc, 8);
 
 			swbaEvt.tsf = ath_hal_gettsf64(ah);
-			swbaEvt.beaconPendingCount = ath_hal_numtxpending(ah, sc->sc_bhalq);
+			swbaEvt.beaconPendingCount = ah->ah_numTxPending(ah, sc->sc_bhalq);
 			sc->sc_swba_tsf = ath_hal_gettsf64(ah);
 
 			wmi_event(sc->tgt_wmi_handle,

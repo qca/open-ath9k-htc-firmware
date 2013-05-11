@@ -557,7 +557,5 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
     ((*(_ah)->ah_set11nAggrMiddle)(_ah, _ds, _numdelims))
 #define ath_hal_set11n_aggr_last(_ah, _ds) \
     ((*(_ah)->ah_set11nAggrLast)(_ah, _ds))
-#define ath_hal_numtxpending(_ah, _q) \
-    ((*(_ah)->ah_numTxPending)((_ah), (_q)))
 
 #endif /* _DEV_ATH_ATHVAR_H */
