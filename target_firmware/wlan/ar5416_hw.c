@@ -105,25 +105,21 @@ ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
 
 	ah->ah_dev = dev;
 	ah->ah_sc = sc;
-	
-	/* If its a Owl 2.0 chip then change the hal structure to
-	   point to the Owl 2.0 ar5416_hal_20 structure */
-	if(1) {
-		ah->ah_set11nTxDesc        = ar5416Set11nTxDesc_20;
-		ah->ah_set11nRateScenario  = ar5416Set11nRateScenario_20;
-		ah->ah_set11nAggrFirst     = ar5416Set11nAggrFirst_20;
-		ah->ah_set11nAggrMiddle    = ar5416Set11nAggrMiddle_20;
-		ah->ah_set11nAggrLast      = ar5416Set11nAggrLast_20;
-		ah->ah_clr11nAggr          = ar5416Clr11nAggr_20;
-		ah->ah_set11nBurstDuration = ar5416Set11nBurstDuration_20;
-		ah->ah_setupRxDesc         = ar5416SetupRxDesc_20;
-		ah->ah_procRxDescFast      = ar5416ProcRxDescFast_20;
-		ah->ah_setupTxDesc         = ar5416SetupTxDesc_20;
-		ah->ah_fillTxDesc          = ar5416FillTxDesc_20;
-		ah->ah_fillKeyTxDesc       = ar5416FillKeyTxDesc_20;
-		ah->ah_procTxDesc          = ar5416ProcTxDesc_20;
-		ah->ah_set11nVirtualMoreFrag = ar5416Set11nVirtualMoreFrag_20;
-	}
+
+	ah->ah_set11nTxDesc        = ar5416Set11nTxDesc_20;
+	ah->ah_set11nRateScenario  = ar5416Set11nRateScenario_20;
+	ah->ah_set11nAggrFirst     = ar5416Set11nAggrFirst_20;
+	ah->ah_set11nAggrMiddle    = ar5416Set11nAggrMiddle_20;
+	ah->ah_set11nAggrLast      = ar5416Set11nAggrLast_20;
+	ah->ah_clr11nAggr          = ar5416Clr11nAggr_20;
+	ah->ah_set11nBurstDuration = ar5416Set11nBurstDuration_20;
+	ah->ah_setupRxDesc         = ar5416SetupRxDesc_20;
+	ah->ah_procRxDescFast      = ar5416ProcRxDescFast_20;
+	ah->ah_setupTxDesc         = ar5416SetupTxDesc_20;
+	ah->ah_fillTxDesc          = ar5416FillTxDesc_20;
+	ah->ah_fillKeyTxDesc       = ar5416FillKeyTxDesc_20;
+	ah->ah_procTxDesc          = ar5416ProcTxDesc_20;
+	ah->ah_set11nVirtualMoreFrag = ar5416Set11nVirtualMoreFrag_20;
 
 	return ah;
 }
