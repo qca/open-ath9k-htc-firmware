@@ -57,7 +57,6 @@ static const struct ath_hal_private ar5416hal_10 = {{
 
 		/* Transmit functions */
 		.ah_updateTxTrigLevel   = ar5416UpdateTxTrigLevel,
-		.ah_getTxDP             = ar5416GetTxDP,
 		.ah_setTxDP             = ar5416SetTxDP,
 		.ah_numTxPending        = ar5416NumTxPending,    
 		.ah_startTxDma          = ar5416StartTxDma,
@@ -565,12 +564,6 @@ HAL_BOOL ar5416UpdateTxTrigLevel(struct ath_hal *ah, HAL_BOOL bIncTrigLevel)
         ar5416SetInterrupts(ah, omask);
 
         return (newLevel != curLevel);
-}
-
-a_uint32_t ar5416GetTxDP(struct ath_hal *ah, a_uint32_t q)
-{
-        HALASSERT(q < AH_PRIVATE(ah)->ah_caps.halTotalQueues);
-        return OS_REG_READ(ah, AR_QTXDP(q));
 }
 
 HAL_BOOL ar5416SetTxDP(struct ath_hal *ah, a_uint32_t q, a_uint32_t txdp)
