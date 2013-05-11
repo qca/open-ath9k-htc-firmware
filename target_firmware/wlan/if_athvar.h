@@ -493,8 +493,6 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
     ((*(_ah)->ah_set11nVirtualMoreFrag)(_ah, _ds, _vmf))
 #define ath_hal_fillkeytxdesc(_ah, _ds, _keytype) \
     ((*(_ah)->ah_fillKeyTxDesc)((_ah), (_ds), (_keytype)))
-#define ath_hal_filltxdesc(_ah, _ds, _l, _first, _last, _ds0) \
-    ((*(_ah)->ah_fillTxDesc)((_ah), (_ds), (_l), (_first), (_last), (_ds0)))
 #define ath_hal_txprocdesc(_ah, _ds) \
     ((*(_ah)->ah_procTxDesc)((_ah), (_ds)))
 #define ath_hal_htsupported(_ah) \
