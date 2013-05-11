@@ -119,7 +119,6 @@ ar5416Attach(a_uint32_t devid,HAL_SOFTC sc, adf_os_device_t dev,
 		ah->ah_setupRxDesc         = ar5416SetupRxDesc_20;
 		ah->ah_procRxDescFast      = ar5416ProcRxDescFast_20;
 		ah->ah_setupTxDesc         = ar5416SetupTxDesc_20;
-		ah->ah_reqTxIntrDesc       = ar5416IntrReqTxDesc_20;
 		ah->ah_fillTxDesc          = ar5416FillTxDesc_20;
 		ah->ah_fillKeyTxDesc       = ar5416FillKeyTxDesc_20;
 		ah->ah_procTxDesc          = ar5416ProcTxDesc_20;
@@ -641,12 +640,6 @@ HAL_BOOL ar5416StopTxDma(struct ath_hal*ah, a_uint32_t q)
 
         OS_REG_WRITE(ah, AR_Q_TXD, 0);
         return (i != 0);
-}
-
-void ar5416IntrReqTxDesc_20(struct ath_hal *ah, struct ath_desc *ds)
-{
-	struct ar5416_desc *ads = AR5416DESC(ds);
-	ads->ds_ctl0 |= AR_TxIntrReq;
 }
 
 HAL_BOOL ar5416SetupTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *ds,
