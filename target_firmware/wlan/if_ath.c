@@ -271,7 +271,7 @@ static a_int32_t ath_rxdesc_init(struct ath_softc_tgt *sc, struct ath_rx_desc *d
 			    0);
 
 	if (sc->sc_rxlink == NULL) {
-		ath_hal_putrxbuf(ah, ds->ds_daddr);
+		ah->ah_setRxDP(ah, ds->ds_daddr);
 	}
 	else {
 		*sc->sc_rxlink = ds->ds_daddr;
@@ -472,7 +472,7 @@ static a_int32_t ath_startrecv(struct ath_softc_tgt *sc)
 	}
 
 	ds = asf_tailq_first(&sc->sc_rxdesc);
-	ath_hal_putrxbuf(ah, ds->ds_daddr);
+	ah->ah_setRxDP(ah, ds->ds_daddr);
 
 	return 0;
 }
