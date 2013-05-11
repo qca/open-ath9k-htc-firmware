@@ -251,8 +251,6 @@ struct ath_hal_private {
 extern HAL_BOOL ath_hal_wait(struct ath_hal *, a_uint32_t reg,
 			     a_uint32_t mask, a_uint32_t val);
 
-extern void ath_hal_vprintf(struct ath_hal *, const char*, __va_list);
-
 /* allocate and free memory */
 extern void *ath_hal_malloc(size_t);
 extern void ath_hal_free(void *);

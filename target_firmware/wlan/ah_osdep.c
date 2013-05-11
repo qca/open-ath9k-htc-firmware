@@ -135,14 +135,6 @@ ath_hal_memcpy(void *dst, const void *src, adf_os_size_t n)
 	return 0;
 }
 
-/*
- * Print/log message support.
- */
-void __ahdecl
-ath_hal_vprintf(struct ath_hal *ah, const char* fmt, va_list ap)
-{
-}
-
 enum {
 	DEV_ATH     = 9,            /* XXX must match driver */
 };
