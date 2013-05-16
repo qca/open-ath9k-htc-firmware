@@ -61,17 +61,25 @@ You're in for a treat.
 
   * Linux:
 
-  $ make firmware
+  $ make -C target_firmware
 
   * FreeBSD:
 
-  edit the build script, change make to gmake, and then
-
-  $ ./build
+  $ gmake -C target_firmware
 
 You will end up with two .fw files - one for the AR7010 and one for
 the AR9271 in the target_firmware directory.
 
+You can clean the firmware build (when you wish to force a rebuild)
+by doing:
+
+  * Linux:
+
+  $ make -C target_firmware clean
+
+  * FreeBSD:
+
+  $ gmake -C target_firmware clean
 
 Then what?
 ----------
