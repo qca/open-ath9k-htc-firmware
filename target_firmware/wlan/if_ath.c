@@ -1731,6 +1731,19 @@ static void ath_rc_mask_tgt(void *Context, A_UINT16 Command,
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
+static void ath_get_build_number_tgt(void *Context,A_UINT16 Command, A_UINT16 SeqNo,
+				A_UINT8 *data, a_int32_t datalen)
+{
+	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
+	struct wmi_build_number bld_num;
+
+	bld_num.major = ATH_BUILD_NUMBER_MAJOR;
+	bld_num.minor = ATH_BUILD_NUMBER_MINOR;
+	bld_num.tag = ATH_BUILD_NUMBER_TAG;
+
+	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, &bld_num, sizeof(bld_num));
+}
+
 static WMI_DISPATCH_ENTRY Magpie_Sys_DispatchEntries[] =
 {
 	{handle_echo_command,         WMI_ECHO_CMDID,               0},
@@ -1764,6 +1777,7 @@ static WMI_DISPATCH_ENTRY Magpie_Sys_DispatchEntries[] =
 	{ath_tx_stats_tgt,            WMI_TX_STATS_CMDID,           0},
 	{ath_rx_stats_tgt,            WMI_RX_STATS_CMDID,           0},
 	{ath_rc_mask_tgt,             WMI_BITRATE_MASK_CMDID,       0},
+	{ath_get_build_number_tgt,    WMI_GET_BUILD_NUMBER,         0}
 };
 
 /*****************/

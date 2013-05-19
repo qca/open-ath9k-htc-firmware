@@ -221,6 +221,12 @@ struct ath_aggr_info {
 	a_uint8_t padding;
 };    
 
+struct wmi_build_number {
+	a_uint16_t major;
+	a_uint16_t minor;
+	a_uint16_t tag;
+};
+
 struct wmi_data_delba {
 	a_uint8_t  ni_nodeindex;
 	a_uint8_t  tidno;
