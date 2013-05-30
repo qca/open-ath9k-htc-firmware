@@ -126,8 +126,6 @@ typedef struct {
 		halChanHalfRate         : 1,
 		halChanQuarterRate      : 1,
 		halHTSupport            : 1,
-		halRxStbcSupport        : 1,
-		halTxStbcSupport        : 1,
 		halGTTSupport           : 1,
 		halFastCCSupport        : 1,
 		halExtChanDfsSupport    : 1,
