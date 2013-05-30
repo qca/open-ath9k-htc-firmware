@@ -1146,16 +1146,6 @@ static void ath_init_tgt(void *Context, A_UINT16 Command,
 	if (ath_hal_htsupported(ah))
 		sc->sc_imask |= HAL_INT_CST;
 
-#ifdef MAGPIE_MERLIN
-	{
-		a_uint32_t stbcsupport;
-		if (ath_hal_txstbcsupport(ah, &stbcsupport))
-			sc->sc_txstbcsupport = stbcsupport;
-
-		if (ath_hal_rxstbcsupport(ah, &stbcsupport))
-			sc->sc_rxstbcsupport = stbcsupport;
-	}
-#endif
 	adf_os_setup_intr(sc->sc_dev, ath_intr);
 	ath_hal_intrset(ah, sc->sc_imask);
 

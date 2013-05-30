@@ -429,20 +429,7 @@ rcSibUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	rcSortValidRates(pRateTable, pRc);
 }
 
-void 
-rcSibUpdate_11n(struct ath_softc_tgt *sc, struct ath_node_target *pSib, 
-		A_UINT32 capflag, A_BOOL keepState, struct ieee80211_rate  *pRateSet)
-{
-	rcSibUpdate_ht(sc, 
-		       pSib, 
-		       ((capflag & ATH_RC_DS_FLAG)   ? WLAN_RC_DS_FLAG  : 0) |
-		       ((capflag & ATH_RC_HT40_SGI_FLAG)  ? WLAN_RC_HT40_SGI_FLAG : 0) | 
-		       ((capflag & ATH_RC_HT_FLAG)   ? WLAN_RC_HT_FLAG  : 0) |
-		       ((capflag & ATH_RC_CW40_FLAG) ? WLAN_RC_40_FLAG  : 0) |
-		       ((capflag & ATH_RC_TX_STBC_FLAG)   ? WLAN_RC_STBC_FLAG  : 0), 
-		       keepState,
-		       pRateSet);
-}
+
 
 /*
  * Return the median of three numbers
@@ -1211,29 +1198,12 @@ ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int 
 		      unsigned int capflag, struct ieee80211_rate *rs)
 {
 	if (isnew) {
-		struct atheros_node *oan = ATH_NODE_ATHEROS(an);
-
-		oan->htcap = ((capflag & ATH_RC_DS_FLAG) ? WLAN_RC_DS_FLAG : 0) |
-			((capflag & ATH_RC_HT40_SGI_FLAG) ? WLAN_RC_HT40_SGI_FLAG : 0) | 
-			((capflag & ATH_RC_HT_FLAG)  ? WLAN_RC_HT_FLAG : 0) |
-			((capflag & ATH_RC_CW40_FLAG) ? WLAN_RC_40_FLAG : 0) |
-			((capflag & ATH_RC_WEP_TKIP_FLAG) ? WLAN_RC_WEP_TKIP_FLAG : 0);    
-    
 #ifdef MAGPIE_MERLIN
-		/* Rx STBC is a 2-bit mask. Needs to convert from ath definition to wlan definition. */
-        
-		oan->htcap |= (((capflag & ATH_RC_RX_STBC_FLAG) >> ATH_RC_RX_STBC_FLAG_S)
-			       << WLAN_RC_STBC_FLAG_S);
-                       
-		/* If only one chain is enabled, do not do stbc. */
-		if (sc->sc_txstbcsupport) {
-			oan->stbc = (capflag & ATH_RC_RX_STBC_FLAG) >> ATH_RC_RX_STBC_FLAG_S;
-		} else {
-			oan->stbc = 0;
-		}
-        
+		struct atheros_node *oan = ATH_NODE_ATHEROS(an);
+		/* Only MERLIN can send STBC */
+		oan->stbc = (capflag & ATH_RC_TX_STBC_FLAG) ? 1 : 0;
 #endif
-		rcSibUpdate_11n(sc, an, oan->htcap, 0, rs);
+		rcSibUpdate_ht(sc, an, capflag, 0, rs);
 	}
 }
 

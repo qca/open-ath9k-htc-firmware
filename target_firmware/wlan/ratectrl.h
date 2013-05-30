@@ -159,7 +159,6 @@ typedef struct phy_rate_ctrl {
 struct atheros_node {
 	TX_RATE_CTRL txRateCtrl;    /* rate control state proper */
 	A_UINT32 lastRateKbps;      /* last rate in Kb/s */
-	A_UINT32 htcap;            /* ht capabilites */
 	A_UINT8 singleStream    :1,   /* When TRUE, only single stream Tx possible */
 		stbc            :2;   /* Rx stbc capability */
 
