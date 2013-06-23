@@ -80,13 +80,6 @@ typedef enum {
 } HAL_CAPABILITY_TYPE;
 
 typedef enum {
-	HAL_M_STA       = 1,
-	HAL_M_IBSS      = 0,
-	HAL_M_HOSTAP    = 6,
-	HAL_M_MONITOR   = 8,
-} HAL_OPMODE;
-
-typedef enum {
 	HAL_TX_QUEUE_INACTIVE   = 0,
 	HAL_TX_QUEUE_DATA   = 1,
 	HAL_TX_QUEUE_BEACON = 2,
