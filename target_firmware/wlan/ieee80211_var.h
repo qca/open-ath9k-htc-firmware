@@ -201,28 +201,6 @@ ieee80211_hdrsize(const void *data)
 }
 
 /*
- * Return the size of the 802.11 header for a management or data frame.
- */
-static __inline a_int32_t
-ieee80211_hdrsize_padding(const void *data)
-{
-	const struct ieee80211_frame *wh = data;
-	a_int32_t size = sizeof(struct ieee80211_frame);
-	a_int32_t is4addr = (wh->i_fc[1] & IEEE80211_FC1_DIR_MASK) == IEEE80211_FC1_DIR_DSTODS;
-	a_int32_t is_qos = IEEE80211_QOS_HAS_SEQ(wh);
-
-	/* NB: we don't handle control frames */
-	adf_os_assert((wh->i_fc[0]&IEEE80211_FC0_TYPE_MASK) != IEEE80211_FC0_TYPE_CTL);
-	if (is4addr)
-		size += IEEE80211_ADDR_LEN;
-	if (is_qos)
-		size += sizeof(a_uint16_t);
-	if (is4addr && is_qos)
-		size += sizeof(a_uint16_t);
-	return size;
-}
-
-/*
  * Like ieee80211_hdrsize, but handles any type of frame.
  */
 static __inline a_int32_t

@@ -67,12 +67,6 @@
  */
 #define __adf_os_virt_module_exit(_fn)  
 
-/**
- * initiallize a generic module
- */
-#define __adf_os_virt_module_name(_name)    
-
-
 #define __adf_os_module_dep(_name, _dep)    
 
 #endif

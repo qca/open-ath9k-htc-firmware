@@ -48,10 +48,8 @@
 #include <adf_net.h>
 
 #include <if_llc.h>
-#include <if_ethersubr.h>
 #include "ieee80211_var.h"
 
-#include "_ieee80211.h"
 #include "ieee80211.h"
 #include <wlan_hdr.h>
 

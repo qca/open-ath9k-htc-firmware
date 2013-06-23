@@ -73,4 +73,3 @@ adf_os_virt_module_init(init_htc_tgt);
 adf_os_virt_module_exit(exit_htc_tgt);
 adf_os_module_dep(htc_tgt, adf_net);
 adf_os_module_dep(htc_tgt, inproc_hif);
-adf_os_virt_module_name(htc_tgt);

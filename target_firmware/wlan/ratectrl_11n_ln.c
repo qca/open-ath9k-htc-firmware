@@ -47,7 +47,6 @@
 #include <adf_os_atomic.h>
 #include <adf_nbuf.h>
 #include <adf_net.h>
-#include <adf_net_types.h>
 
 #include <ieee80211_var.h>
 
@@ -56,8 +55,6 @@
 
 #include "ratectrl.h"
 #include "ratectrl11n.h"
-
-INLINE A_RSSI median(A_RSSI a, A_RSSI b, A_RSSI c);
 
 static void ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew, 
 				  unsigned int capflag, struct ieee80211_rate *rs);
@@ -121,13 +118,6 @@ rcSetValidTxMask(TX_RATE_CTRL *pRc, A_UINT8 index, A_BOOL validTxRate)
 	ASSERT(index < pRc->rateTableSize);
 	pRc->validRateIndex[index] = validTxRate ? TRUE : FALSE;
 
-}
-
-static INLINE A_BOOL
-rcIsValidTxMask(TX_RATE_CTRL *pRc, A_UINT8 index)
-{
-	ASSERT(index < pRc->rateTableSize);
-	return (pRc->validRateIndex[index]);
 }
 
 /* Iterators for validTxRateMask */
@@ -427,32 +417,6 @@ rcSibUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	pRc->maxValidRate = k;
 
 	rcSortValidRates(pRateTable, pRc);
-}
-
-
-
-/*
- * Return the median of three numbers
- */
-INLINE A_RSSI median(A_RSSI a, A_RSSI b, A_RSSI c)
-{
-	if (a >= b) {
-		if (b >= c) {
-			return b;
-		} else if (a > c) {
-			return c;
-		} else {
-			return a;
-		}
-	} else {
-		if (a >= c) {
-			return a;
-		} else if (b >= c) {
-			return c;
-		} else {
-			return b;
-		}
-	}
 }
 
 static A_UINT8
@@ -1077,12 +1041,6 @@ ath_rate_attach(struct ath_softc_tgt *sc)
 }
 
 void
-ath_rate_detach(struct ath_ratectrl *rc)
-{
-	adf_os_mem_free(rc);
-}
-
-void
 ath_rate_findrate(struct ath_softc_tgt *sc,
                   struct ath_node_target *an,
                   int shortPreamble,
@@ -1205,34 +1163,4 @@ ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int 
 #endif
 		rcSibUpdate_ht(sc, an, capflag, 0, rs);
 	}
-}
-
-void ath_rate_mcs2rate(struct ath_softc_tgt *sc,a_uint8_t sgi, a_uint8_t ht40, 
-		       a_uint8_t rateCode, a_uint32_t *txrate, a_uint32_t *rxrate)
-{
-	int idx;
-	struct atheros_softc *asc = (struct atheros_softc*)sc->sc_rc;
-	RATE_TABLE_11N *pRateTable = (RATE_TABLE_11N *)asc->hwRateTable[sc->sc_curmode];
-	a_uint32_t rateKbps = 0;
-   
-	*txrate = asc->currentTxRateKbps;
-
-	/* look  11NA table for rateKbps*/
-	for (idx = 0; idx < pRateTable->rateCount && !rateKbps; ++idx) {   
-		if (pRateTable->info[idx].rateCode == rateCode) {
-			if(ht40 && sgi) {
-				if(pRateTable->info[idx].valid == TRUE_40 &&
-				   pRateTable->info[idx].phy == WLAN_RC_PHY_HT_40_DS_HGI)
-					rateKbps = pRateTable->info[idx].rateKbps;
-			} else if (ht40) {
-				if (pRateTable->info[idx].valid == TRUE_40)/* HT40 only*/
-					rateKbps = pRateTable->info[idx].rateKbps;
-			} else { 
-				if (pRateTable->info[idx].valid != FALSE)
-					rateKbps = pRateTable->info[idx].rateKbps;
-			}
-		}
-	}
-    
-	*rxrate = rateKbps;
 }

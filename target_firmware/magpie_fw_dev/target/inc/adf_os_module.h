@@ -56,11 +56,6 @@ typedef a_status_t (*module_init_func_t)(void);
 #define adf_os_virt_module_exit(_mod_exit_func)  __adf_os_virt_module_exit(_mod_exit_func)
 
 /**
- * @brief Specify the module's name.
- */ 
-#define adf_os_virt_module_name(_name)      __adf_os_virt_module_name(_name)
-
-/**
  * @brief Specify the module's dependency on another module.
  */ 
 #define adf_os_module_dep(_name,_dep)       __adf_os_module_dep(_name,_dep)

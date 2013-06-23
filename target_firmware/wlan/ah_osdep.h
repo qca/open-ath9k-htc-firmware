@@ -128,8 +128,6 @@ extern  void __ahdecl ath_hal_delay(a_int32_t);
 extern  void* __ahdecl ath_hal_ioremap(a_uint32_t addr, a_uint32_t len);
 #define OS_REMAP(_addr, _len)       ath_hal_ioremap(_addr, _len)
 
-#define OS_MEMZERO(_a, _n)  ath_hal_memzero((_a), (_n))
-extern void __ahdecl ath_hal_memzero(void *, size_t);
 #define OS_MEMCPY(_d, _s, _n)   ath_hal_memcpy(_d,_s,_n)
 extern void * __ahdecl ath_hal_memcpy(void *, const void *, size_t);
 
@@ -158,5 +156,4 @@ extern  a_uint32_t __ahdecl ath_hal_reg_read_target(struct ath_hal *ah, a_uint32
 #define AH_USE_EEPROM     0x00000001
 extern  struct ath_hal *_ath_hal_attach_tgt( a_uint32_t, HAL_SOFTC, adf_os_device_t,
        a_uint32_t flags, void* status);
-extern  void ath_hal_detach(struct ath_hal *);
 #endif /* _ATH_AH_OSDEP_H_ */
