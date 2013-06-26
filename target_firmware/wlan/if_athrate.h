@@ -82,7 +82,6 @@ struct ath_rc_series {
  * Attach/detach a rate control module.
  */
 struct ath_ratectrl *ath_rate_attach(struct ath_softc_tgt *);
-void ath_rate_detach(struct ath_ratectrl *);
 
 /*
  * Return the transmit info for a data packet.  If multi-rate state

@@ -80,7 +80,6 @@ typedef u_int8_t        WLAN_PHY;
  * a null arg because we know it's not needed.
  */
 #define A_MS_TICKGET()  OS_GETUPTIME(NULL)
-#define A_MEM_ZERO(p,s) OS_MEMZERO(p,s)
 
 #define WLAN_PHY_OFDM   IEEE80211_T_OFDM
 #define WLAN_PHY_TURBO  IEEE80211_T_TURBO

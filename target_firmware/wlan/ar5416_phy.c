@@ -33,7 +33,6 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "opt_ah.h"
 #include "ah.h"
 #include "ah_internal.h"
 #include "ar5416.h"

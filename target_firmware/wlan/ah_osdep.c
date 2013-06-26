@@ -48,7 +48,6 @@
 #include <adf_os_atomic.h>
 #include <adf_nbuf.h>
 #include <adf_net.h>
-#include <adf_net_types.h>
 
 #include "ah.h"
 #include<ah_internal.h>
@@ -69,12 +68,6 @@ _ath_hal_attach_tgt(a_uint32_t devid, HAL_SOFTC sc,
 	adf_os_print(" ath_hal = %p \n",ah);
 	*(HAL_STATUS *)s = status;
 	return ah;
-}
-
-void
-ath_hal_detach(struct ath_hal *ah)
-{
-	(*ah->ah_detach)(ah);
 }
 
 extern void *global_hdl;
@@ -135,25 +128,11 @@ ath_hal_free(void* p)
 	adf_os_mem_free(p);
 }
 
-void __ahdecl
-ath_hal_memzero(void *dst, adf_os_size_t n)
-{
-	adf_os_mem_set(dst, 0, n);
-}
-
 void * __ahdecl
 ath_hal_memcpy(void *dst, const void *src, adf_os_size_t n)
 {
 	adf_os_mem_copy(dst, src, n);
 	return 0;
-}
-
-/*
- * Print/log message support.
- */
-void __ahdecl
-ath_hal_vprintf(struct ath_hal *ah, const char* fmt, va_list ap)
-{
 }
 
 enum {
@@ -162,4 +141,3 @@ enum {
 
 adf_os_module_dep(hal, adf_net);
 adf_os_module_dep(hal, hal);
-adf_os_virt_module_name(hal);
