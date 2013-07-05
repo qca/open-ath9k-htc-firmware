@@ -57,7 +57,6 @@
 #include <adf_net.h>
 #include <adf_os_irq.h>
 
-#include <adf_net_types.h>
 #include <adf_net_wcmd.h>
 
 #include <ieee80211_var.h>
