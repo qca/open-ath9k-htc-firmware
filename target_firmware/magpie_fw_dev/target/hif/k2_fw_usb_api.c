@@ -144,7 +144,7 @@ void _fw_usb_suspend_reboot()
                 
 		//set all GPIO to input
         gpio_in = HAL_WORD_REG_READ(0x1000404c);
-        HAL_WORD_REG_WRITE(0x100404c, 0x0);
+        HAL_WORD_REG_WRITE(0x1000404c, 0x0);
                 
 		//set PU/PD for all GPIO except two UART pins
         pupd = HAL_WORD_REG_READ(0x10004088);
