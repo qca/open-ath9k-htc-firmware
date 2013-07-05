@@ -354,7 +354,7 @@ void _fw_usb_reset_fifo(void)
     volatile uint32_t   *reg_data;
 
     HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100ae)|0x10));
-    HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100af)|0x10));
+    HAL_BYTE_REG_WRITE(0x100af, (HAL_BYTE_REG_READ(0x100af)|0x10));
 
     // disable ep3 int enable, so that resume back won't send wdt magic pattern out!!!
     mUSB_STATUS_IN_INT_DISABLE();
