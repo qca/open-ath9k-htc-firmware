@@ -418,6 +418,10 @@ void vUsb_Reg_Out_patch(void)
 
     // get the size of this transcation
     usbfifolen = USB_BYTE_REG_READ(ZM_EP4_BYTE_COUNT_LOW_OFFSET);
+    if (usbfifolen > 0x40) {
+        A_PRINTF("EP4 FIFO Bug? Buffer is too big: %x\n", usbfifolen);
+        goto ERR;
+    }
 
     // check is command is new
     if( cmd_is_new ){
