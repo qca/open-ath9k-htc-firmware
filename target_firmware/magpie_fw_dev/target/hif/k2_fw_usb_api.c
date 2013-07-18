@@ -452,6 +452,11 @@ void vUsb_Reg_Out_patch(void)
     
     // accumulate the size
     cmdLen += usbfifolen;
+    if (cmdLen > buf->desc_list->buf_size) {
+        A_PRINTF("Data length on EP4 FIFO is bigger as allocated buffer data!"
+                 " Drop it!\n");
+        goto ERR;
+    }
     
     // round it to alignment
     if(usbfifolen % 4)
