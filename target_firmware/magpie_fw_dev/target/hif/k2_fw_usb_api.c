@@ -402,6 +402,17 @@ void _fw_usb_reset_fifo(void)
     A_UART_HWINIT((22*1000*1000), 19200);
 }
 
+void cold_reboot(void)
+{
+	A_PRINTF("Cold reboot initiated.");
+#if defined(PROJECT_MAGPIE)
+	HAL_WORD_REG_WRITE(WATCH_DOG_MAGIC_PATTERN_ADDR, 0);
+#elif defined(PROJECT_K2)
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, 0);
+#endif /* #if defined(PROJECT_MAGPIE) */
+	A_USB_JUMP_BOOT();
+}
+
 /*
  * -- support more than 64 bytes command on ep4 -- 
  */
@@ -420,7 +431,7 @@ void vUsb_Reg_Out_patch(void)
     usbfifolen = USB_BYTE_REG_READ(ZM_EP4_BYTE_COUNT_LOW_OFFSET);
     if (usbfifolen > 0x40) {
         A_PRINTF("EP4 FIFO Bug? Buffer is too big: %x\n", usbfifolen);
-        goto ERR;
+        cold_reboot();
     }
 
     // check is command is new
