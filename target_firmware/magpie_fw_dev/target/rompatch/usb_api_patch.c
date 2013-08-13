@@ -749,9 +749,9 @@ extern BOOLEAN bGet_descriptor(void);
 
 uint16_t ConfigDescriptorPatch[30];
 
- uint16_t UsbDeviceDescriptorPatch[18];
- #define VENDOR_ID_OFFSET           8
- #define PRODUCT_ID_OFFSET          10
+uint16_t UsbDeviceDescriptorPatch[9];
+#define VENDOR_ID_OFFSET		4
+#define PRODUCT_ID_OFFSET		5
 
 #define EP3_TRANSFER_TYPE_OFFSET    17
 #define EP3_INT_INTERVAL            19
