@@ -750,6 +750,8 @@ extern BOOLEAN bGet_descriptor(void);
 uint16_t ConfigDescriptorPatch[30];
 
 uint16_t UsbDeviceDescriptorPatch[9];
+#define BCD_DEVICE_OFFSET		6
+#define BCD_DEVICE_FW_SIGNATURE		0xffff
 #define VENDOR_ID_OFFSET		4
 #define PRODUCT_ID_OFFSET		5
 
@@ -785,17 +787,25 @@ uint16_t UsbDeviceDescriptorPatch[9];
  
 BOOLEAN bGet_descriptor_patch(void)
 {
-	/* Patch for custom id from flash */
-	if (bEepromExist == FALSE && mDEV_REQ_VALUE_HIGH() == 1)
+	if (mDEV_REQ_VALUE_HIGH() == 1)
 	{
 		uint8_t *p = (uint8_t *)u8UsbDeviceDescriptor;
 		uint32_t u32Tmp=0;
 		/* Copy Usb Device Descriptor */
 		ath_hal_memcpy(UsbDeviceDescriptorPatch, p, sizeof(UsbDeviceDescriptorPatch));
 
-		A_SFLASH_READ_4B(u32Tmp, FLASH_SIZE - EE_DATA_RESERVED_LEN + FLASH_USB_VENDOR_ID_OFFSET*2);
-		UsbDeviceDescriptorPatch[VENDOR_ID_OFFSET] = mSWAP_BYTE(mLOW_WORD0(u32Tmp));
-		UsbDeviceDescriptorPatch[PRODUCT_ID_OFFSET] = mSWAP_BYTE(mHIGH_WORD0(u32Tmp)); 		   
+		UsbDeviceDescriptorPatch[BCD_DEVICE_OFFSET] =
+			BCD_DEVICE_FW_SIGNATURE;
+
+		/* Patch for custom id from flash */
+		if (bEepromExist == FALSE) {
+			A_SFLASH_READ_4B(u32Tmp, FLASH_SIZE -
+				EE_DATA_RESERVED_LEN + FLASH_USB_VENDOR_ID_OFFSET*2);
+			UsbDeviceDescriptorPatch[VENDOR_ID_OFFSET] =
+				mSWAP_BYTE(mLOW_WORD0(u32Tmp));
+			UsbDeviceDescriptorPatch[PRODUCT_ID_OFFSET] =
+				mSWAP_BYTE(mHIGH_WORD0(u32Tmp));
+		}
       
 		pu8DescriptorEX = UsbDeviceDescriptorPatch;
 		u16TxRxCounter = mTABLE_LEN(u8UsbDeviceDescriptor[0]);
