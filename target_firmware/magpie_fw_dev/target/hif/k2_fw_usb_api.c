@@ -750,11 +750,7 @@ BOOLEAN bGet_descriptor_patch(void)
 	ath_hal_memcpy(ConfigDescriptorPatch,
             u8ConfigDescriptorEX, sizeof(ConfigDescriptorPatch));
 
-        /* Patch the transfer type of EP3 and EP4 */
-        ConfigDescriptorPatch[EP3_TRANSFER_TYPE_OFFSET] = 0x0283;
-        ConfigDescriptorPatch[EP3_INT_INTERVAL] = 0x0700;
-        ConfigDescriptorPatch[EP4_TRANSFER_TYPE_OFFSET] = 0x4002;
-        ConfigDescriptorPatch[EP4_INT_INTERVAL] = 0x00;
+	/* place holder for EPx patches */
 
         switch (mDEV_REQ_VALUE_LOW())
         {
