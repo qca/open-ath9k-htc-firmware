@@ -715,13 +715,18 @@ ERR_DONE:
     ;
 }
 
+extern uint16_t *u8UsbDeviceDescriptor;
 extern uint16_t *u8ConfigDescriptorEX;
 extern uint16_t *pu8DescriptorEX;
 extern uint16_t u16TxRxCounter;
 extern BOOLEAN bGet_descriptor(void);
 
+uint16_t DeviceDescriptorPatch[9];
 uint16_t ConfigDescriptorPatch[30];
 
+
+#define BCD_DEVICE		    6
+#define BCD_DEVICE_FW_SIGNATURE	    0xffff
 #define EP3_TRANSFER_TYPE_OFFSET    17
 #define EP3_INT_INTERVAL            19
 #define EP4_TRANSFER_TYPE_OFFSET    21
@@ -729,13 +734,21 @@ uint16_t ConfigDescriptorPatch[30];
 
 BOOLEAN bGet_descriptor_patch(void)
 {
-    if (mDEV_REQ_VALUE_HIGH() == 2) {
-        uint8_t *p = (uint8_t *)u8ConfigDescriptorEX;
+    int i;
+    switch (mDEV_REQ_VALUE_HIGH()) {
+    case 1:
+        ath_hal_memcpy(DeviceDescriptorPatch,
+            u8UsbDeviceDescriptor, sizeof(DeviceDescriptorPatch));
 
+        DeviceDescriptorPatch[BCD_DEVICE] = BCD_DEVICE_FW_SIGNATURE;
+
+        pu8DescriptorEX = DeviceDescriptorPatch;
+        u16TxRxCounter = mTABLE_LEN(DeviceDescriptorPatch[0]);
+        break;
+    case 2:
         /* Copy ConfigDescriptor */
-	ath_hal_memcpy(ConfigDescriptorPatch, p, sizeof(ConfigDescriptorPatch));
-
-        p = (uint8_t *)ConfigDescriptorPatch;
+	ath_hal_memcpy(ConfigDescriptorPatch,
+            u8ConfigDescriptorEX, sizeof(ConfigDescriptorPatch));
 
         /* Patch the transfer type of EP3 and EP4 */
         ConfigDescriptorPatch[EP3_TRANSFER_TYPE_OFFSET] = 0x0283;
@@ -753,16 +766,16 @@ BOOLEAN bGet_descriptor_patch(void)
         default:
             return FALSE;
         }
-
-        if (u16TxRxCounter > mDEV_REQ_LENGTH())
-            u16TxRxCounter = mDEV_REQ_LENGTH();
-
-        A_USB_EP0_TX_DATA();
-        return TRUE;
-    }
-    else {
+        break;
+    default:
         return bGet_descriptor();
     }
+
+    if (u16TxRxCounter > mDEV_REQ_LENGTH())
+        u16TxRxCounter = mDEV_REQ_LENGTH();
+
+    A_USB_EP0_TX_DATA();
+    return TRUE;
 }
 
 extern BOOLEAN bStandardCommand(void);
