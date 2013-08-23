@@ -209,7 +209,8 @@ void app_start()
 
 #ifdef FUSION_USB_ENABLE_TX_STREAM
 		// For K2, enable tx stream mode
-		A_PRINTF("Enable Tx Stream mode\r\n");
+		A_PRINTF("Enable Tx Stream mode: 0x%x\r\n",
+			USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET));
 
 		// Patch for K2 USB STREAM mode
 		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, \
@@ -266,6 +267,8 @@ void app_start()
 	else if (hostif == HIF_PCI )
 		hif_pci_patch_install(&_indir_tbl.hif);
 #endif
+		A_PRINTF("USB mode: 0x%x\r\n",
+			USB_WORD_REG_READ(0x100));
 
 	// patch the clock function
 	if(1) {

@@ -67,3 +67,4 @@ PROVIDE ( _HIFusb_isr_handler = 0x008e2b58 );
 PROVIDE ( bGet_descriptor = 0x008e2ec4 );
 PROVIDE ( u8ConfigDescriptorEX = 0x005009e8 );
 PROVIDE ( bStandardCommand = 0x008e328c );
+PROVIDE ( u8UsbDeviceDescriptor = 0x00500a00 );
