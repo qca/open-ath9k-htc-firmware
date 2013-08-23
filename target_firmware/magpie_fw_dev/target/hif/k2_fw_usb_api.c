@@ -144,7 +144,7 @@ void _fw_usb_suspend_reboot()
                 
 		//set all GPIO to input
         gpio_in = HAL_WORD_REG_READ(0x1000404c);
-        HAL_WORD_REG_WRITE(0x100404c, 0x0);
+        HAL_WORD_REG_WRITE(0x1000404c, 0x0);
                 
 		//set PU/PD for all GPIO except two UART pins
         pupd = HAL_WORD_REG_READ(0x10004088);
@@ -197,6 +197,7 @@ void _fw_usb_suspend_reboot()
         HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, (BIT1) );
         HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, (HAL_WORD_REG_READ(MAGPIE_REG_RST_PWDN_CTRL_ADDR)|BIT0));
         HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0 );
+	A_DELAY_USECS(1000);
     }
 
     //A_PRINTF("reg(0x10020)=(%x)\n", HAL_WORD_REG_READ(0x10020));
@@ -353,7 +354,7 @@ void _fw_usb_reset_fifo(void)
     volatile uint32_t   *reg_data;
 
     HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100ae)|0x10));
-    HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100af)|0x10));
+    HAL_BYTE_REG_WRITE(0x100af, (HAL_BYTE_REG_READ(0x100af)|0x10));
 
     // disable ep3 int enable, so that resume back won't send wdt magic pattern out!!!
     mUSB_STATUS_IN_INT_DISABLE();
@@ -401,6 +402,17 @@ void _fw_usb_reset_fifo(void)
     A_UART_HWINIT((22*1000*1000), 19200);
 }
 
+void cold_reboot(void)
+{
+	A_PRINTF("Cold reboot initiated.");
+#if defined(PROJECT_MAGPIE)
+	HAL_WORD_REG_WRITE(WATCH_DOG_MAGIC_PATTERN_ADDR, 0);
+#elif defined(PROJECT_K2)
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, 0);
+#endif /* #if defined(PROJECT_MAGPIE) */
+	A_USB_JUMP_BOOT();
+}
+
 /*
  * -- support more than 64 bytes command on ep4 -- 
  */
@@ -417,6 +429,10 @@ void vUsb_Reg_Out_patch(void)
 
     // get the size of this transcation
     usbfifolen = USB_BYTE_REG_READ(ZM_EP4_BYTE_COUNT_LOW_OFFSET);
+    if (usbfifolen > 0x40) {
+        A_PRINTF("EP4 FIFO Bug? Buffer is too big: %x\n", usbfifolen);
+        cold_reboot();
+    }
 
     // check is command is new
     if( cmd_is_new ){
@@ -447,6 +463,11 @@ void vUsb_Reg_Out_patch(void)
     
     // accumulate the size
     cmdLen += usbfifolen;
+    if (cmdLen > buf->desc_list->buf_size) {
+        A_PRINTF("Data length on EP4 FIFO is bigger as allocated buffer data!"
+                 " Drop it!\n");
+        goto ERR;
+    }
     
     // round it to alignment
     if(usbfifolen % 4)
@@ -694,13 +715,18 @@ ERR_DONE:
     ;
 }
 
+extern uint16_t *u8UsbDeviceDescriptor;
 extern uint16_t *u8ConfigDescriptorEX;
 extern uint16_t *pu8DescriptorEX;
 extern uint16_t u16TxRxCounter;
 extern BOOLEAN bGet_descriptor(void);
 
+uint16_t DeviceDescriptorPatch[9];
 uint16_t ConfigDescriptorPatch[30];
 
+
+#define BCD_DEVICE		    6
+#define BCD_DEVICE_FW_SIGNATURE	    0xffff
 #define EP3_TRANSFER_TYPE_OFFSET    17
 #define EP3_INT_INTERVAL            19
 #define EP4_TRANSFER_TYPE_OFFSET    21
@@ -708,19 +734,23 @@ uint16_t ConfigDescriptorPatch[30];
 
 BOOLEAN bGet_descriptor_patch(void)
 {
-    if (mDEV_REQ_VALUE_HIGH() == 2) {
-        uint8_t *p = (uint8_t *)u8ConfigDescriptorEX;
+    int i;
+    switch (mDEV_REQ_VALUE_HIGH()) {
+    case 1:
+        ath_hal_memcpy(DeviceDescriptorPatch,
+            u8UsbDeviceDescriptor, sizeof(DeviceDescriptorPatch));
 
+        DeviceDescriptorPatch[BCD_DEVICE] = BCD_DEVICE_FW_SIGNATURE;
+
+        pu8DescriptorEX = DeviceDescriptorPatch;
+        u16TxRxCounter = mTABLE_LEN(DeviceDescriptorPatch[0]);
+        break;
+    case 2:
         /* Copy ConfigDescriptor */
-	ath_hal_memcpy(ConfigDescriptorPatch, p, sizeof(ConfigDescriptorPatch));
+	ath_hal_memcpy(ConfigDescriptorPatch,
+            u8ConfigDescriptorEX, sizeof(ConfigDescriptorPatch));
 
-        p = (uint8_t *)ConfigDescriptorPatch;
-
-        /* Patch the transfer type of EP3 and EP4 */
-        ConfigDescriptorPatch[EP3_TRANSFER_TYPE_OFFSET] = 0x0283;
-        ConfigDescriptorPatch[EP3_INT_INTERVAL] = 0x0700;
-        ConfigDescriptorPatch[EP4_TRANSFER_TYPE_OFFSET] = 0x4002;
-        ConfigDescriptorPatch[EP4_INT_INTERVAL] = 0x00;
+	/* place holder for EPx patches */
 
         switch (mDEV_REQ_VALUE_LOW())
         {
@@ -732,16 +762,16 @@ BOOLEAN bGet_descriptor_patch(void)
         default:
             return FALSE;
         }
-
-        if (u16TxRxCounter > mDEV_REQ_LENGTH())
-            u16TxRxCounter = mDEV_REQ_LENGTH();
-
-        A_USB_EP0_TX_DATA();
-        return TRUE;
-    }
-    else {
+        break;
+    default:
         return bGet_descriptor();
     }
+
+    if (u16TxRxCounter > mDEV_REQ_LENGTH())
+        u16TxRxCounter = mDEV_REQ_LENGTH();
+
+    A_USB_EP0_TX_DATA();
+    return TRUE;
 }
 
 extern BOOLEAN bStandardCommand(void);

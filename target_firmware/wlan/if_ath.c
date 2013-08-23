@@ -1425,10 +1425,7 @@ static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command,
 		t = (struct registerWrite *)(data+i);
 
 		if( t->reg > 0xffff ) {
-			a_uint32_t *pReg = (a_uint32_t *)t->reg;
-
-			*pReg = t->val;
-
+			HAL_WORD_REG_WRITE(t->reg, t->val);
 #if defined(PROJECT_K2)
 			if( t->reg == 0x50040 ) {
 				static uint8_t flg=0;
@@ -1444,20 +1441,19 @@ static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command,
 #if defined(PROJECT_K2)
 			if( t->reg == 0x7014 ) {
 				static uint8_t resetPLL = 0;
-				a_uint32_t *pReg;
 
 				if( resetPLL == 0 ) {
-					t->reg = 0x50044;
-					pReg = (a_uint32_t *)t->reg;
-					*pReg = 0;
+					/* here we write to core register */
+					HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
+					/* and here to mac register */
 					ath_hal_reg_write_target(ah, 0x786c,
 						 ath_hal_reg_read_target(ah,0x786c) | 0x6000000);
 					ath_hal_reg_write_target(ah, 0x786c,
 						 ath_hal_reg_read_target(ah,0x786c) & (~0x6000000));
-					*pReg = 0x20;
+
+					HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x20);
 					resetPLL = 1;
 				}
-				t->reg = 0x7014;
 			}
 #elif defined(PROJECT_MAGPIE) && !defined (FPGA)
 			if( t->reg == 0x7014 ){
