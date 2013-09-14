@@ -1411,6 +1411,59 @@ static void ath_hal_reg_read_tgt(void *Context, A_UINT16 Command,
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, &val[0], datalen);
 }
 
+static void ath_pll_reset_ones(struct ath_hal *ah)
+{
+	static uint8_t reset_pll = 0;
+
+	if(reset_pll == 0) {
+#if defined(PROJECT_K2)
+		/* here we write to core register */
+		HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
+		/* and here to mac register */
+		ath_hal_reg_write_target(ah, 0x786c,
+			 ath_hal_reg_read_target(ah,0x786c) | 0x6000000);
+		ath_hal_reg_write_target(ah, 0x786c,
+			 ath_hal_reg_read_target(ah,0x786c) & (~0x6000000));
+
+		HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x20);
+
+#elif defined(PROJECT_MAGPIE) && !defined (FPGA)
+		ath_hal_reg_write_target(ah, 0x7890,
+			 ath_hal_reg_read_target(ah,0x7890) | 0x1800000);
+		ath_hal_reg_write_target(ah, 0x7890,
+			 ath_hal_reg_read_target(ah,0x7890) & (~0x1800000));
+#endif
+		reset_pll = 1;
+	}
+}
+
+static void ath_hal_reg_write_filter(struct ath_hal *ah,
+			a_uint32_t reg, a_uint32_t val)
+{
+	if(reg > 0xffff) {
+		HAL_WORD_REG_WRITE(reg, val);
+#if defined(PROJECT_K2)
+		if(reg == 0x50040) {
+			static uint8_t flg=0;
+
+			if(flg == 0) {
+				/* reinit clock and uart.
+				 * TODO: Independent on what host will
+				 * here set. We do our own decision. Why? */
+				A_CLOCK_INIT(117);
+				A_UART_HWINIT(117*1000*1000, 19200);
+				flg = 1;
+			}
+		}
+#endif
+	} else {
+		if(reg == 0x7014)
+			ath_pll_reset_ones(ah);
+
+		ath_hal_reg_write_target(ah, reg, val);
+	}
+}
+
 static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command,
 				  A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen)
 {
@@ -1425,52 +1478,7 @@ static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command,
 	for (i = 0; i < datalen; i += sizeof(struct registerWrite)) {
 		t = (struct registerWrite *)(data+i);
 
-		if( t->reg > 0xffff ) {
-			HAL_WORD_REG_WRITE(t->reg, t->val);
-#if defined(PROJECT_K2)
-			if( t->reg == 0x50040 ) {
-				static uint8_t flg=0;
-
-				if( flg == 0 ) {
-					A_CLOCK_INIT(117);
-					A_UART_HWINIT(117*1000*1000, 19200);
-					flg = 1;
-				}
-			}
-#endif
-		} else {
-#if defined(PROJECT_K2)
-			if( t->reg == 0x7014 ) {
-				static uint8_t resetPLL = 0;
-
-				if( resetPLL == 0 ) {
-					/* here we write to core register */
-					HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
-					/* and here to mac register */
-					ath_hal_reg_write_target(ah, 0x786c,
-						 ath_hal_reg_read_target(ah,0x786c) | 0x6000000);
-					ath_hal_reg_write_target(ah, 0x786c,
-						 ath_hal_reg_read_target(ah,0x786c) & (~0x6000000));
-
-					HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x20);
-					resetPLL = 1;
-				}
-			}
-#elif defined(PROJECT_MAGPIE) && !defined (FPGA)
-			if( t->reg == 0x7014 ){
-				static uint8_t resetPLL = 0;
-
-				if( resetPLL == 0 ) {
-					ath_hal_reg_write_target(ah, 0x7890,
-						 ath_hal_reg_read_target(ah,0x7890) | 0x1800000);
-					ath_hal_reg_write_target(ah, 0x7890,
-						 ath_hal_reg_read_target(ah,0x7890) & (~0x1800000));
-					resetPLL = 1;
-				}
-			}
-#endif
-			ath_hal_reg_write_target(ah,t->reg,t->val);
-		}
+		ath_hal_reg_write_filter(ah, t->reg, t->val);
 	}
 
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
@@ -1493,7 +1501,7 @@ static void ath_hal_reg_rmw_tgt(void *Context, A_UINT16 Command,
 		val = ath_hal_reg_read_target(ah, buf->reg);
 		val &= ~buf->clr;
 		val |= buf->set;
-		ath_hal_reg_write_target(ah, buf->reg, val);
+		ath_hal_reg_write_filter(ah, buf->reg, val);
 	}
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
