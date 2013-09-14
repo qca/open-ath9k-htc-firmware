@@ -1380,6 +1380,23 @@ static void ath_node_update_tgt(void *Context, A_UINT16 Command,
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
+static a_int32_t ath_reg_read_filter(struct ath_hal *ah, a_int32_t addr)
+{
+	if ((addr & 0xffffe000) == 0x2000) {
+		/* SEEPROM registers */
+		ath_hal_reg_read_target(ah, addr);
+		if (!ath_hal_wait(ah, 0x407c, 0x00030000, 0))
+			adf_os_print("SEEPROM Read fail: 0x%08x\n", addr);
+
+		return (ath_hal_reg_read_target(ah, 0x407c) & 0x0000ffff);
+	} else if (addr > 0xffff)
+		/* SoC registers */
+		return HAL_WORD_REG_READ(addr);
+	else
+		/* MAC registers */
+		return ath_hal_reg_read_target(ah, addr);
+}
+
 static void ath_hal_reg_read_tgt(void *Context, A_UINT16 Command,
 				 A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen)
 {
@@ -1393,19 +1410,8 @@ static void ath_hal_reg_read_tgt(void *Context, A_UINT16 Command,
 		addr = *(a_uint32_t *)(data + i);
 		addr = adf_os_ntohl(addr);
 
-		if ((addr & 0xffffe000) == 0x2000) {
-			/* SEEPROM */
-			ath_hal_reg_read_target(ah, addr);
-			if (!ath_hal_wait(ah, 0x407c, 0x00030000, 0)) {
-				adf_os_print("SEEPROM Read fail: 0x%08x\n", addr);
-			}
-			val[i/sizeof(a_int32_t)] = (ath_hal_reg_read_target(ah, 0x407c) & 0x0000ffff);
-		} else if (addr > 0xffff) {
-			val[i/sizeof(a_int32_t)] = *(a_uint32_t *)addr;
-		} else
-			val[i/sizeof(a_int32_t)] = ath_hal_reg_read_target(ah, addr);
-
-		val[i/sizeof(a_int32_t)] = adf_os_ntohl(val[i/sizeof(a_int32_t)]);
+		val[i/sizeof(a_int32_t)] =
+			adf_os_ntohl(ath_reg_read_filter(ah, addr));
 	}
 
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, &val[0], datalen);
@@ -1498,7 +1504,7 @@ static void ath_hal_reg_rmw_tgt(void *Context, A_UINT16 Command,
 		a_uint32_t val;
 		buf = (struct register_rmw *)(data + i);
 
-		val = ath_hal_reg_read_target(ah, buf->reg);
+		val = ath_reg_read_filter(ah, buf->reg);
 		val &= ~buf->clr;
 		val |= buf->set;
 		ath_hal_reg_write_filter(ah, buf->reg, val);
