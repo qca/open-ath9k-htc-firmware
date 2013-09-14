@@ -72,6 +72,7 @@ uint32_t *init_htc_handle = 0;
 void owl_tgt_tx_tasklet(TQUEUE_ARG data);
 static void ath_tgt_send_beacon(struct ath_softc_tgt *sc,adf_nbuf_t bc_hdr,adf_nbuf_t nbuf,HTC_ENDPOINT_ID EndPt);
 static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen);
+static void ath_hal_reg_rmw_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen);
 extern struct ath_tx_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc, adf_nbuf_t skb, ath_data_hdr_t *dh);
 extern void  ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t mgt_hdr, adf_nbuf_t skb,HTC_ENDPOINT_ID EndPt);
 extern HAL_BOOL ath_hal_wait(struct ath_hal *ah, a_uint32_t reg, a_uint32_t mask, a_uint32_t val);
@@ -1475,6 +1476,28 @@ static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command,
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
+static void ath_hal_reg_rmw_tgt(void *Context, A_UINT16 Command,
+				A_UINT16 SeqNo, A_UINT8 *data,
+				a_int32_t datalen)
+{
+	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
+	struct ath_hal *ah = sc->sc_ah;
+	struct register_rmw *buf = (struct register_rmw *)data;
+	int i;
+
+	for (i = 0; i < datalen;
+	     i += sizeof(struct register_rmw)) {
+		a_uint32_t val;
+		buf = (struct register_rmw *)(data + i);
+
+		val = ath_hal_reg_read_target(ah, buf->reg);
+		val &= ~buf->clr;
+		val |= buf->set;
+		ath_hal_reg_write_target(ah, buf->reg, val);
+	}
+	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
+}
+
 static void ath_vap_delete_tgt(void *Context, A_UINT16 Command,
 			       A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen)
 {
@@ -1734,6 +1757,7 @@ static WMI_DISPATCH_ENTRY Magpie_Sys_DispatchEntries[] =
 	{ath_tx_stats_tgt,            WMI_TX_STATS_CMDID,           0},
 	{ath_rx_stats_tgt,            WMI_RX_STATS_CMDID,           0},
 	{ath_rc_mask_tgt,             WMI_BITRATE_MASK_CMDID,       0},
+	{ath_hal_reg_rmw_tgt,         WMI_REG_RMW_CMDID,            0},
 };
 
 /*****************/
