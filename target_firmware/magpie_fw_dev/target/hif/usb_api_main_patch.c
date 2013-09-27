@@ -27,6 +27,80 @@ void cold_reboot(void)
 }
 
 /*
+ * support more than 64 bytes command on ep3
+ */
+void usb_status_in_patch(void)
+{
+	uint16_t count;
+	uint16_t remainder;
+	uint16_t reg_buf_len;
+	static uint16_t buf_len;
+	static VBUF *evntbuf = NULL;
+	static volatile uint32_t *regaddr;
+	static BOOLEAN cmd_is_new = TRUE;
+	BOOLEAN cmd_end = FALSE;
+
+	if (cmd_is_new) {
+		evntbuf = usbFifoConf.get_event_buf();
+		if (evntbuf != NULL) {
+			regaddr = (uint32_t *)VBUF_GET_DATA_ADDR(evntbuf);
+			buf_len = evntbuf->buf_length;
+		} else {
+			mUSB_STATUS_IN_INT_DISABLE();
+			return;
+		}
+
+		cmd_is_new = FALSE;
+	}
+
+	if (buf_len > USB_EP3_MAX_PKT_SIZE) {
+		reg_buf_len = USB_EP3_MAX_PKT_SIZE;
+		buf_len -= USB_EP3_MAX_PKT_SIZE;
+	}
+	/* TODO: 64 bytes...
+	 * controller supposed will take care of zero-length? */
+	else {
+		reg_buf_len = buf_len;
+		cmd_end = TRUE;
+	}
+
+	/* INT use EP3 */
+	for (count = 0; count < (reg_buf_len / 4); count++)
+	{
+		USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, *regaddr);
+		regaddr++;
+	}
+
+	remainder = reg_buf_len % 4;
+
+	if (remainder) {
+		switch(remainder) {
+		case 3:
+			USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0x7);
+			break;
+		case 2:
+			USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0x3);
+			break;
+		case 1:
+			USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0x1);
+			break;
+		}
+
+		USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, *regaddr);
+
+		/* Restore CBus FIFO size to word size */
+		USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0xF);
+	}
+
+	mUSB_EP3_XFER_DONE();
+
+	if (evntbuf != NULL && cmd_end) {
+		usbFifoConf.send_event_done(evntbuf);
+		cmd_is_new = TRUE;
+	}
+}
+
+/*
  * support more than 64 bytes command on ep4 
  */
 void usb_reg_out_patch(void)

@@ -49,7 +49,7 @@ extern int _HIFusb_get_max_msg_len_patch(hif_handle_t handle, int pipe);
 extern void _HIFusb_isr_handler_patch(hif_handle_t h);
 extern BOOLEAN bSet_configuration_patch(void);
 extern void vUSBFIFO_EP6Cfg_FS_patch(void);
-extern void vUsb_Status_In_patch(void);
+extern void usb_status_in_patch(void);
 extern void _fw_usbfifo_init(USB_FIFO_CONFIG *pConfig);
 extern void zfTurnOffPower_patch(void);
 extern void zfResetUSBFIFO_patch(void);
@@ -190,7 +190,7 @@ void app_start()
 		_indir_tbl.cmnos.usb._usb_reg_out = usb_reg_out_patch;
 		_indir_tbl.hif._isr_handler = _HIFusb_isr_handler_patch;
 		_indir_tbl.cmnos.usb._usb_set_configuration = bSet_configuration_patch;
-		_indir_tbl.cmnos.usb._usb_status_in = vUsb_Status_In_patch;
+		_indir_tbl.cmnos.usb._usb_status_in = usb_status_in_patch;
 		_indir_tbl.cmnos.usb._usb_get_descriptor = bGet_descriptor_patch;
 		_indir_tbl.cmnos.usb._usb_standard_cmd = bStandardCommand_patch;
 		_indir_tbl.usbfifo_api._init = _fw_usbfifo_init;
