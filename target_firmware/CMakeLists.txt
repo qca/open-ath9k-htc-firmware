@@ -27,6 +27,7 @@ SET(SOURCES
 	magpie_fw_dev/target/buf_pool/buf_pool_static.c
 	magpie_fw_dev/target/cmnos/dbg_api.c
 	magpie_fw_dev/target/cmnos/cmnos_sflash.c
+	magpie_fw_dev/target/hif/usb_api_main_patch.c
 	wlan/ah.c
 	wlan/ah_osdep.c
 	wlan/ar5416Phy.c

@@ -44,7 +44,7 @@
 #define ALLOCRAM_SIZE        ( SYS_RAM_SZIE - ( ALLOCRAM_START - SYS_D_RAM_REGION_0_BASE) - SYS_D_RAM_STACK_SIZE)
 
 // support for more than 64 bytes on command pipe
-extern void vUsb_Reg_Out_patch(void);
+extern void usb_reg_out_patch(void);
 extern int _HIFusb_get_max_msg_len_patch(hif_handle_t handle, int pipe);
 extern void _HIFusb_isr_handler_patch(hif_handle_t h);
 extern BOOLEAN bSet_configuration_patch(void);
@@ -187,7 +187,7 @@ void app_start()
 
 	if( hostif == HIF_USB ) {
 		_indir_tbl.hif._get_max_msg_len = _HIFusb_get_max_msg_len_patch;
-		_indir_tbl.cmnos.usb._usb_reg_out = vUsb_Reg_Out_patch;
+		_indir_tbl.cmnos.usb._usb_reg_out = usb_reg_out_patch;
 		_indir_tbl.hif._isr_handler = _HIFusb_isr_handler_patch;
 		_indir_tbl.cmnos.usb._usb_set_configuration = bSet_configuration_patch;
 		_indir_tbl.cmnos.usb._usb_status_in = vUsb_Status_In_patch;
