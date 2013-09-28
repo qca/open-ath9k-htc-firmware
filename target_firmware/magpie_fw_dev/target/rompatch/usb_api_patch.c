@@ -118,134 +118,6 @@ void _fw_usbfifo_init(USB_FIFO_CONFIG *pConfig)
 	usbFifoConf.send_event_done = pConfig->send_event_done;
 }
 
-/* 
- *  -- usb1.1 ep6 fix --
- */
-extern uint16_t       u8UsbConfigValue;
-extern uint16_t       u8UsbInterfaceValue;
-extern uint16_t       u8UsbInterfaceAlternateSetting;
-extern SetupPacket    ControlCmd;
-extern void vUsbClrEPx(void);
-
-#undef FS_C1_I0_A0_EP_NUMBER
-#define FS_C1_I0_A0_EP_NUMBER 6
-
-#define FS_C1_I0_A0_EP6_BLKSIZE    BLK512BYTE
-#define FS_C1_I0_A0_EP6_BLKNO      DOUBLE_BLK
-#define FS_C1_I0_A0_EP6_DIRECTION  DIRECTION_OUT
-#define FS_C1_I0_A0_EP6_TYPE       TF_TYPE_BULK
-#define FS_C1_I0_A0_EP6_MAX_PACKET 0x0040
-#define FS_C1_I0_A0_EP6_bInterval  00
-
-// EP6
-#define FS_C1_I0_A0_EP6_FIFO_START  (FS_C1_I0_A0_EP5_FIFO_START + FS_C1_I0_A0_EP5_FIFO_NO)
-#define FS_C1_I0_A0_EP6_FIFO_NO     (FS_C1_I0_A0_EP6_BLKNO * FS_C1_I0_A0_EP6_BLKSIZE)
-#define FS_C1_I0_A0_EP6_FIFO_CONFIG (0x80 | ((FS_C1_I0_A0_EP6_BLKSIZE - 1) << 4) | ((FS_C1_I0_A0_EP6_BLKNO - 1) << 2) | FS_C1_I0_A0_EP6_TYPE)
-#define FS_C1_I0_A0_EP6_FIFO_MAP    (((1 - FS_C1_I0_A0_EP6_DIRECTION) << 4) | EP6)
-#define FS_C1_I0_A0_EP6_MAP         (FS_C1_I0_A0_EP6_FIFO_START |   (FS_C1_I0_A0_EP6_FIFO_START << 4)   | (MASK_F0 >> (4*FS_C1_I0_A0_EP6_DIRECTION)))
-
-
-#define CMD_PCI_RC_RESET_ON() HAL_WORD_REG_WRITE(MAGPIE_REG_RST_RESET_ADDR, \
-			 (HAL_WORD_REG_READ(MAGPIE_REG_RST_RESET_ADDR)|	\
-			  (PCI_RC_PHY_SHIFT_RESET_BIT|PCI_RC_PLL_RESET_BIT|PCI_RC_PHY_RESET_BIT|PCI_RC_RESET_BIT)))
-
-void vUSBFIFO_EP6Cfg_FS_patch(void)
-{
-#if (FS_C1_I0_A0_EP_NUMBER >= 6)
-	int i;
-
-	//EP0X06
-	mUsbEPMap(EP6, FS_C1_I0_A0_EP6_MAP);
-	mUsbFIFOMap(FS_C1_I0_A0_EP6_FIFO_START, FS_C1_I0_A0_EP6_FIFO_MAP);
-	mUsbFIFOConfig(FS_C1_I0_A0_EP6_FIFO_START, FS_C1_I0_A0_EP6_FIFO_CONFIG);
-
-	for(i = FS_C1_I0_A0_EP6_FIFO_START + 1 ;
-            i < FS_C1_I0_A0_EP6_FIFO_START + FS_C1_I0_A0_EP6_FIFO_NO ; i ++)
-	{
-		mUsbFIFOConfig(i, (FS_C1_I0_A0_EP6_FIFO_CONFIG & (~BIT7)) );
-	}
-
-	mUsbEPMxPtSzHigh(EP6, FS_C1_I0_A0_EP6_DIRECTION, (FS_C1_I0_A0_EP6_MAX_PACKET & 0x7ff));
-	mUsbEPMxPtSzLow(EP6, FS_C1_I0_A0_EP6_DIRECTION, (FS_C1_I0_A0_EP6_MAX_PACKET & 0x7ff));
-	mUsbEPinHighBandSet(EP6 , FS_C1_I0_A0_EP6_DIRECTION, FS_C1_I0_A0_EP6_MAX_PACKET);
-#endif
-}
-
-void vUsbFIFO_EPxCfg_FS_patch(void)
-{
-	switch (u8UsbConfigValue)
-	{
-#if (FS_CONFIGURATION_NUMBER >= 1)
-		// Configuration 0X01
-        case 0X01:
-		switch (u8UsbInterfaceValue)
-		{
-#if (FS_C1_INTERFACE_NUMBER >= 1)
-			// Interface 0
-                case 0:
-			switch (u8UsbInterfaceAlternateSetting)
-			{
-
-#if (FS_C1_I0_ALT_NUMBER >= 1)
-				// AlternateSetting 0
-                        case 0:
-
-				// snapped....
-
-				// patch up this ep6_fs config
-				vUSBFIFO_EP6Cfg_FS_patch();
-
-				break;
-
-#endif
-                        default:
-				break;
-			}
-			break;
-#endif
-                default:
-			break;
-		}
-		break;
-#endif
-        default:
-		break;
-	}
-	//mCHECK_STACK();
-}
-
-
-BOOLEAN bSet_configuration_patch(void)
-{
-	bSet_configuration();
-
-	if (mLOW_BYTE(mDEV_REQ_VALUE()) == 0)
-	{
-		// snapped....
-		;
-	}
-	else
-	{
-		if (mUsbHighSpeedST())                  // First judge HS or FS??
-		{
-			// snapped....
-			;
-		}
-		else
-		{
-			// snapped....
-			vUsbFIFO_EPxCfg_FS_patch();
-		}
-
-		// snapped....
-	}
-
-	eUsbCxFinishAction = ACT_DONE;
-	return TRUE;
-}
-
-
-
 #define PCI_RC_RESET_BIT                            BIT6
 #define PCI_RC_PHY_RESET_BIT                        BIT7
 #define PCI_RC_PLL_RESET_BIT                        BIT8
@@ -545,6 +417,10 @@ static void _fw_power_on()
 			   (HAL_WORD_REG_READ(MAGPIE_REG_ETH_PLL_BYPASS_ADDR)&(~(BIT4|BIT0))));
 }
 
+#define CMD_PCI_RC_RESET_ON() HAL_WORD_REG_WRITE(MAGPIE_REG_RST_RESET_ADDR, \
+			 (HAL_WORD_REG_READ(MAGPIE_REG_RST_RESET_ADDR)|	\
+			  (PCI_RC_PHY_SHIFT_RESET_BIT|PCI_RC_PLL_RESET_BIT|PCI_RC_PHY_RESET_BIT|PCI_RC_RESET_BIT)))
+
 static void _fw_restore_dma_fifo(void)
 {
 	HAL_WORD_REG_WRITE(0x5601C, (HAL_WORD_REG_READ(0x5601C)&(~(BIT18))));
@@ -568,6 +444,7 @@ static void _fw_restore_dma_fifo(void)
 extern uint16_t *u8ConfigDescriptorEX;
 extern uint16_t *pu8DescriptorEX;
 extern uint16_t u16TxRxCounter;
+extern SetupPacket    ControlCmd;
 
 extern uint16_t *u8UsbDeviceDescriptor;
 
@@ -674,31 +551,3 @@ BOOLEAN bGet_descriptor_patch(void)
 	}
 }
 
-extern BOOLEAN bStandardCommand(void);
-
-BOOLEAN bStandardCommand_patch(void)
-{
-	if (mDEV_REQ_REQ() == USB_SET_CONFIGURATION) {
-		A_USB_SET_CONFIG();
-
-#if ENABLE_SWAP_DATA_MODE
-		// SWAP FUNCTION should be enabled while DMA engine is not working,
-		// the best place to enable it is before we trigger the DMA
-		MAGPIE_REG_USB_RX0_SWAP_DATA = 0x1;
-		MAGPIE_REG_USB_TX0_SWAP_DATA = 0x1;
-
-#if SYSTEM_MODULE_HP_EP5
-		MAGPIE_REG_USB_RX1_SWAP_DATA = 0x1;
-#endif
-
-#if SYSTEM_MODULE_HP_EP6
-		MAGPIE_REG_USB_RX2_SWAP_DATA = 0x1;
-#endif
-
-#endif //ENABLE_SWAP_DATA_MODE
-		return TRUE;
-	}
-	else {
-		return bStandardCommand();
-	}
-}
