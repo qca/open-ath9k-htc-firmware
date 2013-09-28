@@ -347,3 +347,76 @@ BOOLEAN bStandardCommand_patch(void)
 		return bStandardCommand();
 }
 
+/*
+ * usb descriptor patch
+ */
+
+extern uint16_t		*u8ConfigDescriptorEX;
+extern uint16_t		*pu8DescriptorEX;
+extern uint16_t		u16TxRxCounter;
+extern SetupPacket	ControlCmd;
+extern uint16_t		*u8UsbDeviceDescriptor;
+extern BOOLEAN		bGet_descriptor(void);
+
+uint16_t ConfigDescriptorPatch[30];
+uint16_t UsbDeviceDescriptorPatch[9];
+
+#define BCD_DEVICE_OFFSET		6
+#define BCD_DEVICE_FW_SIGNATURE		0xffff
+#define VENDOR_ID_OFFSET		4
+#define PRODUCT_ID_OFFSET		5
+
+#define EP3_TRANSFER_TYPE_OFFSET	17
+#define EP3_INT_INTERVAL		19
+#define EP4_TRANSFER_TYPE_OFFSET	21
+#define EP4_INT_INTERVAL		22
+
+BOOLEAN bGet_descriptor_patch(void)
+{
+	if (mDEV_REQ_VALUE_HIGH() == 1)
+	{
+		uint8_t *p = (uint8_t *)u8UsbDeviceDescriptor;
+
+		/* Copy Usb Device Descriptor */
+		ath_hal_memcpy(UsbDeviceDescriptorPatch, p,
+				sizeof(UsbDeviceDescriptorPatch));
+
+		/* Change bcdDevice. we need it to detect if FW
+		 * was uploaded. */
+		UsbDeviceDescriptorPatch[BCD_DEVICE_OFFSET] =
+			BCD_DEVICE_FW_SIGNATURE;
+
+		pu8DescriptorEX = UsbDeviceDescriptorPatch;
+		u16TxRxCounter = mTABLE_LEN(u8UsbDeviceDescriptor[0]);
+
+		if (u16TxRxCounter > mDEV_REQ_LENGTH())
+			u16TxRxCounter = mDEV_REQ_LENGTH();
+
+		A_USB_EP0_TX_DATA();
+
+		return TRUE;
+	} else if (mDEV_REQ_VALUE_HIGH() == 2) {
+		uint8_t *p = (uint8_t *)u8ConfigDescriptorEX;
+
+		/* Copy ConfigDescriptor */
+		ath_hal_memcpy(ConfigDescriptorPatch, p,
+				sizeof(ConfigDescriptorPatch));
+
+		 /* place holder for EPx patches */
+
+		if (mDEV_REQ_VALUE_LOW() == 0) {
+			/* configuration no: 0 */
+			pu8DescriptorEX = ConfigDescriptorPatch;
+			u16TxRxCounter = ConfigDescriptorPatch[1];
+		} else
+			return FALSE;
+
+		if (u16TxRxCounter > mDEV_REQ_LENGTH())
+			u16TxRxCounter = mDEV_REQ_LENGTH();
+
+		A_USB_EP0_TX_DATA();
+		return TRUE;
+	} else
+		return bGet_descriptor();
+}
+
