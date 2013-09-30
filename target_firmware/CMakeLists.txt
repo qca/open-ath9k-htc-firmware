@@ -46,7 +46,7 @@ SET(SOURCES
 IF(TARGET_K2)
 	SET(SOURCES ${SOURCES}
 		magpie_fw_dev/target/hif/k2_HIF_usb_patch.c
-		magpie_fw_dev/target/hif/k2_fw_usb_api.c
+		magpie_fw_dev/target/hif/usb_api_k2_patch.c
 	)
 	SET(LIBS ${LIBS} hif)
 	ADD_DEFINITIONS(-DPROJECT_K2)
@@ -63,8 +63,8 @@ ELSEIF(TARGET_MAGPIE)
 		-DMAGPIE_MERLIN
 	)
 	SET(SOURCES ${SOURCES}
+		magpie_fw_dev/target/hif/usb_api_magpie_patch.c
 		magpie_fw_dev/target/rompatch/cmnos_clock_patch.c
-		magpie_fw_dev/target/rompatch/usb_api_patch.c
 		magpie_fw_dev/target/rompatch/HIF_usb_patch.c
 	)
 	INCLUDE_DIRECTORIES(
