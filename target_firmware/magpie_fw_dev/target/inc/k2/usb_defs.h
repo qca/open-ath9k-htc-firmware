@@ -133,6 +133,7 @@
 #define ZM_SOC_USB_MODE_CTRL_OFFSET      0x108
 #define ZM_SOC_USB_MAX_AGGREGATE_OFFSET  0x110
 #define ZM_SOC_USB_TIME_CTRL_OFFSET      0x114
+#define ZM_SOC_USB_DMA_RESET_OFFSET      0x118
 
 #define ZM_ADDR_CONV                     0x0
 

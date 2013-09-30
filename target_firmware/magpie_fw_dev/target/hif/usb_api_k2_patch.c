@@ -332,8 +332,7 @@ void _fw_usb_reset_fifo(void)
 	 * *reg_data = 0x00000001;
 	 * because of Hardware bug in K2
 	 */
-	reg_data = (uint32_t *)(USB_CTRL_BASE_ADDRESS + 0x118);
-	*reg_data = 0x00000000;
+	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, 0x0);
 
 	/* reset both usb(bit2)/wlan(bit1) dma */
 	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, (BIT2));
@@ -341,7 +340,7 @@ void _fw_usb_reset_fifo(void)
 			(HAL_WORD_REG_READ(MAGPIE_REG_RST_PWDN_CTRL_ADDR)|BIT0));
 	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
 
-	*reg_data = 0x00000001;
+	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, BIT0);
 
 	/* MAC warem reset */
 	//reg_data = (uint32_t *)(K2_REG_MAC_BASE_ADDR + 0x7000);
