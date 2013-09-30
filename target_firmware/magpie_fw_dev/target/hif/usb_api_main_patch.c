@@ -1,3 +1,4 @@
+/* shared patches for k2 and magpie */
 
 #include "usb_defs.h"
 #include "usb_type.h"
@@ -15,6 +16,34 @@
 
 extern USB_FIFO_CONFIG usbFifoConf;
 extern Action eUsbCxFinishAction;
+extern void _fw_usb_suspend_reboot();
+
+typedef void (* USBFIFO_recv_command)(VBUF *cmd);
+USBFIFO_recv_command m_origUsbfifoRecvCmd = NULL;
+
+void _fw_usbfifo_recv_command(VBUF *buf)
+{
+	uint8_t *cmd_data;
+	uint32_t tmp;
+
+	cmd_data = (uint8_t *)(buf->desc_list->buf_addr +
+				buf->desc_list->data_offset);
+	tmp = *((uint32_t *)cmd_data);
+	if (tmp == 0xFFFFFFFF)
+		_fw_usb_suspend_reboot();
+	else
+		m_origUsbfifoRecvCmd(buf);
+}
+
+void _fw_usbfifo_init(USB_FIFO_CONFIG *pConfig)
+{
+	m_origUsbfifoRecvCmd = pConfig->recv_command;
+
+	usbFifoConf.get_command_buf = pConfig->get_command_buf;
+	usbFifoConf.recv_command    = _fw_usbfifo_recv_command;
+	usbFifoConf.get_event_buf   = pConfig->get_event_buf;
+	usbFifoConf.send_event_done = pConfig->send_event_done;
+}
 
 void cold_reboot(void)
 {

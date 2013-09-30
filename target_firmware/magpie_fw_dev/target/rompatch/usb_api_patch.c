@@ -46,16 +46,12 @@
 #define measure_time 0
 #define measure_time_pll 10000000
 
-typedef void (* USBFIFO_recv_command)(VBUF *cmd);
-
 extern Action eUsbCxFinishAction;
 extern CommandType eUsbCxCommand;
 extern BOOLEAN UsbChirpFinish;
 extern USB_FIFO_CONFIG usbFifoConf;
 extern uint16_t *pu8DescriptorEX;
 extern uint16_t u16TxRxCounter;
-
-USBFIFO_recv_command m_origUsbfifoRecvCmd = NULL;
 
 void zfTurnOffPower_patch(void);
 
@@ -67,62 +63,42 @@ static void _fw_power_off();
 BOOLEAN bEepromExist = TRUE;
 BOOLEAN bJumptoFlash = FALSE;
 
-void _fw_usbfifo_recv_command(VBUF *buf)
+void _fw_usb_suspend_reboot()
 {
-	A_UINT8 *cmd_data;
-	A_UINT32 tmp;
+	/* reset usb/wlan dma */
+	_fw_reset_dma_fifo();
 
-	cmd_data = (A_UINT8 *)(buf->desc_list->buf_addr + buf->desc_list->data_offset);
-	tmp = *((A_UINT32 *)cmd_data);
-	if ( tmp == 0xFFFFFFFF ) {	
-		// reset usb/wlan dma
-		_fw_reset_dma_fifo();
+	/* restore gpio setting and usb/wlan dma state */
+	_fw_restore_dma_fifo();
 
-		// restore gpio setting and usb/wlan dma state
-		_fw_restore_dma_fifo();
+	/* set clock to bypass mode - 40Mhz from XTAL */
+	HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_BYPASS_ADDR, (BIT0|BIT4));
 
-		// set clock to bypass mode - 40Mhz from XTAL 
-		HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_BYPASS_ADDR, (BIT0|BIT4));
+	A_DELAY_USECS(100); /* wait for stable */
 
-		A_DELAY_USECS(100); // wait for stable
+	HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_ADDR, (BIT16));
 
-		HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_ADDR, (BIT16));
+	A_DELAY_USECS(100); /* wait for stable */
+	A_UART_HWINIT((40*1000*1000), 19200);
 
-		A_DELAY_USECS(100); // wait for stable
-		A_UART_HWINIT((40*1000*1000), 19200);
+	A_CLOCK_INIT(40);
 
-		A_CLOCK_INIT(40);
-
-		if (!bEepromExist) { //jump to flash boot (eeprom data in flash)
-			bJumptoFlash = TRUE;
-			A_PRINTF("Jump to Flash BOOT\n");
-			app_start();
-		}else{
-			A_PRINTF("receive the suspend command...\n");
-			// reboot.....
-			A_USB_JUMP_BOOT();	        
-		}
-
+	if (!bEepromExist) { /* jump to flash boot (eeprom data in flash) */
+		bJumptoFlash = TRUE;
+		A_PRINTF("Jump to Flash BOOT\n");
+		app_start();
 	} else {
-		m_origUsbfifoRecvCmd(buf);
+		A_PRINTF("receive the suspend command...\n");
+		/* reboot..... */
+		A_USB_JUMP_BOOT();
 	}
-}
 
-void _fw_usbfifo_init(USB_FIFO_CONFIG *pConfig)
-{
-	m_origUsbfifoRecvCmd = pConfig->recv_command;
-
-	usbFifoConf.get_command_buf = pConfig->get_command_buf;
-	usbFifoConf.recv_command    = _fw_usbfifo_recv_command;
-	usbFifoConf.get_event_buf   = pConfig->get_event_buf;
-	usbFifoConf.send_event_done = pConfig->send_event_done;
 }
 
 #define PCI_RC_RESET_BIT                            BIT6
 #define PCI_RC_PHY_RESET_BIT                        BIT7
 #define PCI_RC_PLL_RESET_BIT                        BIT8
 #define PCI_RC_PHY_SHIFT_RESET_BIT                  BIT10
-
 
 /*
  * -- urn_off_merlin --

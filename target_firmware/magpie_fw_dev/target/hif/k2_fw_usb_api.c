@@ -44,15 +44,12 @@
 
 #include "sys_cfg.h"
 
-typedef void (* USBFIFO_recv_command)(VBUF *cmd);
 void _fw_usb_suspend_reboot();
 
 extern Action      eUsbCxFinishAction;
 extern CommandType eUsbCxCommand;
 extern BOOLEAN     UsbChirpFinish;
 extern USB_FIFO_CONFIG usbFifoConf;
-
-USBFIFO_recv_command m_origUsbfifoRecvCmd = NULL;
 
 #if SYSTEM_MODULE_USB
 #define vUsb_ep0end(void)                                   \
@@ -75,30 +72,6 @@ USBFIFO_recv_command m_origUsbfifoRecvCmd = NULL;
 
 #define vUsb_resm() USB_BYTE_REG_WRITE(ZM_INTR_SOURCE_7_OFFSET,     \
                         (USB_BYTE_REG_READ(ZM_INTR_SOURCE_7_OFFSET)&~BIT3))
-
-void _fw_usbfifo_recv_command(VBUF *buf)
-{
-    A_UINT8 *cmd_data;
-    A_UINT32 tmp;
-
-    cmd_data = (A_UINT8 *)(buf->desc_list->buf_addr + buf->desc_list->data_offset);
-    tmp = *((A_UINT32 *)cmd_data);
-    if ( tmp == 0xFFFFFFFF ) {
-        _fw_usb_suspend_reboot();
-    } else {
-        m_origUsbfifoRecvCmd(buf);
-    }
-}
-
-void _fw_usbfifo_init(USB_FIFO_CONFIG *pConfig)
-{
-    m_origUsbfifoRecvCmd = pConfig->recv_command;
-
-    usbFifoConf.get_command_buf = pConfig->get_command_buf;
-    usbFifoConf.recv_command    = _fw_usbfifo_recv_command;
-    usbFifoConf.get_event_buf   = pConfig->get_event_buf;
-    usbFifoConf.send_event_done = pConfig->send_event_done;
-}
 
 #define CHECK_SOF_LOOP_CNT    50
 
