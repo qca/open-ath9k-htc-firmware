@@ -77,301 +77,286 @@ extern USB_FIFO_CONFIG usbFifoConf;
 
 void _fw_usb_suspend_reboot()
 {
-    volatile uint32_t gpio_in = 0;
-    volatile uint32_t pupd = 0;
-    volatile uint32_t t = 0;
-    volatile uint32_t sof_no=0,sof_no_new=0;
-    /* Set GO_TO_SUSPEND bit to USB main control register */
-    vUsb_suspend();
-    A_PRINTF("!USB suspend\n\r");
+	volatile uint32_t gpio_in = 0;
+	volatile uint32_t pupd = 0;
+	volatile uint32_t t = 0;
+	volatile uint32_t sof_no=0,sof_no_new=0;
+	/* Set GO_TO_SUSPEND bit to USB main control register */
+	vUsb_suspend();
+	A_PRINTF("!USB suspend\n\r");
 
-    // keep the record of suspend
+	/* keep the record of suspend */
 #if defined(PROJECT_MAGPIE)
-    *((volatile uint32_t*)WATCH_DOG_MAGIC_PATTERN_ADDR) = SUS_MAGIC_PATTERN;
+	*((volatile uint32_t*)WATCH_DOG_MAGIC_PATTERN_ADDR) = SUS_MAGIC_PATTERN;
 #elif defined(PROJECT_K2)
-    HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, SUS_MAGIC_PATTERN);
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, SUS_MAGIC_PATTERN);
 #endif /* #if defined(PROJECT_MAGPIE) */
 
-    /* Reset USB FIFO */
-    A_USB_RESET_FIFO();
+	/* Reset USB FIFO */
+	A_USB_RESET_FIFO();
 
-    /* Turn off power */
-    A_USB_POWER_OFF();
+	/* Turn off power */
+	A_USB_POWER_OFF();
 
-    DEBUG_SYSTEM_STATE = (DEBUG_SYSTEM_STATE&(~0xffff)) | 0x1000;
+	DEBUG_SYSTEM_STATE = (DEBUG_SYSTEM_STATE&(~0xffff)) | 0x1000;
 
-    // reset ep3/ep4 fifo in case there is data which might affect resuming
+	/* reset ep3/ep4 fifo in case there
+	 * is data which might affect resuming */
 //  HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100ae)|0x10));
 //  HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100af)|0x10));
 
-    {
-        // config gpio to input before goto suspend
+	{
+		/* config gpio to input before goto suspend */
 
-        //disable JTAG/ICE
-        //jtag = HAL_WORD_REG_READ(0x10004054);
-        //HAL_WORD_REG_WRITE(0x10004054, (jtag|BIT17));
-                
-		//disable SPI
-        //spi = HAL_WORD_REG_READ(0x50040);
-        //HAL_WORD_REG_WRITE(0x50040, (spi&~(BIT8)));
-                
-		//set all GPIO to input
-        gpio_in = HAL_WORD_REG_READ(0x1000404c);
-        HAL_WORD_REG_WRITE(0x1000404c, 0x0);
-                
-		//set PU/PD for all GPIO except two UART pins
-        pupd = HAL_WORD_REG_READ(0x10004088);
-        HAL_WORD_REG_WRITE(0x10004088, 0xA982AA6A);
-    }
+		/* disable JTAG/ICE */
+	        //jtag = HAL_WORD_REG_READ(0x10004054);
+	        //HAL_WORD_REG_WRITE(0x10004054, (jtag|BIT17));
 
-    sof_no= HAL_WORD_REG_READ(0x10004); 
-    for (t = 0; t < CHECK_SOF_LOOP_CNT; t++)
-    {
-        A_DELAY_USECS(1000);    //delay 1ms	
-        sof_no_new = HAL_WORD_REG_READ(0x10004);
+		/* disable SPI */
+		//spi = HAL_WORD_REG_READ(0x50040);
+		//HAL_WORD_REG_WRITE(0x50040, (spi&~(BIT8)));
 
-        if(sof_no_new == sof_no)
-     	    break; 
+		/* set all GPIO to input */
+		gpio_in = HAL_WORD_REG_READ(0x1000404c);
+		HAL_WORD_REG_WRITE(0x1000404c, 0x0);
 
-        sof_no = sof_no_new;	  
-    } 
-    
-    /* 
-     * Reset "printf" module patch point(RAM to ROM) when K2 warm start or suspend,  
-     * which fixed the error issue cause by redownload another different firmware. 
-     */
-    _indir_tbl.cmnos.printf._printf = save_cmnos_printf;
-    
-    ///////////////////////////////////////////////////////////////
-    // setting the go suspend here, power down right away...
-    if (t != CHECK_SOF_LOOP_CNT)   // not time out
-        HAL_WORD_REG_WRITE(0x10000, HAL_WORD_REG_READ(0x10000)|(0x8));
-    ///////////////////////////////////////////////////////////////
+		/* set PU/PD for all GPIO except two UART pins */
+		pupd = HAL_WORD_REG_READ(0x10004088);
+		HAL_WORD_REG_WRITE(0x10004088, 0xA982AA6A);
+	}
 
-    DEBUG_SYSTEM_STATE = (DEBUG_SYSTEM_STATE&(~0xffff)) | 0x1100;
+	sof_no= HAL_WORD_REG_READ(0x10004); 
+	for (t = 0; t < CHECK_SOF_LOOP_CNT; t++)
+	{
+		A_DELAY_USECS(1000);    /* delay 1ms */
+		sof_no_new = HAL_WORD_REG_READ(0x10004);
 
-#if 0 // pll unstable, h/w bug?
-    HAL_WORD_REG_WRITE(0x50040, (0x300|6|(1>>1)<<12));
-    A_UART_HWINIT((40*1000*1000)/1, 19200);
+		if(sof_no_new == sof_no)
+			break;
+		sof_no = sof_no_new;
+	}
+
+	/*
+	 * Reset "printf" module patch point(RAM to ROM)
+	 * when K2 warm start or suspend,
+	 * which fixed the error issue cause by redownload
+	 * another different firmware.
+	 */
+	_indir_tbl.cmnos.printf._printf = save_cmnos_printf;
+
+	/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	 * setting the go suspend here, power down right away!!!
+	 */
+	if (t != CHECK_SOF_LOOP_CNT)   /* not time out */
+		HAL_WORD_REG_WRITE(0x10000, HAL_WORD_REG_READ(0x10000)|(0x8));
+
+	DEBUG_SYSTEM_STATE = (DEBUG_SYSTEM_STATE&(~0xffff)) | 0x1100;
+
+#if 0 /* pll unstable, h/w bug? */
+	HAL_WORD_REG_WRITE(0x50040, (0x300|6|(1>>1)<<12));
+	A_UART_HWINIT((40*1000*1000)/1, 19200);
 #endif
-    {
-        // restore gpio setting
-        //HAL_WORD_REG_WRITE(0x10004054, jtag);
-        //HAL_WORD_REG_WRITE(0x50040, spi);
-        HAL_WORD_REG_WRITE(0x1000404c, gpio_in);
-        HAL_WORD_REG_WRITE(0x10004088, pupd);
-    }
-    DEBUG_SYSTEM_STATE = (DEBUG_SYSTEM_STATE&(~0xffff)) | 0x1200;
+	/* restore gpio setting */
+	//HAL_WORD_REG_WRITE(0x10004054, jtag);
+	//HAL_WORD_REG_WRITE(0x50040, spi);
+	HAL_WORD_REG_WRITE(0x1000404c, gpio_in);
+	HAL_WORD_REG_WRITE(0x10004088, pupd);
 
-    {
-        // since we still need to touch mac_base address after resuming back, so that
-        // reset mac can't be done in ResetFifo function, move to here... 
-        // whole mac control reset.... (bit1)
-        HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, (BIT1) );
-        HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, (HAL_WORD_REG_READ(MAGPIE_REG_RST_PWDN_CTRL_ADDR)|BIT0));
-        HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0 );
+	DEBUG_SYSTEM_STATE = (DEBUG_SYSTEM_STATE&(~0xffff)) | 0x1200;
+
+	/* since we still need to touch mac_base address after resuming back,
+	 * so that reset mac can't be done in ResetFifo function,
+	 * move to here... whole mac control reset.... (bit1)
+	 */
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, (BIT1));
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR,
+		(HAL_WORD_REG_READ(MAGPIE_REG_RST_PWDN_CTRL_ADDR)|BIT0));
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
 	A_DELAY_USECS(1000);
-    }
 
-    //A_PRINTF("reg(0x10020)=(%x)\n", HAL_WORD_REG_READ(0x10020));
-    // disable ep3 int enable, so that resume back won't send wdt magic pattern out!!!
-    mUSB_STATUS_IN_INT_DISABLE();            
+	//A_PRINTF("reg(0x10020)=(%x)\n", HAL_WORD_REG_READ(0x10020));
+	/* disable ep3 int enable, so that resume back won't
+	 * send wdt magic pattern out!!! */
+	mUSB_STATUS_IN_INT_DISABLE();
 
-    MAGPIE_REG_USB_RX0_SWAP_DATA = 0x1;
-    MAGPIE_REG_USB_TX0_SWAP_DATA = 0x1;
-    MAGPIE_REG_USB_RX1_SWAP_DATA = 0x1;
-    MAGPIE_REG_USB_RX2_SWAP_DATA = 0x1;
+	MAGPIE_REG_USB_RX0_SWAP_DATA = 0x1;
+	MAGPIE_REG_USB_TX0_SWAP_DATA = 0x1;
+	MAGPIE_REG_USB_RX1_SWAP_DATA = 0x1;
+	MAGPIE_REG_USB_RX2_SWAP_DATA = 0x1;
 
-    if (((DEBUG_SYSTEM_STATE&~(0x0000ffff))>>16 == 0x5342)) {
-        /* UART_SEL and SPI_SEL */
-        HAL_WORD_REG_WRITE(0x50040, (0x300|0|(1>>1)<<12));
-    }
+	if (((DEBUG_SYSTEM_STATE&~(0x0000ffff))>>16 == 0x5342)) {
+		/* UART_SEL and SPI_SEL */
+		HAL_WORD_REG_WRITE(0x50040, (0x300|0|(1>>1)<<12));
+	}
 
-    /* Jump to boot code */
-    A_USB_JUMP_BOOT();
-
+	/* Jump to boot code */
+	A_USB_JUMP_BOOT();
 }
 
 /*
- * -- patch usb_fw_task --
- * . usb zero length interrupt should not clear by s/w, h/w will handle that
- * . complete suspend handle, configure gpio, turn off related function, 
- *   slow down the pll for stable issue
+ * patch usb_fw_task
+ * usb zero length interrupt should not clear by s/w, h/w will handle that
+ * complete suspend handle, configure gpio, turn off related function,
+ * slow down the pll for stable issue
  */
 void _fw_usb_fw_task(void)
 {
-    register uint8_t usb_interrupt_level1;
-    register uint8_t usb_interrupt_level2;
+	register uint8_t usb_interrupt_level1;
+	register uint8_t usb_interrupt_level2;
 
-    usb_interrupt_level1 = USB_BYTE_REG_READ(ZM_INTR_GROUP_OFFSET);
-#if 0 // these endpoints are handled by DMA
-    if (usb_interrupt_level1 & BIT5)            //Group Byte 5
-    {
-        vUsb_Data_In();
-    }
+	usb_interrupt_level1 = USB_BYTE_REG_READ(ZM_INTR_GROUP_OFFSET);
+#if 0 /* these endpoints are handled by DMA */
+	if (usb_interrupt_level1 & BIT5)
+	{
+		vUsb_Data_In();
+	}
 #endif
-    if (usb_interrupt_level1 & BIT4)
-    {
-        usb_interrupt_level2 = USB_BYTE_REG_READ(ZM_INTR_SOURCE_4_OFFSET);
-        if( usb_interrupt_level2 & BIT6)
-            A_USB_REG_OUT();//vUsb_Reg_Out();
-    }
+	if (usb_interrupt_level1 & BIT4) {
+		usb_interrupt_level2 =
+			USB_BYTE_REG_READ(ZM_INTR_SOURCE_4_OFFSET);
 
-    if (usb_interrupt_level1 & BIT6)
-    {
-        //zfGenWatchDogEvent();
-    usb_interrupt_level2 = USB_BYTE_REG_READ(ZM_INTR_SOURCE_6_OFFSET);
-        if( usb_interrupt_level2 & BIT6)
-             A_USB_STATUS_IN();//vUsb_Status_In();
-    }
+		if(usb_interrupt_level2 & BIT6)
+			A_USB_REG_OUT(); /* vUsb_Reg_Out() */
+	}
 
-    if (usb_interrupt_level1 & BIT0)            //Group Byte 0
-    {
-        //usb_interrupt_level2 = ZM_INTR_SOURCE_0_REG;
-        usb_interrupt_level2 = USB_BYTE_REG_READ(ZM_INTR_SOURCE_0_OFFSET);
+	if (usb_interrupt_level1 & BIT6) {
+		/* zfGenWatchDogEvent(); ?? */
+		usb_interrupt_level2 =
+			USB_BYTE_REG_READ(ZM_INTR_SOURCE_6_OFFSET);
+		if(usb_interrupt_level2 & BIT6)
+			A_USB_STATUS_IN(); /* vUsb_Status_In() */
+	}
 
-        // refer to FUSB200, p 48, offset:21H, bit7 description, should clear the command abort interrupt first!?
-        if (usb_interrupt_level2 & BIT7)
-        {
-            //ZM_INTR_SOURCE_0_REG &= 0x7f;       // Handle command abort
-            USB_BYTE_REG_WRITE(ZM_INTR_SOURCE_0_OFFSET, (USB_BYTE_REG_READ(ZM_INTR_SOURCE_0_OFFSET)& ~BIT7));
-            A_PRINTF("![SOURCE_0] bit7 on\n\r");
-        }
+	if (usb_interrupt_level1 & BIT0) {
+		usb_interrupt_level2 =
+			USB_BYTE_REG_READ(ZM_INTR_SOURCE_0_OFFSET);
 
-        if (usb_interrupt_level2 & BIT1)
-        {
-            //A_PRINTF("![USB] ep0 IN in \n\r");
-            A_USB_EP0_TX();                       // USB EP0 tx interrupt
-        }
-        if (usb_interrupt_level2 & BIT2)
-        {
-            //A_PRINTF("![USB] ep0 OUT in\n\r");
-            A_USB_EP0_RX();                       // USB EP0 rx interrupt
-        }
-        if (usb_interrupt_level2 & BIT0)
-        {
-            //A_PRINTF("![USB] ep0 SETUP in\n\r");
-            A_USB_EP0_SETUP();
-            //vWriteUSBFakeData();
-        }
-//        else if (usb_interrupt_level2 & BIT3)
-        if (usb_interrupt_level2 & BIT3)
-        {
-            vUsb_ep0end();
-//            A_PRINTF("![SOURCE_0] ep0 CMD_END\n\r");
-        }
-        if (usb_interrupt_level2 & BIT4)
-        {
-            vUsb_ep0fail();
-//            A_PRINTF("![SOURCE_0] ep0 CMD_FAIL\n\r");
-        }
-        if (eUsbCxFinishAction == ACT_STALL)
-        {
-            // set CX_STL to stall Endpoint0 & will also clear FIFO0
-            USB_BYTE_REG_WRITE(ZM_CX_CONFIG_STATUS_OFFSET, 0x04);
-//            A_PRINTF("![USB] ZM_CX_CONFIG_STATUS_REG = 0x04\n\r");
-        }
-        else if (eUsbCxFinishAction == ACT_DONE)
-        {
-            // set CX_DONE to indicate the transmistion of control frame
-            USB_BYTE_REG_WRITE(ZM_CX_CONFIG_STATUS_OFFSET, 0x01);
-        }
-        eUsbCxFinishAction = ACT_IDLE;
-    }
+		/* refer to FUSB200, p 48, offset:21H, bit7 description,
+		 * should clear the command abort interrupt first!?
+		 */
+		if (usb_interrupt_level2 & BIT7) {
+			/* Handle command abort */
+			USB_BYTE_REG_WRITE(ZM_INTR_SOURCE_0_OFFSET,
+				(USB_BYTE_REG_READ(ZM_INTR_SOURCE_0_OFFSET)
+				 & ~BIT7));
+			A_PRINTF("![SOURCE_0] bit7 on\n\r");
+		}
 
-    if (usb_interrupt_level1 & BIT7)            //Group Byte 7
-    {
-        //usb_interrupt_level2 = ZM_INTR_SOURCE_7_REG;
-        usb_interrupt_level2 = USB_BYTE_REG_READ(ZM_INTR_SOURCE_7_OFFSET);
+		if (usb_interrupt_level2 & BIT1)
+			A_USB_EP0_TX(); /* USB EP0 tx interrupt */
+
+		if (usb_interrupt_level2 & BIT2)
+			A_USB_EP0_RX(); /* USB EP0 rx interrupt */
+
+		if (usb_interrupt_level2 & BIT0) {
+			A_USB_EP0_SETUP();
+			/* vWriteUSBFakeData() */
+		}
+
+		if (usb_interrupt_level2 & BIT3)
+			vUsb_ep0end();
+
+	        if (usb_interrupt_level2 & BIT4)
+			vUsb_ep0fail();
+
+		if (eUsbCxFinishAction == ACT_STALL) {
+			/* set CX_STL to stall Endpoint0 &
+			 * will also clear FIFO0 */
+			USB_BYTE_REG_WRITE(ZM_CX_CONFIG_STATUS_OFFSET, 0x04);
+		} else if (eUsbCxFinishAction == ACT_DONE) {
+			/* set CX_DONE to indicate the transmistion
+			 * of control frame */
+			USB_BYTE_REG_WRITE(ZM_CX_CONFIG_STATUS_OFFSET, 0x01);
+		}
+		eUsbCxFinishAction = ACT_IDLE;
+	}
+
+	if (usb_interrupt_level1 & BIT7) {
+		usb_interrupt_level2 =
+			USB_BYTE_REG_READ(ZM_INTR_SOURCE_7_OFFSET);
 
 #if 0
-        if (usb_interrupt_level2 & BIT7)
-        {
-            vUsb_Data_Out0Byte();
-//            A_PRINTF("![SOURCE_7] bit7 on, clear it\n\r");
-        }
-        if (usb_interrupt_level2 & BIT6)
-        {
-            vUsb_Data_In0Byte();
-//            A_PRINTF("![SOURCE_7] bit6 on, clear it\n\r");
-        }
-#endif
-        
-        if (usb_interrupt_level2 & BIT1)
-        {
-            vUsb_rst();
-            //USB_BYTE_REG_WRITE(ZM_INTR_SOURCE_7_REG, (USB_BYTE_REG_READ(ZM_INTR_SOURCE_7_OFFSET)&~0x2));
-            A_PRINTF("!USB reset\n\r");
-//            A_PRINTF("![0x1012c]: %\n\r", USB_WORD_REG_READ(0x12c));
-        }
-        if (usb_interrupt_level2 & BIT2)
-        {
-           // TBD: the suspend resume code should put here, Ryan, 07/18
-           //
-           //  issue, jump back to rom code and what peripherals should we reset here?
-           //
-           _fw_usb_suspend_reboot();		
-        }
-        if (usb_interrupt_level2 & BIT3)
-        {
-            vUsb_resm();
-            A_PRINTF("!USB resume\n\r");
-        }
-    }
+	if (usb_interrupt_level2 & BIT7)
+		vUsb_Data_Out0Byte();
 
+	if (usb_interrupt_level2 & BIT6)
+		vUsb_Data_In0Byte();
+#endif
+
+		if (usb_interrupt_level2 & BIT1) {
+			vUsb_rst();
+			A_PRINTF("!USB reset\n\r");
+//			A_PRINTF("![0x1012c]: %\n\r", USB_WORD_REG_READ(0x12c));
+		}
+		if (usb_interrupt_level2 & BIT2) {
+			/* TBD: the suspend resume code should put here,
+			 * Ryan, 07/18
+			 * issue, jump back to rom code and what peripherals
+			 * should we reset here? */
+			_fw_usb_suspend_reboot();
+		}
+		if (usb_interrupt_level2 & BIT3) {
+			vUsb_resm();
+			A_PRINTF("!USB resume\n\r");
+		}
+	}
 }
 
 
 void _fw_usb_reset_fifo(void)
 {
-    volatile uint32_t   *reg_data;
+	volatile uint32_t   *reg_data;
 
-    HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100ae)|0x10));
-    HAL_BYTE_REG_WRITE(0x100af, (HAL_BYTE_REG_READ(0x100af)|0x10));
+	HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100ae)|0x10));
+	HAL_BYTE_REG_WRITE(0x100af, (HAL_BYTE_REG_READ(0x100af)|0x10));
 
-    // disable ep3 int enable, so that resume back won't send wdt magic pattern out!!!
-    mUSB_STATUS_IN_INT_DISABLE();
+	/* disable ep3 int enable, so that resume back won't
+	 * send wdt magic pattern out!!!
+	 */
+	mUSB_STATUS_IN_INT_DISABLE();
 
-    // update magic pattern to indicate this is a suspend
-    // k2: MAGPIE_REG_RST_WDT_TIMER_CTRL_ADDR
-    // magpie: MAGPIE_REG_RST_STATUS_ADDR
-    HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, SUS_MAGIC_PATTERN);
+	/* update magic pattern to indicate this is a suspend
+	 * k2: MAGPIE_REG_RST_WDT_TIMER_CTRL_ADDR
+	 * magpie: MAGPIE_REG_RST_STATUS_ADDR
+	 */
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, SUS_MAGIC_PATTERN);
 
-    /*
-     * Before USB suspend, USB DMA must be reset(refer to Otus)
-     * Otus runs the following statements only
-     * HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, BIT0|BIT2 );
-     * HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0 );
-     * K2 must run the following statements additionally
-     * reg_data = (A_UINT32 *)(USB_CTRL_BASE_ADDRESS + 0x118);
-     * *reg_data = 0x00000000;
-     * *reg_data = 0x00000001;
-     * because of Hardware bug in K2
-     */
-    reg_data = (uint32_t *)(USB_CTRL_BASE_ADDRESS + 0x118);
-    *reg_data = 0x00000000;
+	/*
+	 * Before USB suspend, USB DMA must be reset(refer to Otus)
+	 * Otus runs the following statements only
+	 * HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, BIT0|BIT2 );
+	 * HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0 );
+	 * K2 must run the following statements additionally
+	 * reg_data = (A_UINT32 *)(USB_CTRL_BASE_ADDRESS + 0x118);
+	 * *reg_data = 0x00000000;
+	 * *reg_data = 0x00000001;
+	 * because of Hardware bug in K2
+	 */
+	reg_data = (uint32_t *)(USB_CTRL_BASE_ADDRESS + 0x118);
+	*reg_data = 0x00000000;
 
-    // reset both usb(bit2)/wlan(bit1) dma
-    HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, (BIT2) );
-    HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, (HAL_WORD_REG_READ(MAGPIE_REG_RST_PWDN_CTRL_ADDR)|BIT0));
-    HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0 );
+	/* reset both usb(bit2)/wlan(bit1) dma */
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, (BIT2));
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR,
+			(HAL_WORD_REG_READ(MAGPIE_REG_RST_PWDN_CTRL_ADDR)|BIT0));
+	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
 
-    *reg_data = 0x00000001;
+	*reg_data = 0x00000001;
 
-    /* MAC warem reset */
-    //reg_data = (uint32_t *)(K2_REG_MAC_BASE_ADDR + 0x7000);
-    //*reg_data = 0x00000001;
+	/* MAC warem reset */
+	//reg_data = (uint32_t *)(K2_REG_MAC_BASE_ADDR + 0x7000);
+	//*reg_data = 0x00000001;
 
-    //A_DELAY_USECS(1);
+	//A_DELAY_USECS(1);
 
-    //*reg_data = 0x00000000;
+	//*reg_data = 0x00000000;
 
-    //while (*reg_data)   ;
+	//while (*reg_data)   ;
 
-    A_PRINTF("\n change clock to 22 and go to suspend now!");
-    
-    /* UART_SEL */
-    HAL_WORD_REG_WRITE(0x50040, (0x200|0|(1>>1)<<12));
-    A_UART_HWINIT((22*1000*1000), 19200);
+	A_PRINTF("\n change clock to 22 and go to suspend now!");
+
+	/* UART_SEL */
+	HAL_WORD_REG_WRITE(0x50040, (0x200|0|(1>>1)<<12));
+	A_UART_HWINIT((22*1000*1000), 19200);
 }
 #endif
