@@ -162,6 +162,7 @@ typedef enum {
     WMI_TX_STATS_CMDID,
     WMI_RX_STATS_CMDID,
     WMI_BITRATE_MASK_CMDID,
+    WMI_REG_RMW_CMDID,
 } WMI_COMMAND_ID;
 
 /*
@@ -288,6 +289,12 @@ typedef PREPACK struct {
 	a_uint8_t cnt;
 	__WMI_TXSTATUS_EVENT txstatus[HTC_MAX_TX_STATUS];
 } POSTPACK WMI_TXSTATUS_EVENT;
+
+PREPACK struct register_rmw {
+	a_uint32_t reg;
+	a_uint32_t set;
+	a_uint32_t clr;
+} POSTPACK;
 
 #ifndef ATH_TARGET
 //#include "athendpack.h"
