@@ -166,9 +166,12 @@ void exception_reset(struct register_dump_s *dump)
 	MAGPIE_REG_USB_RX1_SWAP_DATA = 0x1;
 	MAGPIE_REG_USB_RX2_SWAP_DATA = 0x1;
 
-	A_PRINTF("Jump to BOOT\n");
-
-	// reboot.....
+        A_PRINTF("Cold reboot initiated.");
+#if defined(PROJECT_MAGPIE)
+        HAL_WORD_REG_WRITE(WATCH_DOG_MAGIC_PATTERN_ADDR, 0);
+#elif defined(PROJECT_K2)
+        HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, 0);
+#endif /* #if defined(PROJECT_MAGPIE) */
 	A_USB_JUMP_BOOT();
 }
 
