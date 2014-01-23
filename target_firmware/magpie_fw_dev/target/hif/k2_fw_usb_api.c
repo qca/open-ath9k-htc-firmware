@@ -734,7 +734,6 @@ uint16_t ConfigDescriptorPatch[30];
 
 BOOLEAN bGet_descriptor_patch(void)
 {
-    int i;
     switch (mDEV_REQ_VALUE_HIGH()) {
     case 1:
         ath_hal_memcpy(DeviceDescriptorPatch,
