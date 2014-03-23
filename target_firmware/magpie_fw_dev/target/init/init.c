@@ -35,10 +35,10 @@
 #if defined(_RAM_)
 
 #include "athos_api.h"
-    
+#include "usb_defs.h"
+
 #if defined(PROJECT_MAGPIE)
 #include "regdump.h"
-#include "usb_defs.h"
 extern  uint32_t *init_htc_handle;
 uint8_t htc_complete_setup = 0;
 void reset_EP4_FIFO(void);
@@ -145,12 +145,12 @@ void exception_reset(struct register_dump_s *dump)
 	HAL_WORD_REG_WRITE(MAGPIE_REG_AHB_ARB_ADDR,
 			   (HAL_WORD_REG_READ(MAGPIE_REG_AHB_ARB_ADDR)|BIT1));
 
-	HAL_WORD_REG_WRITE((USB_CTRL_BASE_ADDRESS+0x118), 0x0);
+	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, 0x0);
 	HAL_WORD_REG_WRITE(0x50010, HAL_WORD_REG_READ(0x50010)|BIT4);
 	A_DELAY_USECS(5);
 	HAL_WORD_REG_WRITE(0x50010, HAL_WORD_REG_READ(0x50010)&~BIT4);
 	A_DELAY_USECS(5);
-	HAL_WORD_REG_WRITE((USB_CTRL_BASE_ADDRESS+0x118), 0x1);
+	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, BIT0);
 
 	// set clock to bypass mode - 40Mhz from XTAL
 	HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_BYPASS_ADDR, (BIT0|BIT4));
@@ -166,9 +166,12 @@ void exception_reset(struct register_dump_s *dump)
 	MAGPIE_REG_USB_RX1_SWAP_DATA = 0x1;
 	MAGPIE_REG_USB_RX2_SWAP_DATA = 0x1;
 
-	A_PRINTF("Jump to BOOT\n");
-
-	// reboot.....
+        A_PRINTF("Cold reboot initiated.");
+#if defined(PROJECT_MAGPIE)
+        HAL_WORD_REG_WRITE(WATCH_DOG_MAGIC_PATTERN_ADDR, 0);
+#elif defined(PROJECT_K2)
+        HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, 0);
+#endif /* #if defined(PROJECT_MAGPIE) */
 	A_USB_JUMP_BOOT();
 }
 
