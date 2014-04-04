@@ -67,9 +67,15 @@ ieee80211_tgt_crypto_encap(struct ieee80211_frame *wh,
 	a_uint16_t tmp;
 	a_uint16_t offset = IEEE80211_WLAN_HDR_LEN;
 	a_uint8_t b1, b2;
+	struct ieee80211_qosframe_addr4 *wh_mesh;
 
 	if (IEEE80211_QOS_HAS_SEQ(wh))
 		offset += 4;  // pad for 4 byte alignment
+
+	/* set the offset to 32 if the mesh control field is present */
+	wh_mesh = (struct ieee80211_qosframe_addr4 *)wh;
+	if (wh_mesh->i_qos[1] == 0x01)
+		offset = 32;
 
 	iv = (a_uint8_t *) wh;
 	iv = iv + offset;
