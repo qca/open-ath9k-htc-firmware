@@ -72,6 +72,7 @@ uint32_t *init_htc_handle = 0;
 void owl_tgt_tx_tasklet(TQUEUE_ARG data);
 static void ath_tgt_send_beacon(struct ath_softc_tgt *sc,adf_nbuf_t bc_hdr,adf_nbuf_t nbuf,HTC_ENDPOINT_ID EndPt);
 static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen);
+static void ath_hal_reg_rmw_tgt(void *Context, A_UINT16 Command, A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen);
 extern struct ath_tx_buf* ath_tgt_tx_prepare(struct ath_softc_tgt *sc, adf_nbuf_t skb, ath_data_hdr_t *dh);
 extern void  ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t mgt_hdr, adf_nbuf_t skb,HTC_ENDPOINT_ID EndPt);
 extern HAL_BOOL ath_hal_wait(struct ath_hal *ah, a_uint32_t reg, a_uint32_t mask, a_uint32_t val);
@@ -1379,6 +1380,23 @@ static void ath_node_update_tgt(void *Context, A_UINT16 Command,
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
+static a_int32_t ath_reg_read_filter(struct ath_hal *ah, a_int32_t addr)
+{
+	if ((addr & 0xffffe000) == 0x2000) {
+		/* SEEPROM registers */
+		ath_hal_reg_read_target(ah, addr);
+		if (!ath_hal_wait(ah, 0x407c, 0x00030000, 0))
+			adf_os_print("SEEPROM Read fail: 0x%08x\n", addr);
+
+		return (ath_hal_reg_read_target(ah, 0x407c) & 0x0000ffff);
+	} else if (addr > 0xffff)
+		/* SoC registers */
+		return HAL_WORD_REG_READ(addr);
+	else
+		/* MAC registers */
+		return ath_hal_reg_read_target(ah, addr);
+}
+
 static void ath_hal_reg_read_tgt(void *Context, A_UINT16 Command,
 				 A_UINT16 SeqNo, A_UINT8 *data, a_int32_t datalen)
 {
@@ -1392,22 +1410,64 @@ static void ath_hal_reg_read_tgt(void *Context, A_UINT16 Command,
 		addr = *(a_uint32_t *)(data + i);
 		addr = adf_os_ntohl(addr);
 
-		if ((addr & 0xffffe000) == 0x2000) {
-			/* SEEPROM */
-			ath_hal_reg_read_target(ah, addr);
-			if (!ath_hal_wait(ah, 0x407c, 0x00030000, 0)) {
-				adf_os_print("SEEPROM Read fail: 0x%08x\n", addr);
-			}
-			val[i/sizeof(a_int32_t)] = (ath_hal_reg_read_target(ah, 0x407c) & 0x0000ffff);
-		} else if (addr > 0xffff) {
-			val[i/sizeof(a_int32_t)] = *(a_uint32_t *)addr;
-		} else
-			val[i/sizeof(a_int32_t)] = ath_hal_reg_read_target(ah, addr);
-
-		val[i/sizeof(a_int32_t)] = adf_os_ntohl(val[i/sizeof(a_int32_t)]);
+		val[i/sizeof(a_int32_t)] =
+			adf_os_ntohl(ath_reg_read_filter(ah, addr));
 	}
 
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, &val[0], datalen);
+}
+
+static void ath_pll_reset_ones(struct ath_hal *ah)
+{
+	static uint8_t reset_pll = 0;
+
+	if(reset_pll == 0) {
+#if defined(PROJECT_K2)
+		/* here we write to core register */
+		HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
+		/* and here to mac register */
+		ath_hal_reg_write_target(ah, 0x786c,
+			 ath_hal_reg_read_target(ah,0x786c) | 0x6000000);
+		ath_hal_reg_write_target(ah, 0x786c,
+			 ath_hal_reg_read_target(ah,0x786c) & (~0x6000000));
+
+		HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x20);
+
+#elif defined(PROJECT_MAGPIE) && !defined (FPGA)
+		ath_hal_reg_write_target(ah, 0x7890,
+			 ath_hal_reg_read_target(ah,0x7890) | 0x1800000);
+		ath_hal_reg_write_target(ah, 0x7890,
+			 ath_hal_reg_read_target(ah,0x7890) & (~0x1800000));
+#endif
+		reset_pll = 1;
+	}
+}
+
+static void ath_hal_reg_write_filter(struct ath_hal *ah,
+			a_uint32_t reg, a_uint32_t val)
+{
+	if(reg > 0xffff) {
+		HAL_WORD_REG_WRITE(reg, val);
+#if defined(PROJECT_K2)
+		if(reg == 0x50040) {
+			static uint8_t flg=0;
+
+			if(flg == 0) {
+				/* reinit clock and uart.
+				 * TODO: Independent on what host will
+				 * here set. We do our own decision. Why? */
+				A_CLOCK_INIT(117);
+				A_UART_HWINIT(117*1000*1000, 19200);
+				flg = 1;
+			}
+		}
+#endif
+	} else {
+		if(reg == 0x7014)
+			ath_pll_reset_ones(ah);
+
+		ath_hal_reg_write_target(ah, reg, val);
+	}
 }
 
 static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command,
@@ -1424,54 +1484,31 @@ static void ath_hal_reg_write_tgt(void *Context, A_UINT16 Command,
 	for (i = 0; i < datalen; i += sizeof(struct registerWrite)) {
 		t = (struct registerWrite *)(data+i);
 
-		if( t->reg > 0xffff ) {
-			HAL_WORD_REG_WRITE(t->reg, t->val);
-#if defined(PROJECT_K2)
-			if( t->reg == 0x50040 ) {
-				static uint8_t flg=0;
-
-				if( flg == 0 ) {
-					A_CLOCK_INIT(117);
-					A_UART_HWINIT(117*1000*1000, 19200);
-					flg = 1;
-				}
-			}
-#endif
-		} else {
-#if defined(PROJECT_K2)
-			if( t->reg == 0x7014 ) {
-				static uint8_t resetPLL = 0;
-
-				if( resetPLL == 0 ) {
-					/* here we write to core register */
-					HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
-					/* and here to mac register */
-					ath_hal_reg_write_target(ah, 0x786c,
-						 ath_hal_reg_read_target(ah,0x786c) | 0x6000000);
-					ath_hal_reg_write_target(ah, 0x786c,
-						 ath_hal_reg_read_target(ah,0x786c) & (~0x6000000));
-
-					HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x20);
-					resetPLL = 1;
-				}
-			}
-#elif defined(PROJECT_MAGPIE) && !defined (FPGA)
-			if( t->reg == 0x7014 ){
-				static uint8_t resetPLL = 0;
-
-				if( resetPLL == 0 ) {
-					ath_hal_reg_write_target(ah, 0x7890,
-						 ath_hal_reg_read_target(ah,0x7890) | 0x1800000);
-					ath_hal_reg_write_target(ah, 0x7890,
-						 ath_hal_reg_read_target(ah,0x7890) & (~0x1800000));
-					resetPLL = 1;
-				}
-			}
-#endif
-			ath_hal_reg_write_target(ah,t->reg,t->val);
-		}
+		ath_hal_reg_write_filter(ah, t->reg, t->val);
 	}
 
+	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
+}
+
+static void ath_hal_reg_rmw_tgt(void *Context, A_UINT16 Command,
+				A_UINT16 SeqNo, A_UINT8 *data,
+				a_int32_t datalen)
+{
+	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
+	struct ath_hal *ah = sc->sc_ah;
+	struct register_rmw *buf = (struct register_rmw *)data;
+	int i;
+
+	for (i = 0; i < datalen;
+	     i += sizeof(struct register_rmw)) {
+		a_uint32_t val;
+		buf = (struct register_rmw *)(data + i);
+
+		val = ath_reg_read_filter(ah, buf->reg);
+		val &= ~buf->clr;
+		val |= buf->set;
+		ath_hal_reg_write_filter(ah, buf->reg, val);
+	}
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
@@ -1734,6 +1771,7 @@ static WMI_DISPATCH_ENTRY Magpie_Sys_DispatchEntries[] =
 	{ath_tx_stats_tgt,            WMI_TX_STATS_CMDID,           0},
 	{ath_rx_stats_tgt,            WMI_RX_STATS_CMDID,           0},
 	{ath_rc_mask_tgt,             WMI_BITRATE_MASK_CMDID,       0},
+	{ath_hal_reg_rmw_tgt,         WMI_REG_RMW_CMDID,            0},
 };
 
 /*****************/
