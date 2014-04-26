@@ -129,7 +129,8 @@ ar5416Attach(HAL_SOFTC sc, adf_os_device_t dev, HAL_STATUS *status)
 
 HAL_BOOL ar5416IsInterruptPending(struct ath_hal *ah)
 {
-	a_uint32_t host_isr = OS_REG_READ(ah, AR_INTR_ASYNC_CAUSE);
+	a_uint32_t host_isr =
+		ioread32_mac(AR_INTR_ASYNC_CAUSE);
 	/*
 	 * Some platforms trigger our ISR before applying power to
 	 * the card, so make sure.
@@ -144,8 +145,10 @@ HAL_BOOL ar5416GetPendingInterrupts(struct ath_hal *ah, HAL_INT *masked)
 	HAL_BOOL fatal_int = AH_FALSE;
 	a_uint32_t sync_cause;
 
-	if (OS_REG_READ(ah, AR_INTR_ASYNC_CAUSE) & AR_INTR_MAC_IRQ) {
-		if ((OS_REG_READ(ah, AR_RTC_STATUS) & AR_RTC_STATUS_M) != AR_RTC_STATUS_ON) {
+	if (ioread32_mac(AR_INTR_ASYNC_CAUSE)
+			& AR_INTR_MAC_IRQ) {
+		if ((ioread32_mac(AR_RTC_STATUS)
+				& AR_RTC_STATUS_M) != AR_RTC_STATUS_ON) {
 			*masked = 0;
 			return AH_FALSE;
 		}
@@ -154,7 +157,7 @@ HAL_BOOL ar5416GetPendingInterrupts(struct ath_hal *ah, HAL_INT *masked)
 		return AH_FALSE;
 	}
 #endif
-	isr = OS_REG_READ(ah, AR_ISR_RAC);
+	isr = ioread32_mac(AR_ISR_RAC);
 	if (isr == 0xffffffff) {
 		*masked = 0;
 		return AH_FALSE;
@@ -174,7 +177,7 @@ HAL_BOOL ar5416GetPendingInterrupts(struct ath_hal *ah, HAL_INT *masked)
 	if (isr & AR_ISR_BCNMISC) {
 		a_uint32_t s2_s;
 
-		s2_s = OS_REG_READ(ah, AR_ISR_S2_S);
+		s2_s = ioread32_mac(AR_ISR_S2_S);
 
 		if (s2_s & AR_ISR_S2_GTT) {
 			*masked |= HAL_INT_GTT;
@@ -192,8 +195,8 @@ HAL_BOOL ar5416GetPendingInterrupts(struct ath_hal *ah, HAL_INT *masked)
 		a_uint32_t           s0_s, s1_s;
 
 		*masked |= HAL_INT_TX;
-		s0_s = OS_REG_READ(ah, AR_ISR_S0_S);
-		s1_s = OS_REG_READ(ah, AR_ISR_S1_S);
+		s0_s = ioread32_mac(AR_ISR_S0_S);
+		s1_s = ioread32_mac(AR_ISR_S1_S);
 		ahp->ah_intrTxqs |= MS(s0_s, AR_ISR_S0_QCU_TXOK);
 		ahp->ah_intrTxqs |= MS(s0_s, AR_ISR_S0_QCU_TXDESC);
 		ahp->ah_intrTxqs |= MS(s1_s, AR_ISR_S1_QCU_TXERR);
@@ -201,14 +204,14 @@ HAL_BOOL ar5416GetPendingInterrupts(struct ath_hal *ah, HAL_INT *masked)
 	}
 
 #ifndef AR9100
-	sync_cause = OS_REG_READ(ah, AR_INTR_SYNC_CAUSE);
+	sync_cause = ioread32_mac(AR_INTR_SYNC_CAUSE);
 	fatal_int = ((sync_cause != AR_INTR_SPURIOUS) &&
-		     (sync_cause & (AR_INTR_SYNC_HOST1_FATAL | AR_INTR_SYNC_HOST1_PERR))) ?
-		AH_TRUE : AH_FALSE;
+		     (sync_cause & (AR_INTR_SYNC_HOST1_FATAL
+		      | AR_INTR_SYNC_HOST1_PERR))) ? AH_TRUE : AH_FALSE;
 
 	if (AH_TRUE == fatal_int) {
 		OS_REG_WRITE(ah, AR_INTR_SYNC_CAUSE_CLR, sync_cause);
-		(void) OS_REG_READ(ah, AR_INTR_SYNC_CAUSE_CLR);
+		(void) ioread32_mac(AR_INTR_SYNC_CAUSE_CLR);
 	}
 #endif
 	return AH_TRUE;
@@ -223,7 +226,7 @@ ar5416SetInterrupts(struct ath_hal *ah, HAL_INT ints)
 
 	if (omask & HAL_INT_GLOBAL) {
 		OS_REG_WRITE(ah, AR_IER, AR_IER_DISABLE);
-		(void) OS_REG_READ(ah, AR_IER);
+		(void) ioread32_mac(AR_IER);
 	}
 
 	mask = ints & HAL_INT_COMMON;
@@ -251,14 +254,14 @@ ar5416SetInterrupts(struct ath_hal *ah, HAL_INT ints)
 	}
 
 	OS_REG_WRITE(ah, AR_IMR, mask);
-	(void) OS_REG_READ(ah, AR_IMR);
+	(void) ioread32_mac(AR_IMR);
 	ahp->ah_maskReg = ints;
 
 	/* Re-enable interrupts if they were enabled before. */
 	if (ints & HAL_INT_GLOBAL) {
 		OS_REG_WRITE(ah, AR_IER, AR_IER_ENABLE);
 		/* See explanation above... */
-		(void) OS_REG_READ(ah, AR_IER);
+		(void) ioread32_mac(AR_IER);
 	}
 
 	OS_REG_WRITE(ah, AR_INTR_ASYNC_ENABLE, AR_INTR_MAC_IRQ);
@@ -276,8 +279,8 @@ u_int64_t ar5416GetTsf64(struct ath_hal *ah)
 {
         u_int64_t tsf;
 
-        tsf = OS_REG_READ(ah, AR_TSF_U32);
-        tsf = (tsf << 32) | OS_REG_READ(ah, AR_TSF_L32);
+	tsf = ioread32_mac(AR_TSF_U32);
+	tsf = (tsf << 32) | ioread32_mac(AR_TSF_L32);
 
         return tsf;
 }
@@ -288,7 +291,7 @@ u_int64_t ar5416GetTsf64(struct ath_hal *ah)
 void ar5416SetRxDP(struct ath_hal *ah, a_uint32_t rxdp)
 {
 	OS_REG_WRITE(ah, AR_RXDP, rxdp);
-	HALASSERT(OS_REG_READ(ah, AR_RXDP) == rxdp);
+	HALASSERT(ioread32_mac(AR_RXDP) == rxdp);
 }
 
 HAL_BOOL ar5416StopDmaReceive(struct ath_hal *ah)
@@ -313,9 +316,13 @@ void ar5416SetRxFilter(struct ath_hal *ah, a_uint32_t bits)
 		phybits |= AR_PHY_ERR_OFDM_TIMING | AR_PHY_ERR_CCK_TIMING;
 	OS_REG_WRITE(ah, AR_PHY_ERR, phybits);
 	if (phybits) {
-		OS_REG_WRITE(ah, AR_RXCFG,OS_REG_READ(ah, AR_RXCFG) | AR_RXCFG_ZLFDMA);
+		OS_REG_WRITE(ah, AR_RXCFG,
+			     ioread32_mac(AR_RXCFG)
+			     | AR_RXCFG_ZLFDMA);
 	} else {
-		OS_REG_WRITE(ah, AR_RXCFG,OS_REG_READ(ah, AR_RXCFG) &~ AR_RXCFG_ZLFDMA);
+		OS_REG_WRITE(ah, AR_RXCFG,
+			     ioread32_mac(AR_RXCFG)
+			     & ~AR_RXCFG_ZLFDMA);
 	}
 }
 
@@ -362,7 +369,7 @@ HAL_STATUS ar5416ProcRxDescFast_20(struct ath_hal *ah, struct ath_rx_desc *ds,
 	 * once and picked it up again...make sure the hw has moved on.
 	 */
 	if ((ands->ds_rxstatus8 & AR_RxDone) == 0
-	    && OS_REG_READ(ah, AR_RXDP) == pa)
+	    && ioread32_mac(AR_RXDP) == pa)
 		return HAL_EINPROGRESS;
 
 	/*
@@ -457,7 +464,7 @@ HAL_BOOL ar5416UpdateTxTrigLevel(struct ath_hal *ah, HAL_BOOL bIncTrigLevel)
          */
         omask = ar5416SetInterrupts(ah, ahp->ah_maskReg &~ HAL_INT_GLOBAL);
 
-        txcfg = OS_REG_READ(ah, AR_TXCFG);
+	txcfg = ioread32_mac(AR_TXCFG);
         curLevel = MS(txcfg, AR_FTRIG);
         newLevel = curLevel;
 
@@ -485,7 +492,7 @@ HAL_BOOL ar5416SetTxDP(struct ath_hal *ah, a_uint32_t q, a_uint32_t txdp)
          * Make sure that TXE is deasserted before setting the TXDP.  If TXE
          * is still asserted, setting TXDP will have no effect.
          */
-        HALASSERT((OS_REG_READ(ah, AR_Q_TXE) & (1 << q)) == 0);
+	HALASSERT((ioread32_mac(AR_Q_TXE) & (1 << q)) == 0);
 
         OS_REG_WRITE(ah, AR_QTXDP(q), txdp);
 
@@ -498,7 +505,7 @@ HAL_BOOL ar5416StartTxDma(struct ath_hal *ah, a_uint32_t q)
         HALASSERT(AH5416(ah)->ah_txq[q].tqi_type != HAL_TX_QUEUE_INACTIVE);
 
         /* Check to be sure we're not enabling a q that has its TXD bit set. */
-        HALASSERT((OS_REG_READ(ah, AR_Q_TXD) & (1 << q)) == 0);
+	HALASSERT((ioread32_mac(AR_Q_TXD) & (1 << q)) == 0);
 
         OS_REG_WRITE(ah, AR_Q_TXE, 1 << q);
 
@@ -512,19 +519,21 @@ a_uint32_t ar5416NumTxPending(struct ath_hal *ah, a_uint32_t q)
         HALASSERT(q < AH_PRIVATE(ah)->ah_caps.halTotalQueues);
         HALASSERT(AH5416(ah)->ah_txq[q].tqi_type != HAL_TX_QUEUE_INACTIVE);
 
-        npend = OS_REG_READ(ah, AR_QSTS(q)) & AR_Q_STS_PEND_FR_CNT;
+	npend = ioread32_mac(AR_QSTS(q))
+		& AR_Q_STS_PEND_FR_CNT;
         if (npend == 0) {
                 /*
                  * Pending frame count (PFC) can momentarily go to zero
                  * while TXE remains asserted.  In other words a PFC of
                  * zero is not sufficient to say that the queue has stopped.
                  */
-                if (OS_REG_READ(ah, AR_Q_TXE) & (1 << q))
+		if (ioread32_mac(AR_Q_TXE) & (1 << q))
                         npend = 1;
         }
 #ifdef DEBUG
         if (npend && (AH5416(ah)->ah_txq[q].tqi_type == HAL_TX_QUEUE_CAB)) {
-                if (OS_REG_READ(ah, AR_Q_RDYTIMESHDN) & (1 << q)) {
+		if (ioread32_mac(AR_Q_RDYTIMESHDN)
+				& (1 << q)) {
                         isrPrintf("RTSD on CAB queue\n");
                         /* Clear the ReadyTime shutdown status bits */
                         OS_REG_WRITE(ah, AR_Q_RDYTIMESHDN, 1 << q);
