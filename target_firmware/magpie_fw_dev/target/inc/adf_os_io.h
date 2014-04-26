@@ -67,12 +67,16 @@
 /**
  * @brief Read a 32-bit register value
  *
- * @param[in] osdev   platform device object
  * @param[in] addr    register addr
  *
  * @return A 32-bit register value.
  */
-#define adf_os_reg_read32(osdev, addr)        __adf_os_reg_read32(osdev, addr)
+static inline a_uint32_t ioread32(a_uint32_t addr)
+{
+	return *(const volatile a_uint32_t *) addr;
+}
+
+#define ioread32_mac(addr)	ioread32(WLAN_BASE_ADDRESS + (addr))
 
 /**
  * @brief Read a 64-bit register value

@@ -238,13 +238,15 @@ struct ath_hal_private {
 #define MS(_v, _f)  (((_v) & _f) >> _f##_S)
 #define OS_REG_RMW_FIELD(_a, _r, _f, _v)				\
 	OS_REG_WRITE(_a, _r,						\
-		     (OS_REG_READ(_a, _r) &~ _f) | (((_v) << _f##_S) & _f))
+		     (ioread32_mac(_r) & ~_f)		\
+		      | (((_v) << _f##_S) & _f))
 #define OS_REG_RMW(_a, _r, _set, _clr)					\
-        OS_REG_WRITE(_a, _r, (OS_REG_READ(_a, _r) & ~(_clr)) | (_set))
+	OS_REG_WRITE(_a, _r,						\
+		     (ioread32_mac(_r) & ~(_clr)) | (_set))
 #define OS_REG_SET_BIT(_a, _r, _f)			\
-	OS_REG_WRITE(_a, _r, OS_REG_READ(_a, _r) | _f)
+	OS_REG_WRITE(_a, _r, ioread32_mac(_r) | _f)
 #define OS_REG_CLR_BIT(_a, _r, _f)			\
-	OS_REG_WRITE(_a, _r, OS_REG_READ(_a, _r) &~ _f)
+	OS_REG_WRITE(_a, _r, ioread32_mac(_r) & ~_f)
 
 
 /* wait for the register contents to have the specified value */

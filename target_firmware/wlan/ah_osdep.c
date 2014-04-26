@@ -88,16 +88,6 @@ ath_hal_reg_write_target(struct ath_hal *ah, a_uint32_t reg, a_uint32_t val)
 	adf_os_reg_write32(ah->ah_dev, reg, val); 
 }
 
-a_uint32_t __ahdecl
-ath_hal_reg_read_target(struct ath_hal *ah, a_uint32_t reg)
-{
-    	a_uint32_t val;
-
-	val = adf_os_reg_read32(ah->ah_dev, reg);
-
-	return val;
-}
-
 /*
  * Delay n microseconds.
  */
