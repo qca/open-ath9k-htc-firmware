@@ -47,8 +47,6 @@
                                                 	 (((x) & 0x0000ff00) <<  8) | \
                                                 	 (((x) & 0x000000ff) << 24))
 
-#define __adf_os_reg_write32(_dev, _addr, _val)     *((a_uint32_t *)(WLAN_BASE_ADDRESS + _addr)) = _val;
-
 #define __adf_os_ntohs(x)                    	    x
 #define __adf_os_ntohl(x)                    	    x
 
