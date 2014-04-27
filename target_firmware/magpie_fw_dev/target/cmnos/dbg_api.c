@@ -35,6 +35,8 @@
 #include "sys_cfg.h"
 #include "athos_api.h"
 
+#include "adf_os_io.h"
+
 #if defined(PROJECT_K2)
 #if SYSTEM_MODULE_SFLASH
 #include "sflash_api.h"
@@ -455,7 +457,7 @@ static int db_ldr_cmd(char *cmd, char *param1, char *param2, char *param3)
 			addr &= 0xfffffffc;
 			//val = *(unsigned long *)addr;
 
-			val = HAL_WORD_REG_READ(addr);
+			val = ioread32(addr);
 		}
 		else if (strcmp(cmd, "LDRH") == 0)
 		{
@@ -491,9 +493,7 @@ static int db_str_cmd(char *cmd, char *param1, char *param2, char *param3)
 		if (strcmp(cmd, "STR") == 0)
 		{
 			addr &= 0xfffffffc;
-			//HAL_WORD_REG_WRITE(addr, val);
-			HAL_WORD_REG_WRITE(addr, val);
-			//*(volatile unsigned long *)(addr & 0xfffffffc) = (unsigned long)val;
+			iowrite32(addr, val);
 		}
 
 		else if (strcmp(cmd, "STRH") == 0)
@@ -627,7 +627,7 @@ static void clk_change(uint32_t clk, uint32_t ratio, uint32_t baud)
 		break;
 	}
 
-	HAL_WORD_REG_WRITE(0x50040, (0x300|clk_sel|(ratio>>1)<<12));
+	iowrite32(0x50040, (0x300|clk_sel|(ratio>>1)<<12));
 	A_UART_HWINIT((clk*1000*1000)/ratio, baud);
 
 }
@@ -796,17 +796,14 @@ static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
 #define USB_BYTE_REG_WRITE(addr, val)       	HAL_BYTE_REG_WRITE(USB_CTRL_BASE_ADDRESS|(uint8_t)(addr^3), (val))
 #define USB_BYTE_REG_READ(addr)             	HAL_BYTE_REG_READ(USB_CTRL_BASE_ADDRESS|(uint8_t)(addr^3))
 
-#define USB_WORD_REG_WRITE(addr, val)       	HAL_WORD_REG_WRITE(USB_CTRL_BASE_ADDRESS|(uint32_t)(addr), (val))
-#define USB_WORD_REG_READ(addr)             	HAL_WORD_REG_READ(USB_CTRL_BASE_ADDRESS|(uint32_t)(addr))
-
 		// disable ep3 intr
 		USB_BYTE_REG_WRITE(0x17, USB_BYTE_REG_READ(0x17)|0xc0);
 
 		//ZM_CBUS_FIFO_SIZE_REG = 0xf;
-		USB_WORD_REG_WRITE(0x100, 0x0f);
+		iowrite32_usb(0x100, 0x0f);
 
 		//ZM_EP3_DATA_REG = event;
-		USB_WORD_REG_WRITE(0xF8, event);
+		iowrite32_usb(0xF8, event);
 
 		// tx done
 		USB_BYTE_REG_WRITE(0xAE, USB_BYTE_REG_READ(0xAE)|0x08);
