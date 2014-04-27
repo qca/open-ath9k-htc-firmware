@@ -41,6 +41,7 @@
 #include "athos_api.h"
 #include "usbfifo_api.h"
 
+#include "adf_os_io.h"
 
 #include "sys_cfg.h"
 
@@ -52,26 +53,6 @@ extern BOOLEAN     UsbChirpFinish;
 extern USB_FIFO_CONFIG usbFifoConf;
 
 #if SYSTEM_MODULE_USB
-#define vUsb_ep0end(void)                                   \
-{                                                           \
-    eUsbCxCommand = CMD_VOID;                               \
-    USB_BYTE_REG_WRITE(ZM_CX_CONFIG_STATUS_OFFSET, 0x01);   \
-}
-
-#define vUsb_ep0fail(void)  USB_BYTE_REG_WRITE(ZM_CX_CONFIG_STATUS_OFFSET, 0x04)
-
-#define vUsb_rst()                                              \
-{                                                               \
-    USB_BYTE_REG_WRITE(ZM_INTR_SOURCE_7_OFFSET,                 \
-        (USB_BYTE_REG_READ(ZM_INTR_SOURCE_7_OFFSET)&~BIT1));    \
-    UsbChirpFinish = FALSE;                                     \
-}
-
-#define vUsb_suspend()  USB_BYTE_REG_WRITE(ZM_INTR_SOURCE_7_OFFSET, \
-                            (USB_BYTE_REG_READ(ZM_INTR_SOURCE_7_OFFSET)&~BIT2))
-
-#define vUsb_resm() USB_BYTE_REG_WRITE(ZM_INTR_SOURCE_7_OFFSET,     \
-                        (USB_BYTE_REG_READ(ZM_INTR_SOURCE_7_OFFSET)&~BIT3))
 
 #define CHECK_SOF_LOOP_CNT    50
 
@@ -82,14 +63,14 @@ void _fw_usb_suspend_reboot()
 	volatile uint32_t t = 0;
 	volatile uint32_t sof_no=0,sof_no_new=0;
 	/* Set GO_TO_SUSPEND bit to USB main control register */
-	vUsb_suspend();
+	io8_clr_usb(ZM_INTR_SOURCE_7_OFFSET, BIT2);
 	A_PRINTF("!USB suspend\n\r");
 
 	/* keep the record of suspend */
 #if defined(PROJECT_MAGPIE)
-	*((volatile uint32_t*)WATCH_DOG_MAGIC_PATTERN_ADDR) = SUS_MAGIC_PATTERN;
+	iowrite32(WATCH_DOG_MAGIC_PATTERN_ADDR, SUS_MAGIC_PATTERN);
 #elif defined(PROJECT_K2)
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, SUS_MAGIC_PATTERN);
+	iowrite32(MAGPIE_REG_RST_STATUS_ADDR, SUS_MAGIC_PATTERN);
 #endif /* #if defined(PROJECT_MAGPIE) */
 
 	/* Reset USB FIFO */
@@ -100,36 +81,35 @@ void _fw_usb_suspend_reboot()
 
 	DEBUG_SYSTEM_STATE = (DEBUG_SYSTEM_STATE&(~0xffff)) | 0x1000;
 
+#if 0
 	/* reset ep3/ep4 fifo in case there
 	 * is data which might affect resuming */
-//  HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100ae)|0x10));
-//  HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100af)|0x10));
+	iowrite8(0x100ae, ioread8(0x100ae) | 0x10);
+	iowrite8(0x100ae, ioread8(0x100af) | 0x10);
 
-	{
-		/* config gpio to input before goto suspend */
+	/* config gpio to input before goto suspend */
 
-		/* disable JTAG/ICE */
-	        //jtag = HAL_WORD_REG_READ(0x10004054);
-	        //HAL_WORD_REG_WRITE(0x10004054, (jtag|BIT17));
+	/* disable JTAG/ICE */
+	jtag = ioread32(0x10004054);
+	iowrite32(0x10004054, jtag | BIT17);
 
-		/* disable SPI */
-		//spi = HAL_WORD_REG_READ(0x50040);
-		//HAL_WORD_REG_WRITE(0x50040, (spi&~(BIT8)));
+	/* disable SPI */
+	spi = ioread32(0x50040);
+	iowrite32(0x50040, spi & ~BIT8);
+#endif
+	/* set all GPIO to input */
+	gpio_in = ioread32(0x1000404c);
+	iowrite32(0x1000404c, 0x0);
 
-		/* set all GPIO to input */
-		gpio_in = HAL_WORD_REG_READ(0x1000404c);
-		HAL_WORD_REG_WRITE(0x1000404c, 0x0);
+	/* set PU/PD for all GPIO except two UART pins */
+	pupd = ioread32(0x10004088);
+	iowrite32(0x10004088, 0xA982AA6A);
 
-		/* set PU/PD for all GPIO except two UART pins */
-		pupd = HAL_WORD_REG_READ(0x10004088);
-		HAL_WORD_REG_WRITE(0x10004088, 0xA982AA6A);
-	}
-
-	sof_no= HAL_WORD_REG_READ(0x10004); 
+	sof_no = ioread32(0x10004);
 	for (t = 0; t < CHECK_SOF_LOOP_CNT; t++)
 	{
 		A_DELAY_USECS(1000);    /* delay 1ms */
-		sof_no_new = HAL_WORD_REG_READ(0x10004);
+		sof_no_new = ioread32(0x10004);
 
 		if(sof_no_new == sof_no)
 			break;
@@ -148,19 +128,20 @@ void _fw_usb_suspend_reboot()
 	 * setting the go suspend here, power down right away!!!
 	 */
 	if (t != CHECK_SOF_LOOP_CNT)   /* not time out */
-		HAL_WORD_REG_WRITE(0x10000, HAL_WORD_REG_READ(0x10000)|(0x8));
+		io32_set(0x10000, BIT3);
 
 	DEBUG_SYSTEM_STATE = (DEBUG_SYSTEM_STATE&(~0xffff)) | 0x1100;
 
 #if 0 /* pll unstable, h/w bug? */
-	HAL_WORD_REG_WRITE(0x50040, (0x300|6|(1>>1)<<12));
+	iowrite32(0x50040, 0x300 | 6 | (1>>1) << 12);
 	A_UART_HWINIT((40*1000*1000)/1, 19200);
-#endif
+
 	/* restore gpio setting */
-	//HAL_WORD_REG_WRITE(0x10004054, jtag);
-	//HAL_WORD_REG_WRITE(0x50040, spi);
-	HAL_WORD_REG_WRITE(0x1000404c, gpio_in);
-	HAL_WORD_REG_WRITE(0x10004088, pupd);
+	iowrite32(0x10004054, jtag);
+	iowrite32(0x50040, spi);
+#endif
+	iowrite32(0x1000404c, gpio_in);
+	iowrite32(0x10004088, pupd);
 
 	DEBUG_SYSTEM_STATE = (DEBUG_SYSTEM_STATE&(~0xffff)) | 0x1200;
 
@@ -168,13 +149,11 @@ void _fw_usb_suspend_reboot()
 	 * so that reset mac can't be done in ResetFifo function,
 	 * move to here... whole mac control reset.... (bit1)
 	 */
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, (BIT1));
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR,
-		(HAL_WORD_REG_READ(MAGPIE_REG_RST_PWDN_CTRL_ADDR)|BIT0));
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
+	iowrite32(MAGPIE_REG_RST_PWDN_CTRL_ADDR, BIT1);
+	io32_set(MAGPIE_REG_RST_PWDN_CTRL_ADDR, BIT0);
+	iowrite32(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0);
 	A_DELAY_USECS(1000);
 
-	//A_PRINTF("reg(0x10020)=(%x)\n", HAL_WORD_REG_READ(0x10020));
 	/* disable ep3 int enable, so that resume back won't
 	 * send wdt magic pattern out!!! */
 	mUSB_STATUS_IN_INT_DISABLE();
@@ -186,7 +165,7 @@ void _fw_usb_suspend_reboot()
 
 	if (((DEBUG_SYSTEM_STATE&~(0x0000ffff))>>16 == 0x5342)) {
 		/* UART_SEL and SPI_SEL */
-		HAL_WORD_REG_WRITE(0x50040, (0x300|0|(1>>1)<<12));
+		iowrite32(0x50040, 0x300 | 0 | (1 >> 1) << 12);
 	}
 
 	/* Jump to boot code */
@@ -204,7 +183,7 @@ void _fw_usb_fw_task(void)
 	register uint8_t usb_interrupt_level1;
 	register uint8_t usb_interrupt_level2;
 
-	usb_interrupt_level1 = USB_BYTE_REG_READ(ZM_INTR_GROUP_OFFSET);
+	usb_interrupt_level1 = ioread8_usb(ZM_INTR_GROUP_OFFSET);
 #if 0 /* these endpoints are handled by DMA */
 	if (usb_interrupt_level1 & BIT5)
 	{
@@ -213,7 +192,7 @@ void _fw_usb_fw_task(void)
 #endif
 	if (usb_interrupt_level1 & BIT4) {
 		usb_interrupt_level2 =
-			USB_BYTE_REG_READ(ZM_INTR_SOURCE_4_OFFSET);
+			ioread8_usb(ZM_INTR_SOURCE_4_OFFSET);
 
 		if(usb_interrupt_level2 & BIT6)
 			A_USB_REG_OUT(); /* vUsb_Reg_Out() */
@@ -222,23 +201,21 @@ void _fw_usb_fw_task(void)
 	if (usb_interrupt_level1 & BIT6) {
 		/* zfGenWatchDogEvent(); ?? */
 		usb_interrupt_level2 =
-			USB_BYTE_REG_READ(ZM_INTR_SOURCE_6_OFFSET);
+			ioread8_usb(ZM_INTR_SOURCE_6_OFFSET);
 		if(usb_interrupt_level2 & BIT6)
 			A_USB_STATUS_IN(); /* vUsb_Status_In() */
 	}
 
 	if (usb_interrupt_level1 & BIT0) {
 		usb_interrupt_level2 =
-			USB_BYTE_REG_READ(ZM_INTR_SOURCE_0_OFFSET);
+			ioread8_usb(ZM_INTR_SOURCE_0_OFFSET);
 
 		/* refer to FUSB200, p 48, offset:21H, bit7 description,
 		 * should clear the command abort interrupt first!?
 		 */
 		if (usb_interrupt_level2 & BIT7) {
 			/* Handle command abort */
-			USB_BYTE_REG_WRITE(ZM_INTR_SOURCE_0_OFFSET,
-				(USB_BYTE_REG_READ(ZM_INTR_SOURCE_0_OFFSET)
-				 & ~BIT7));
+			io8_clr_usb(ZM_INTR_SOURCE_0_OFFSET, BIT7);
 			A_PRINTF("![SOURCE_0] bit7 on\n\r");
 		}
 
@@ -253,27 +230,31 @@ void _fw_usb_fw_task(void)
 			/* vWriteUSBFakeData() */
 		}
 
-		if (usb_interrupt_level2 & BIT3)
-			vUsb_ep0end();
+		if (usb_interrupt_level2 & BIT3) {
+			/* vUsb_ep0end */
+			eUsbCxCommand = CMD_VOID;
+			iowrite8_usb(ZM_CX_CONFIG_STATUS_OFFSET, 0x01);
+		}
 
+		/* EP0 fail */
 	        if (usb_interrupt_level2 & BIT4)
-			vUsb_ep0fail();
+			iowrite8_usb(ZM_CX_CONFIG_STATUS_OFFSET, 0x04);
 
 		if (eUsbCxFinishAction == ACT_STALL) {
 			/* set CX_STL to stall Endpoint0 &
 			 * will also clear FIFO0 */
-			USB_BYTE_REG_WRITE(ZM_CX_CONFIG_STATUS_OFFSET, 0x04);
+			iowrite8_usb(ZM_CX_CONFIG_STATUS_OFFSET, 0x04);
 		} else if (eUsbCxFinishAction == ACT_DONE) {
 			/* set CX_DONE to indicate the transmistion
 			 * of control frame */
-			USB_BYTE_REG_WRITE(ZM_CX_CONFIG_STATUS_OFFSET, 0x01);
+			iowrite8_usb(ZM_CX_CONFIG_STATUS_OFFSET, 0x01);
 		}
 		eUsbCxFinishAction = ACT_IDLE;
 	}
 
 	if (usb_interrupt_level1 & BIT7) {
 		usb_interrupt_level2 =
-			USB_BYTE_REG_READ(ZM_INTR_SOURCE_7_OFFSET);
+			ioread8_usb(ZM_INTR_SOURCE_7_OFFSET);
 
 #if 0
 	if (usb_interrupt_level2 & BIT7)
@@ -284,9 +265,9 @@ void _fw_usb_fw_task(void)
 #endif
 
 		if (usb_interrupt_level2 & BIT1) {
-			vUsb_rst();
+			io8_clr_usb(ZM_INTR_SOURCE_7_OFFSET, BIT1);
+			UsbChirpFinish = FALSE;
 			A_PRINTF("!USB reset\n\r");
-//			A_PRINTF("![0x1012c]: %\n\r", USB_WORD_REG_READ(0x12c));
 		}
 		if (usb_interrupt_level2 & BIT2) {
 			/* TBD: the suspend resume code should put here,
@@ -296,7 +277,7 @@ void _fw_usb_fw_task(void)
 			_fw_usb_suspend_reboot();
 		}
 		if (usb_interrupt_level2 & BIT3) {
-			vUsb_resm();
+			io8_clr_usb(ZM_INTR_SOURCE_7_OFFSET, BIT3);
 			A_PRINTF("!USB resume\n\r");
 		}
 	}
@@ -305,10 +286,8 @@ void _fw_usb_fw_task(void)
 
 void _fw_usb_reset_fifo(void)
 {
-	volatile uint32_t   *reg_data;
-
-	HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100ae)|0x10));
-	HAL_BYTE_REG_WRITE(0x100af, (HAL_BYTE_REG_READ(0x100af)|0x10));
+	io8_set(0x100ae, 0x10);
+	io8_set(0x100af, 0x10);
 
 	/* disable ep3 int enable, so that resume back won't
 	 * send wdt magic pattern out!!!
@@ -319,28 +298,27 @@ void _fw_usb_reset_fifo(void)
 	 * k2: MAGPIE_REG_RST_WDT_TIMER_CTRL_ADDR
 	 * magpie: MAGPIE_REG_RST_STATUS_ADDR
 	 */
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, SUS_MAGIC_PATTERN);
+	iowrite32(MAGPIE_REG_RST_STATUS_ADDR, SUS_MAGIC_PATTERN);
 
 	/*
 	 * Before USB suspend, USB DMA must be reset(refer to Otus)
 	 * Otus runs the following statements only
-	 * HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, BIT0|BIT2 );
-	 * HAL_WORD_REG_WRITE( MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0 );
+	 * iowrite32( MAGPIE_REG_RST_PWDN_CTRL_ADDR, BIT0|BIT2 );
+	 * iowrite32( MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0 );
 	 * K2 must run the following statements additionally
 	 * reg_data = (A_UINT32 *)(USB_CTRL_BASE_ADDRESS + 0x118);
 	 * *reg_data = 0x00000000;
 	 * *reg_data = 0x00000001;
 	 * because of Hardware bug in K2
 	 */
-	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, 0x0);
+	iowrite32_usb(ZM_SOC_USB_DMA_RESET_OFFSET, 0x0);
 
 	/* reset both usb(bit2)/wlan(bit1) dma */
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, (BIT2));
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR,
-			(HAL_WORD_REG_READ(MAGPIE_REG_RST_PWDN_CTRL_ADDR)|BIT0));
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
+	iowrite32(MAGPIE_REG_RST_PWDN_CTRL_ADDR, BIT2);
+	io32_set(MAGPIE_REG_RST_PWDN_CTRL_ADDR, BIT0);
+	iowrite32(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
 
-	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, BIT0);
+	iowrite32_usb(ZM_SOC_USB_DMA_RESET_OFFSET, BIT0);
 
 	/* MAC warem reset */
 	//reg_data = (uint32_t *)(K2_REG_MAC_BASE_ADDR + 0x7000);
@@ -355,7 +333,7 @@ void _fw_usb_reset_fifo(void)
 	A_PRINTF("\n change clock to 22 and go to suspend now!");
 
 	/* UART_SEL */
-	HAL_WORD_REG_WRITE(0x50040, (0x200|0|(1>>1)<<12));
+	iowrite32(0x50040, 0x200 | 0 | (1 >> 1) << 12);
 	A_UART_HWINIT((22*1000*1000), 19200);
 }
 #endif
