@@ -37,6 +37,8 @@
 
 #if SYSTEM_MODULE_SFLASH
 
+#include "adf_os_io.h"
+
 #include "reg_defs.h"
 #include "sflash_api.h"
 
@@ -396,7 +398,7 @@ _cmnos_sflash_WaitTillTransactionOver(void)
 
     do
     {
-        poldata = HAL_WORD_REG_READ(SPI_CS_ADDRESS);
+        poldata = ioread32(SPI_CS_ADDRESS);
 
         flg = SPI_CS_BUSY_GET(poldata);
     } while (flg != 0x0);
@@ -406,20 +408,18 @@ _cmnos_sflash_WaitTillTransactionOver(void)
 LOCAL void
 _cmnos_sflash_WaitTillNotWriteInProcess(void)
 {
-    A_UINT32        poldata;
     A_UINT32        flg;
 
     do
     {
         _cmnos_sflash_WaitTillTransactionOver();
 
-        HAL_WORD_REG_WRITE( SPI_AO_ADDRESS, SPI_AO_OPC_SET(ZM_SFLASH_OP_RDSR) );
-        HAL_WORD_REG_WRITE( SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(1) | SPI_CS_RXBCNT_SET(1) | SPI_CS_XCNSTART_SET(1) );
+        iowrite32(SPI_AO_ADDRESS, SPI_AO_OPC_SET(ZM_SFLASH_OP_RDSR));
+        iowrite32(SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(1) | SPI_CS_RXBCNT_SET(1) | SPI_CS_XCNSTART_SET(1));
 
         _cmnos_sflash_WaitTillTransactionOver();
 
-        poldata = HAL_WORD_REG_READ(SPI_D_ADDRESS);
-        flg = poldata & ZM_SFLASH_STATUS_REG_WIP;
+        flg = ioread32(SPI_D_ADDRESS) & ZM_SFLASH_STATUS_REG_WIP;
 
     } while (flg != 0x0);
 }
@@ -432,8 +432,8 @@ _cmnos_sflash_WriteEnable()
 {
     _cmnos_sflash_WaitTillNotWriteInProcess();
 
-    HAL_WORD_REG_WRITE( SPI_AO_ADDRESS, SPI_AO_OPC_SET(ZM_SFLASH_OP_WREN) );
-    HAL_WORD_REG_WRITE( SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(1) | SPI_CS_RXBCNT_SET(0) | SPI_CS_XCNSTART_SET(1) );
+    iowrite32(SPI_AO_ADDRESS, SPI_AO_OPC_SET(ZM_SFLASH_OP_WREN));
+    iowrite32(SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(1) | SPI_CS_RXBCNT_SET(0) | SPI_CS_XCNSTART_SET(1));
 
     _cmnos_sflash_WaitTillTransactionOver();
 }
@@ -445,7 +445,7 @@ LOCAL void
 cmnos_sflash_init(void)
 {
     /* Switch the function of I/O pin 19~22 to act as SPI pins */
-    HAL_WORD_REG_WRITE( MAGPIE_REG_CLOCK_CTRL_ADDR, HAL_WORD_REG_READ(MAGPIE_REG_CLOCK_CTRL_ADDR)|BIT8 );
+	io32_set(MAGPIE_REG_CLOCK_CTRL_ADDR, BIT8);
 
     /* "Autosize-determination of the address size of serial flash" is obsolete according to Brian Yang's mail :
      *    The designers reached an conclusion that the spi master (the apb_spi interface control) will be
@@ -455,7 +455,7 @@ cmnos_sflash_init(void)
      */
 
     /* Force SPI address size to 24 bits */
-    HAL_WORD_REG_WRITE( SPI_CS_ADDRESS, SPI_CS_AUTOSIZ_OVR_SET(2) );
+    iowrite32(SPI_CS_ADDRESS, SPI_CS_AUTOSIZ_OVR_SET(2));
 }
 
 /************************************************************************/
@@ -486,8 +486,8 @@ cmnos_sflash_erase(A_UINT32 erase_type, A_UINT32 addr)
     _cmnos_sflash_WriteEnable();
     _cmnos_sflash_WaitTillNotWriteInProcess();
 
-    HAL_WORD_REG_WRITE( SPI_AO_ADDRESS, SPI_AO_OPC_SET(erase_opcode) | SPI_AO_ADDR_SET(addr) );
-    HAL_WORD_REG_WRITE( SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(tx_len) | SPI_CS_RXBCNT_SET(0) | SPI_CS_XCNSTART_SET(1) );
+    iowrite32(SPI_AO_ADDRESS, SPI_AO_OPC_SET(erase_opcode) | SPI_AO_ADDR_SET(addr));
+    iowrite32(SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(tx_len) | SPI_CS_RXBCNT_SET(0) | SPI_CS_XCNSTART_SET(1));
 
 #if 0
     /* Do not wait(let it be completed in background) */
@@ -541,9 +541,9 @@ cmnos_sflash_program(A_UINT32 addr, A_UINT32 len, A_UINT8 *buf)
         _cmnos_sflash_WriteEnable();
         _cmnos_sflash_WaitTillNotWriteInProcess();
 
-        HAL_WORD_REG_WRITE( SPI_AO_ADDRESS, SPI_AO_OPC_SET(ZM_SFLASH_OP_PP) | SPI_AO_ADDR_SET(s_addr) );
-        HAL_WORD_REG_WRITE( SPI_D_ADDRESS, SPI_D_DATA_SET(t_word_data) );
-        HAL_WORD_REG_WRITE( SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(4 + write_byte) | SPI_CS_RXBCNT_SET(0) | SPI_CS_XCNSTART_SET(1) );
+        iowrite32(SPI_AO_ADDRESS, SPI_AO_OPC_SET(ZM_SFLASH_OP_PP) | SPI_AO_ADDR_SET(s_addr));
+        iowrite32(SPI_D_ADDRESS, SPI_D_DATA_SET(t_word_data));
+        iowrite32(SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(4 + write_byte) | SPI_CS_RXBCNT_SET(0) | SPI_CS_XCNSTART_SET(1));
 
         _cmnos_sflash_WaitTillTransactionOver();
 
@@ -586,8 +586,8 @@ cmnos_sflash_read(A_UINT32 fast, A_UINT32 addr, A_UINT32 len, A_UINT8 *buf)
 
         _cmnos_sflash_WaitTillNotWriteInProcess();
 
-        HAL_WORD_REG_WRITE( SPI_AO_ADDRESS, SPI_AO_OPC_SET(read_opcode) | SPI_AO_ADDR_SET(addr + i*4) );
-        HAL_WORD_REG_WRITE( SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(write_byte) | SPI_CS_RXBCNT_SET(read_byte) | SPI_CS_XCNSTART_SET(1) );
+        iowrite32(SPI_AO_ADDRESS, SPI_AO_OPC_SET(read_opcode) | SPI_AO_ADDR_SET(addr + i*4));
+        iowrite32(SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(write_byte) | SPI_CS_RXBCNT_SET(read_byte) | SPI_CS_XCNSTART_SET(1));
 
         _cmnos_sflash_WaitTillTransactionOver();
 
@@ -605,12 +605,12 @@ cmnos_sflash_rdsr(void)
 
     _cmnos_sflash_WaitTillTransactionOver();
 
-    HAL_WORD_REG_WRITE( SPI_AO_ADDRESS, SPI_AO_OPC_SET(ZM_SFLASH_OP_RDSR) );
-    HAL_WORD_REG_WRITE( SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(1) | SPI_CS_RXBCNT_SET(1) | SPI_CS_XCNSTART_SET(1) );
+    iowrite32(SPI_AO_ADDRESS, SPI_AO_OPC_SET(ZM_SFLASH_OP_RDSR));
+    iowrite32(SPI_CS_ADDRESS, SPI_CS_TXBCNT_SET(1) | SPI_CS_RXBCNT_SET(1) | SPI_CS_XCNSTART_SET(1));
 
     _cmnos_sflash_WaitTillTransactionOver();
 
-    word_data = HAL_WORD_REG_READ(SPI_D_ADDRESS) & 0x000000FF;
+    word_data = ioread32(SPI_D_ADDRESS) & 0x000000FF;
 
     return word_data;
 }
