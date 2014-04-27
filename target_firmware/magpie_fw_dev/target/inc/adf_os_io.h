@@ -60,11 +60,16 @@ static inline a_uint32_t ioread32(a_uint32_t addr)
 /**
  * @brief Write a 32-bit value into register
  *
- * @param[in] osdev   platform device object
  * @param[in] addr    register addr
- * @param[in] l       the 32-bit value to be written
+ * @param[in] b       the 32-bit value to be written
  */
-#define adf_os_reg_write32(osdev, addr, l)    __adf_os_reg_write32(osdev, addr, l)
+
+static inline void iowrite32(volatile a_uint32_t addr, a_uint32_t b)
+{
+	*(volatile a_uint32_t *) addr = b;
+}
+
+#define iowrite32_mac(addr, b)	iowrite32(WLAN_BASE_ADDRESS + (addr), (b))
 
 /**
  * @brief Convert a 16-bit value from network byte order to host byte order

@@ -210,7 +210,7 @@ HAL_BOOL ar5416GetPendingInterrupts(struct ath_hal *ah, HAL_INT *masked)
 		      | AR_INTR_SYNC_HOST1_PERR))) ? AH_TRUE : AH_FALSE;
 
 	if (AH_TRUE == fatal_int) {
-		OS_REG_WRITE(ah, AR_INTR_SYNC_CAUSE_CLR, sync_cause);
+		iowrite32_mac(AR_INTR_SYNC_CAUSE_CLR, sync_cause);
 		(void) ioread32_mac(AR_INTR_SYNC_CAUSE_CLR);
 	}
 #endif
@@ -225,7 +225,7 @@ ar5416SetInterrupts(struct ath_hal *ah, HAL_INT ints)
 	a_uint32_t mask;
 
 	if (omask & HAL_INT_GLOBAL) {
-		OS_REG_WRITE(ah, AR_IER, AR_IER_DISABLE);
+		iowrite32_mac(AR_IER, AR_IER_DISABLE);
 		(void) ioread32_mac(AR_IER);
 	}
 
@@ -253,20 +253,20 @@ ar5416SetInterrupts(struct ath_hal *ah, HAL_INT ints)
 		mask |= AR_IMR_BCNMISC;
 	}
 
-	OS_REG_WRITE(ah, AR_IMR, mask);
+	iowrite32_mac(AR_IMR, mask);
 	(void) ioread32_mac(AR_IMR);
 	ahp->ah_maskReg = ints;
 
 	/* Re-enable interrupts if they were enabled before. */
 	if (ints & HAL_INT_GLOBAL) {
-		OS_REG_WRITE(ah, AR_IER, AR_IER_ENABLE);
+		iowrite32_mac(AR_IER, AR_IER_ENABLE);
 		/* See explanation above... */
 		(void) ioread32_mac(AR_IER);
 	}
 
-	OS_REG_WRITE(ah, AR_INTR_ASYNC_ENABLE, AR_INTR_MAC_IRQ);
-	OS_REG_WRITE(ah, AR_INTR_ASYNC_MASK, AR_INTR_MAC_IRQ);
-	OS_REG_WRITE(ah, AR_INTR_SYNC_ENABLE, AR_INTR_SYNC_ALL);
+	iowrite32_mac(AR_INTR_ASYNC_ENABLE, AR_INTR_MAC_IRQ);
+	iowrite32_mac(AR_INTR_ASYNC_MASK, AR_INTR_MAC_IRQ);
+	iowrite32_mac(AR_INTR_SYNC_ENABLE, AR_INTR_SYNC_ALL);
 
 	return omask;
 }
@@ -290,13 +290,13 @@ u_int64_t ar5416GetTsf64(struct ath_hal *ah)
 /******/
 void ar5416SetRxDP(struct ath_hal *ah, a_uint32_t rxdp)
 {
-	OS_REG_WRITE(ah, AR_RXDP, rxdp);
+	iowrite32_mac(AR_RXDP, rxdp);
 	HALASSERT(ioread32_mac(AR_RXDP) == rxdp);
 }
 
 HAL_BOOL ar5416StopDmaReceive(struct ath_hal *ah)
 {
-	OS_REG_WRITE(ah, AR_CR, AR_CR_RXD); /* Set receive disable bit */
+	iowrite32_mac(AR_CR, AR_CR_RXD); /* Set receive disable bit */
 	if (!ath_hal_wait(ah, AR_CR, AR_CR_RXE, 0)) {
 		return AH_FALSE;
 	} else {
@@ -308,19 +308,19 @@ void ar5416SetRxFilter(struct ath_hal *ah, a_uint32_t bits)
 {
 	a_uint32_t phybits;
     
-	OS_REG_WRITE(ah, AR_RX_FILTER, (bits & 0xff) | AR_RX_COMPR_BAR);
+	iowrite32_mac(AR_RX_FILTER, (bits & 0xff) | AR_RX_COMPR_BAR);
 	phybits = 0;
 	if (bits & HAL_RX_FILTER_PHYRADAR)
 		phybits |= AR_PHY_ERR_RADAR;
 	if (bits & HAL_RX_FILTER_PHYERR)
 		phybits |= AR_PHY_ERR_OFDM_TIMING | AR_PHY_ERR_CCK_TIMING;
-	OS_REG_WRITE(ah, AR_PHY_ERR, phybits);
+	iowrite32_mac(AR_PHY_ERR, phybits);
 	if (phybits) {
-		OS_REG_WRITE(ah, AR_RXCFG,
+		iowrite32_mac(AR_RXCFG,
 			     ioread32_mac(AR_RXCFG)
 			     | AR_RXCFG_ZLFDMA);
 	} else {
-		OS_REG_WRITE(ah, AR_RXCFG,
+		iowrite32_mac(AR_RXCFG,
 			     ioread32_mac(AR_RXCFG)
 			     & ~AR_RXCFG_ZLFDMA);
 	}
@@ -328,7 +328,7 @@ void ar5416SetRxFilter(struct ath_hal *ah, a_uint32_t bits)
 
 void ar5416EnableReceive(struct ath_hal *ah)
 {
-	OS_REG_WRITE(ah, AR_CR, AR_CR_RXE);
+	iowrite32_mac(AR_CR, AR_CR_RXE);
 }
 
 void ar5416StopPcuReceive(struct ath_hal *ah)
@@ -474,8 +474,8 @@ HAL_BOOL ar5416UpdateTxTrigLevel(struct ath_hal *ah, HAL_BOOL bIncTrigLevel)
         } else if (curLevel > MIN_TX_FIFO_THRESHOLD)
                 newLevel--;
         if (newLevel != curLevel)
-                OS_REG_WRITE(ah, AR_TXCFG,
-			     (txcfg &~ AR_FTRIG) | SM(newLevel, AR_FTRIG));
+		iowrite32_mac(AR_TXCFG,
+			     (txcfg & ~AR_FTRIG) | SM(newLevel, AR_FTRIG));
 
         /* re-enable chip interrupts */
         ar5416SetInterrupts(ah, omask);
@@ -494,7 +494,7 @@ HAL_BOOL ar5416SetTxDP(struct ath_hal *ah, a_uint32_t q, a_uint32_t txdp)
          */
 	HALASSERT((ioread32_mac(AR_Q_TXE) & (1 << q)) == 0);
 
-        OS_REG_WRITE(ah, AR_QTXDP(q), txdp);
+	iowrite32_mac(AR_QTXDP(q), txdp);
 
         return AH_TRUE;
 }
@@ -507,7 +507,7 @@ HAL_BOOL ar5416StartTxDma(struct ath_hal *ah, a_uint32_t q)
         /* Check to be sure we're not enabling a q that has its TXD bit set. */
 	HALASSERT((ioread32_mac(AR_Q_TXD) & (1 << q)) == 0);
 
-        OS_REG_WRITE(ah, AR_Q_TXE, 1 << q);
+	iowrite32_mac(AR_Q_TXE, 1 << q);
 
         return AH_TRUE;
 }
@@ -536,7 +536,7 @@ a_uint32_t ar5416NumTxPending(struct ath_hal *ah, a_uint32_t q)
 				& (1 << q)) {
                         isrPrintf("RTSD on CAB queue\n");
                         /* Clear the ReadyTime shutdown status bits */
-                        OS_REG_WRITE(ah, AR_Q_RDYTIMESHDN, 1 << q);
+			iowrite32_mac(AR_Q_RDYTIMESHDN, 1 << q);
                 }
         }
 #endif
@@ -550,7 +550,7 @@ HAL_BOOL ar5416AbortTxDma(struct ath_hal *ah)
 	/*
 	 * set txd on all queues
 	 */
-	OS_REG_WRITE(ah, AR_Q_TXD, AR_Q_TXD_M);
+	iowrite32_mac(AR_Q_TXD, AR_Q_TXD_M);
 
 	/*
 	 * set tx abort bits
@@ -584,7 +584,7 @@ HAL_BOOL ar5416AbortTxDma(struct ath_hal *ah)
 	/*
 	 * clear txd
 	 */
-	OS_REG_WRITE(ah, AR_Q_TXD, 0);
+	iowrite32_mac(AR_Q_TXD, 0);
 
 	return AH_TRUE;
 }
@@ -597,14 +597,14 @@ HAL_BOOL ar5416StopTxDma(struct ath_hal*ah, a_uint32_t q)
 
         HALASSERT(AH5416(ah)->ah_txq[q].tqi_type != HAL_TX_QUEUE_INACTIVE);
 
-        OS_REG_WRITE(ah, AR_Q_TXD, 1 << q);
+	iowrite32_mac(AR_Q_TXD, 1 << q);
         for (i = 1000; i != 0; i--) {
                 if (ar5416NumTxPending(ah, q) == 0)
                         break;
                 OS_DELAY(100);        /* XXX get actual value */
         }
 
-        OS_REG_WRITE(ah, AR_Q_TXD, 0);
+	iowrite32_mac(AR_Q_TXD, 0);
         return (i != 0);
 }
 

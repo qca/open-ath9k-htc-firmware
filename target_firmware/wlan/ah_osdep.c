@@ -73,22 +73,6 @@ _ath_hal_attach_tgt(a_uint32_t devid, HAL_SOFTC sc,
 extern void *global_hdl;
 
 /*
- * Memory-mapped device register read/write.  These are here
- * as routines when debugging support is enabled and/or when
- * explicitly configured to use function calls.  The latter is
- * for architectures that might need to do something before
- * referencing memory (e.g. remap an i/o window).
- *
- * NB: see the comments in ah_osdep.h about byte-swapping register
- *     reads and writes to understand what's going on below.
- */
-void __ahdecl
-ath_hal_reg_write_target(struct ath_hal *ah, a_uint32_t reg, a_uint32_t val)
-{ 
-	adf_os_reg_write32(ah->ah_dev, reg, val); 
-}
-
-/*
  * Delay n microseconds.
  */
 void __ahdecl
