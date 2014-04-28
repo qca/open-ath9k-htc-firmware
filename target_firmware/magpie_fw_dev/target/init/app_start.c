@@ -39,6 +39,8 @@
 #include "usb_defs.h"
 
 #include "init.h"
+#include <linux/compiler.h>
+
 // @TODO: Should define the memory region later~
 #define ALLOCRAM_START       ( ((unsigned int)&_fw_image_end) + 4)
 #define ALLOCRAM_SIZE        ( SYS_RAM_SZIE - ( ALLOCRAM_START - SYS_D_RAM_REGION_0_BASE) - SYS_D_RAM_STACK_SIZE)
@@ -67,7 +69,8 @@ extern a_uint32_t cmnos_milliseconds_patch(void);
 
 extern BOOLEAN bJumptoFlash;
 extern BOOLEAN bEepromExist;
-void app_start()
+
+void __section(boot) __noreturn __visible app_start(void)
 {
 	uint32_t rst_status;
 	A_HOSTIF hostif;
