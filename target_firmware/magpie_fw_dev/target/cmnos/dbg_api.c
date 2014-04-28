@@ -462,7 +462,7 @@ static int db_ldr_cmd(char *cmd, char *param1, char *param2, char *param3)
 		else if (strcmp(cmd, "LDRH") == 0)
 		{
 			addr &= 0xfffffffe;
-			val = HAL_HALF_WORD_REG_READ(addr);
+			val = ioread16(addr);
 		}
 		else if (strcmp(cmd, "LDRB") == 0)
 		{
@@ -500,14 +500,14 @@ static int db_str_cmd(char *cmd, char *param1, char *param2, char *param3)
 		{
 			addr &= 0xfffffffe;
 			//*(volatile unsigned short *)(addr & 0xfffffffe) = (unsigned short)val;
-			HAL_HALF_WORD_REG_WRITE(addr, val);
+			iowrite16(addr, val);
 		}
 		else if (strcmp(cmd, "STRB") == 0)
 		{
 			if( addr & 0x00f00000 )
-				HAL_BYTE_REG_WRITE(addr, val);
+				iowrite8(addr, val);
 			else
-				HAL_BYTE_REG_WRITE(addr^3, val);
+				iowrite8(addr^3, val);
 			//*(volatile unsigned char *)addr = (unsigned char)val;
 		}
 
@@ -793,23 +793,21 @@ static int db_wdt_cmd(char *cmd, char *param1, char *param2, char *param3)
         else if( strcmp(param1, "event") == 0 )
         {
 		uint32_t event= 0x00123400;
-#define USB_BYTE_REG_WRITE(addr, val)       	HAL_BYTE_REG_WRITE(USB_CTRL_BASE_ADDRESS|(uint8_t)(addr^3), (val))
-#define USB_BYTE_REG_READ(addr)             	HAL_BYTE_REG_READ(USB_CTRL_BASE_ADDRESS|(uint8_t)(addr^3))
 
-		// disable ep3 intr
-		USB_BYTE_REG_WRITE(0x17, USB_BYTE_REG_READ(0x17)|0xc0);
+		/* disable ep3 intr */
+		iowrite8_usb(0x17, ioread8_usb(0x17)|0xc0);
 
-		//ZM_CBUS_FIFO_SIZE_REG = 0xf;
+		/* ZM_CBUS_FIFO_SIZE_REG = 0xf */
 		iowrite32_usb(0x100, 0x0f);
 
-		//ZM_EP3_DATA_REG = event;
+		/* ZM_EP3_DATA_REG = event; */
 		iowrite32_usb(0xF8, event);
 
-		// tx done
-		USB_BYTE_REG_WRITE(0xAE, USB_BYTE_REG_READ(0xAE)|0x08);
+		/* tx done */
+		iowrite8_usb(0xAE, ioread8_usb(0xAE) | 0x08);
 
-		// enable ep3 intr
-		USB_BYTE_REG_WRITE(0x17, USB_BYTE_REG_READ(0x17)&0xbf);
+		/* enable ep3 intr */
+		iowrite8_usb(0x17, ioread8_usb(0x17) & 0xbf);
         }
 }
 
