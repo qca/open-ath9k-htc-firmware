@@ -68,4 +68,4 @@ extern void _fw_usb_reset_fifo(void);
 
 void fatal_exception_func();
 void init_mem();
-void wlan_task();
+void __noreturn wlan_task();

@@ -355,18 +355,11 @@ static void idle_task()
 	return;
 }
 
-void wlan_task(void)
+void __noreturn wlan_task(void)
 {
 	loop_low=loop_high=0;
 
 	while(1) {
-#if defined(PROJECT_MAGPIE)
-		if (bJumptoFlash){
-			bJumptoFlash = FALSE;
-			break;
-		}
-#endif
-
 		/* update wdt timer */
 		A_WDT_TASK();
 
