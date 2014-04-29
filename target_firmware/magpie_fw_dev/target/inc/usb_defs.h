@@ -63,15 +63,14 @@
 #define mADDR(addr)             				(*mpADDR(addr))
 #define muADDR(addr)            				((uint16_t) (&(addr)))
 
-#define USB_BYTE_REG_WRITE(addr, val)       	HAL_BYTE_REG_WRITE(USB_CTRL_BASE_ADDRESS|(uint8_t)(addr^3), (val))
-#define USB_BYTE_REG_READ(addr)             	HAL_BYTE_REG_READ(USB_CTRL_BASE_ADDRESS|(uint8_t)(addr^3))
-//#define USB_BYTE_REG_READ(addr)             	HAL_BYTE_REG_READ(USB_CTRL_BASE_ADDRESS|(uint8_t)(addr))
+#define USB_BYTE_REG_WRITE(addr, val)		iowrite8_usb(addr, val)
+#define USB_BYTE_REG_READ(addr)			ioread8_usb(addr)
 
-#define USB_HALF_WORD_REG_WRITE(addr, val)      HAL_HALF_WORD_REG_WRITE(USB_CTRL_BASE_ADDRESS|(uint16_t)(addr), (val))
-#define USB_HALF_WORD_REG_READ(addr)            HAL_HALF_WORD_REG_READ(USB_CTRL_BASE_ADDRESS|(uint16_t)(addr))
+#define USB_HALF_WORD_REG_WRITE(addr, val)	iowrite16_usb(addr, val)
+#define USB_HALF_WORD_REG_READ(addr)		ioread16_usb(addr)
 
-#define USB_WORD_REG_WRITE(addr, val)       	HAL_WORD_REG_WRITE(USB_CTRL_BASE_ADDRESS|(uint32_t)(addr), (val))
-#define USB_WORD_REG_READ(addr)             	HAL_WORD_REG_READ(USB_CTRL_BASE_ADDRESS|(uint32_t)(addr))
+#define USB_WORD_REG_WRITE(addr, val)		iowrite32_usb(addr, val)
+#define USB_WORD_REG_READ(addr)			ioread32_usb(addr)
 
 
 /************************** Register Deinition ***************************/
