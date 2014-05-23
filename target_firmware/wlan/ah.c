@@ -179,13 +179,13 @@ ath_hal_wait(struct ath_hal *ah, a_uint32_t reg, a_uint32_t mask, a_uint32_t val
 
 	if (ath_hal_getcapability(ah, HAL_CAP_HT) == HAL_OK) {
 		for (i = 0; i < AH_TIMEOUT_11N; i++) {
-			if ((OS_REG_READ(ah, reg) & mask) == val)
+			if ((ioread32_mac(reg) & mask) == val)
 				return AH_TRUE;
 			OS_DELAY(10);
 		}
 	} else {
 		for (i = 0; i < AH_TIMEOUT_11G; i++) {
-			if ((OS_REG_READ(ah, reg) & mask) == val)
+			if ((ioread32_mac(reg) & mask) == val)
 				return AH_TRUE;
 			OS_DELAY(10);
 		}

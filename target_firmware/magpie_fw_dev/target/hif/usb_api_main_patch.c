@@ -9,6 +9,8 @@
 #include "athos_api.h"
 #include "usbfifo_api.h"
 
+#include "adf_os_io.h"
+
 #include "sys_cfg.h"
 
 #define USB_EP4_MAX_PKT_SIZE bUSB_EP_MAX_PKT_SIZE_64
@@ -49,9 +51,9 @@ void cold_reboot(void)
 {
 	A_PRINTF("Cold reboot initiated.");
 #if defined(PROJECT_MAGPIE)
-	HAL_WORD_REG_WRITE(WATCH_DOG_MAGIC_PATTERN_ADDR, 0);
+	iowrite32(WATCH_DOG_MAGIC_PATTERN_ADDR, 0);
 #elif defined(PROJECT_K2)
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, 0);
+	iowrite32(MAGPIE_REG_RST_STATUS_ADDR, 0);
 #endif /* #if defined(PROJECT_MAGPIE) */
 	A_USB_JUMP_BOOT();
 }
@@ -97,7 +99,7 @@ void usb_status_in_patch(void)
 	/* INT use EP3 */
 	for (count = 0; count < (reg_buf_len / 4); count++)
 	{
-		USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, *regaddr);
+		iowrite32_usb(ZM_EP3_DATA_OFFSET, *regaddr);
 		regaddr++;
 	}
 
@@ -106,20 +108,20 @@ void usb_status_in_patch(void)
 	if (remainder) {
 		switch(remainder) {
 		case 3:
-			USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0x7);
+			iowrite32_usb(ZM_CBUS_FIFO_SIZE_OFFSET, 0x7);
 			break;
 		case 2:
-			USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0x3);
+			iowrite32_usb(ZM_CBUS_FIFO_SIZE_OFFSET, 0x3);
 			break;
 		case 1:
-			USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0x1);
+			iowrite32_usb(ZM_CBUS_FIFO_SIZE_OFFSET, 0x1);
 			break;
 		}
 
-		USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, *regaddr);
+		iowrite32_usb(ZM_EP3_DATA_OFFSET, *regaddr);
 
 		/* Restore CBus FIFO size to word size */
-		USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0xF);
+		iowrite32_usb(ZM_CBUS_FIFO_SIZE_OFFSET, 0xF);
 	}
 
 	mUSB_EP3_XFER_DONE();
@@ -145,7 +147,7 @@ void usb_reg_out_patch(void)
 	static BOOLEAN cmd_is_new = TRUE;
 
 	/* get the size of this transcation */
-	usbfifolen = USB_BYTE_REG_READ(ZM_EP4_BYTE_COUNT_LOW_OFFSET);
+	usbfifolen = ioread8_usb(ZM_EP4_BYTE_COUNT_LOW_OFFSET);
 
 	if (usbfifolen > USB_EP4_MAX_PKT_SIZE) {
 		A_PRINTF("EP4 FIFO Bug? Buffer is too big: %x\n", usbfifolen);
@@ -197,7 +199,7 @@ void usb_reg_out_patch(void)
 	/* retrieve the data from fifo */
 	for(ii = 0; ii < usbfifolen; ii++) {
 		/* read fifo data out */
-		ep4_data = USB_WORD_REG_READ(ZM_EP4_DATA_OFFSET);
+		ep4_data = ioread32_usb(ZM_EP4_DATA_OFFSET);
 		*regaddr = ep4_data;
 		regaddr++;
 	}
@@ -222,7 +224,7 @@ err:
 	 * but if we return here, the ep4 fifo will be lock out,
 	 * so that we still read them out but just drop it? */
 	for(ii = 0; ii < usbfifolen; ii++)
-		ep4_data = USB_WORD_REG_READ(ZM_EP4_DATA_OFFSET);
+		ep4_data = ioread32_usb(ZM_EP4_DATA_OFFSET);
 
 done:
 	/* mUSB_STATUS_IN_INT_ENABLE(); */

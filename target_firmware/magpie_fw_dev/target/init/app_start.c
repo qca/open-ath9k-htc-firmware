@@ -38,7 +38,11 @@
 #include "regdump.h"
 #include "usb_defs.h"
 
+#include "adf_os_io.h"
+
 #include "init.h"
+#include <linux/compiler.h>
+
 // @TODO: Should define the memory region later~
 #define ALLOCRAM_START       ( ((unsigned int)&_fw_image_end) + 4)
 #define ALLOCRAM_SIZE        ( SYS_RAM_SZIE - ( ALLOCRAM_START - SYS_D_RAM_REGION_0_BASE) - SYS_D_RAM_STACK_SIZE)
@@ -67,7 +71,8 @@ extern a_uint32_t cmnos_milliseconds_patch(void);
 
 extern BOOLEAN bJumptoFlash;
 extern BOOLEAN bEepromExist;
-void app_start()
+
+void __section(boot) __noreturn __visible app_start(void)
 {
 	uint32_t rst_status;
 	A_HOSTIF hostif;
@@ -119,9 +124,9 @@ void app_start()
 	hostif = A_IS_HOST_PRESENT();
 
 #if defined(PROJECT_MAGPIE)
-	rst_status = *((volatile uint32_t*)WATCH_DOG_MAGIC_PATTERN_ADDR);
+	rst_status = ioread32(WATCH_DOG_MAGIC_PATTERN_ADDR);
 #elif defined(PROJECT_K2)
-	rst_status = HAL_WORD_REG_READ(MAGPIE_REG_RST_STATUS_ADDR);
+	rst_status = ioread32(MAGPIE_REG_RST_STATUS_ADDR);
 #endif /* #if defined(PROJECT_MAGPIE) */
 
 
@@ -156,7 +161,7 @@ void app_start()
 #if defined(PROJECT_MAGPIE)
 	*((volatile uint32_t*)WATCH_DOG_MAGIC_PATTERN_ADDR)=WDT_MAGIC_PATTERN;
 #elif defined(PROJECT_K2)
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, WDT_MAGIC_PATTERN);
+	iowrite32(MAGPIE_REG_RST_STATUS_ADDR, WDT_MAGIC_PATTERN);
 #endif /* #if defined(PROJECT_MAGPIE) */
 
 	/* intr enable would left for firmware */
@@ -203,63 +208,52 @@ void app_start()
 		_indir_tbl.htc._HTC_ControlSvcProcessMsg = HTCControlSvcProcessMsg_patch;
 #endif
 
-		if (!(USB_BYTE_REG_READ(ZM_MAIN_CTRL_OFFSET)&BIT6)) {
+		if (!(ioread8_usb(ZM_MAIN_CTRL_OFFSET) & BIT6))
 			vUSBFIFO_EP6Cfg_FS_patch();
-		}
 
 #ifdef FUSION_USB_ENABLE_TX_STREAM
 		// For K2, enable tx stream mode
 		A_PRINTF("Enable Tx Stream mode: 0x%x\r\n",
-			USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET));
+			ioread32_usb(ZM_SOC_USB_MODE_CTRL_OFFSET));
 
-		// Patch for K2 USB STREAM mode
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, \
-				   (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT0)));  // disable down stream DMA mode
-
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET,
-				   ((USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|BIT6)));
-
+		/* Patch for K2 USB STREAM mode */
+		/* disable down stream DMA mode */
+		io32_rmw_usb(ZM_SOC_USB_MODE_CTRL_OFFSET, BIT6, BIT0);
 #if SYSTEM_MODULE_HP_EP5
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET,
-				   ((USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|BIT8)));
+		io32_set_usb(ZM_SOC_USB_MODE_CTRL_OFFSET, BIT8);
 #endif
 
 #if SYSTEM_MODULE_HP_EP6
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET,
-				   ((USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|BIT9)));
+		io32_set_usb(ZM_SOC_USB_MODE_CTRL_OFFSET, BIT9);
 #endif
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET,
-				   (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|(BIT0)));    // enable down stream DMA mode
+		/* enable down stream DMA mode */
+		io32_set_usb(ZM_SOC_USB_MODE_CTRL_OFFSET, BIT0);
 #endif
 
 #ifdef FUSION_USB_ENABLE_RX_STREAM
-		// Patch for K2 USB STREAM mode
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, \
-				   (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT1)));  // disable upstream DMA mode
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, \
-				   (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT3)));  // enable upstream stream mode
+		/* Patch for K2 USB STREAM mode */
+		/* disable upstream DMA mode and enable upstream stream mode */
+		io32_clr_usb(ZM_SOC_USB_MODE_CTRL_OFFSET, BIT1 | BIT3);
 
-		// K2, Set maximum IN transfer to 8K
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, \
-				   (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(0xcf)));
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, \
-				   (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|(0x20)));
+		/* K2, Set maximum IN transfer to 8K */
+		io32_rmw_usb(ZM_SOC_USB_MODE_CTRL_OFFSET, 0x20, 0x30);
 
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET,
-				   (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|(BIT1)));    // enable upstream DMA mode
+		/* enable upstream DMA mode */
+		io32_set_usb(ZM_SOC_USB_MODE_CTRL_OFFSET, BIT1);
 
-		USB_WORD_REG_WRITE(ZM_SOC_USB_TIME_CTRL_OFFSET, 0xa0);  // set stream mode timeout critirea
+		/* set stream mode timeout critirea */
+		iowrite32_usb(ZM_SOC_USB_TIME_CTRL_OFFSET, 0xa0);
 #if defined(PROJECT_K2)
 		/*0x10004020 is vaild in k2 but could be invaild in other chip*/
-		if ((HAL_WORD_REG_READ(0x10004020) & 0x2000) != 0) {
+		if ((ioread32(0x10004020) & 0x2000) != 0) {
 			/* disable stream mode for AR9270 */
-			USB_WORD_REG_WRITE(ZM_SOC_USB_MAX_AGGREGATE_OFFSET, 0);
+			iowrite32_usb(ZM_SOC_USB_MAX_AGGREGATE_OFFSET, 0);
 		} else {
 			/* enable stream mode for AR9271 */
-			USB_WORD_REG_WRITE(ZM_SOC_USB_MAX_AGGREGATE_OFFSET, 9);
+			iowrite32_usb(ZM_SOC_USB_MAX_AGGREGATE_OFFSET, 9);
 		}
 #else
-		USB_WORD_REG_WRITE(ZM_SOC_USB_MAX_AGGREGATE_OFFSET, 9);
+		iowrite32_usb(ZM_SOC_USB_MAX_AGGREGATE_OFFSET, 9);
 #endif
 #endif
 	}
@@ -267,8 +261,7 @@ void app_start()
 	else if (hostif == HIF_PCI )
 		hif_pci_patch_install(&_indir_tbl.hif);
 #endif
-		A_PRINTF("USB mode: 0x%x\r\n",
-			USB_WORD_REG_READ(0x100));
+	A_PRINTF("USB mode: 0x%x\r\n", ioread32_usb(0x100));
 
 	// patch the clock function
 	if(1) {
@@ -285,12 +278,9 @@ void app_start()
 	Magpie_init();
 
 #if MAGPIE_ENABLE_WLAN == 1
-
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_RESET_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_RST_RESET_ADDR)&(~(BIT10|BIT8|BIT7|BIT6))));
+	io32_clr(MAGPIE_REG_RST_RESET_ADDR, BIT10 | BIT8 | BIT7 | BIT6);
 #if defined(PROJECT_MAGPIE)
-	HAL_WORD_REG_WRITE(MAGPIE_REG_AHB_ARB_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_AHB_ARB_ADDR)|BIT1));
+	io32_set(MAGPIE_REG_AHB_ARB_ADDR, BIT1);
 #endif
 
 	wlan_pci_module_init();

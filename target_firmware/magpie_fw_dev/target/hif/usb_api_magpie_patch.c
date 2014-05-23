@@ -40,7 +40,7 @@
 #include "reg_defs.h"
 #include "athos_api.h"
 #include "usbfifo_api.h"
-
+#include "adf_os_io.h"
 #include "sys_cfg.h"
 
 #define measure_time 0
@@ -72,11 +72,11 @@ void _fw_usb_suspend_reboot()
 	_fw_restore_dma_fifo();
 
 	/* set clock to bypass mode - 40Mhz from XTAL */
-	HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_BYPASS_ADDR, (BIT0|BIT4));
+	iowrite32(MAGPIE_REG_CPU_PLL_BYPASS_ADDR, BIT0 | BIT4);
 
 	A_DELAY_USECS(100); /* wait for stable */
 
-	HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_ADDR, (BIT16));
+	iowrite32(MAGPIE_REG_CPU_PLL_ADDR, BIT16);
 
 	A_DELAY_USECS(100); /* wait for stable */
 	A_UART_HWINIT((40*1000*1000), 19200);
@@ -128,10 +128,10 @@ static void turn_off_merlin()
 		{
 			A_DELAY_USECS(10);
         
-			HAL_WORD_REG_WRITE( 0x10ff4040, default_data[i]); 
+			iowrite32(0x10ff4040, default_data[i]);
 		}
 		A_DELAY_USECS(10);
-		HAL_WORD_REG_WRITE(0x10ff4044, BIT0);
+		iowrite32(0x10ff4044, BIT0);
 		A_PRINTF("turn_off_merlin_ep_end ......\n");
 	}
 }
@@ -147,7 +147,6 @@ static void turn_off_phy()
 {
 
 	volatile uint32_t default_data[9];
-	volatile uint32_t read_data = 0;
 	uint32_t i=0;
 
 	default_data[0] = 0x9248fd00;
@@ -166,23 +165,21 @@ static void turn_off_phy()
 
 		while (1)
 		{
-			read_data=HAL_WORD_REG_READ(0x40028);
-			if( read_data & BIT31 )
+			if (ioread32(0x40028) & BIT31)
 				break;
 		}
         
 		A_DELAY_USECS(1);
     
-		HAL_WORD_REG_WRITE( 0x40024, default_data[i]); 
+		iowrite32(0x40024, default_data[i]);
 	}
-	HAL_WORD_REG_WRITE(0x40028, BIT0);
+	iowrite32(0x40028, BIT0);
 }
 
 static void turn_off_phy_rc()
 {
     
 	volatile uint32_t default_data[9];
-	volatile uint32_t read_data = 0;
 	uint32_t i=0;
     
 	A_PRINTF("turn_off_phy_rc\n");
@@ -203,16 +200,15 @@ static void turn_off_phy_rc()
      
 		while (1)
 		{
-			read_data=HAL_WORD_REG_READ(0x40028);
-			if( read_data & BIT31 )
+			if (ioread32(0x40028) & BIT31)
 				break;
 		}
 
 		A_DELAY_USECS(1);
 
-		HAL_WORD_REG_WRITE( 0x40024, default_data[i]); 
+		iowrite32(0x40024, default_data[i]);
 	}
-	HAL_WORD_REG_WRITE(0x40028, BIT0);
+	iowrite32(0x40028, BIT0);
 }
 
 volatile uint32_t gpio_func = 0x0;
@@ -228,8 +224,8 @@ void zfTurnOffPower_patch(void)
 {
 	A_PRINTF("+++ goto suspend ......\n");
 
-	// setting the go suspend here, power down right away...
-	HAL_WORD_REG_WRITE(0x10000, HAL_WORD_REG_READ(0x10000)|(0x8));
+	/* setting the go suspend here, power down right away */
+	io32_set(0x10000, BIT3);
 
 	A_DELAY_USECS(100);
 
@@ -239,20 +235,19 @@ void zfTurnOffPower_patch(void)
 	//32clk wait for External ETH PLL stable
 	A_DELAY_USECS(100);
     
-	HAL_WORD_REG_WRITE(0x52000, 0x70303);//read back 0x703f7
-	HAL_WORD_REG_WRITE(0x52008, 0x0e91c);//read back 0x1e948    
+	iowrite32(0x52000, 0x70303); /* read back 0x703f7 */
+	iowrite32(0x52008, 0x0e91c); /* read back 0x1e948 */
     
-	HAL_WORD_REG_WRITE(MAGPIE_REG_SUSPEND_ENABLE_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_SUSPEND_ENABLE_ADDR)|(BIT0))); //0x56030
+	io32_set(MAGPIE_REG_SUSPEND_ENABLE_ADDR, BIT0);
+
 	// wake up, and turn on cpu, eth, pcie and usb pll 
 	_fw_power_on();
 	// restore gpio and other settings
 	_fw_restore_dma_fifo();
 
-	// clear suspend..................
-	HAL_WORD_REG_WRITE(MAGPIE_REG_SUSPEND_ENABLE_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_SUSPEND_ENABLE_ADDR)&(~BIT0)));
-	HAL_WORD_REG_WRITE(0x52028, HAL_WORD_REG_READ(0x52028)&(~(BIT8|BIT12|BIT16)));
+	/* clear suspend */
+	io32_clr(MAGPIE_REG_SUSPEND_ENABLE_ADDR, BIT0);
+	io32_clr(0x52028, BIT8 | BIT12 | BIT16);
 }
 
 /*
@@ -268,78 +263,82 @@ void zfTurnOffPower_patch(void)
  */
 void zfResetUSBFIFO_patch(void)
 {
-	A_PRINTF("0x9808  0x%x ......\n", HAL_WORD_REG_READ(0x10ff9808));
-	A_PRINTF("0x7890  0x%x ......\n", HAL_WORD_REG_READ(0x10ff7890));
-	A_PRINTF("0x7890  0x%x ......\n", HAL_WORD_REG_READ(0x10ff7890));
-	A_PRINTF("0x4088  0x%x ......\n", HAL_WORD_REG_READ(0x10ff4088));
+	A_PRINTF("0x9808  0x%x ......\n", ioread32(0x10ff9808));
+	A_PRINTF("0x7890  0x%x ......\n", ioread32(0x10ff7890));
+	A_PRINTF("0x7890  0x%x ......\n", ioread32(0x10ff7890));
+	A_PRINTF("0x4088  0x%x ......\n", ioread32(0x10ff4088));
 	_fw_reset_dma_fifo();
 }
 
 static void _fw_reset_dma_fifo()
 {
-	HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100ae)|0x10));
-	HAL_BYTE_REG_WRITE(0x100ae, (HAL_BYTE_REG_READ(0x100af)|0x10));
+	io8_set(0x100ae, 0x10);
+	io8_set(0x100af, 0x10);
 	A_PRINTF("_fw_reset_dma_fifo\n");
 
 	// disable ep3 int enable, so that resume back won't send wdt magic pattern out!!!
 	mUSB_STATUS_IN_INT_DISABLE();
 
-	// update magic pattern to indicate this is a suspend
-	HAL_WORD_REG_WRITE(WATCH_DOG_MAGIC_PATTERN_ADDR, SUS_MAGIC_PATTERN);
+	/* update magic pattern to indicate this is a suspend */
+	iowrite32(WATCH_DOG_MAGIC_PATTERN_ADDR, SUS_MAGIC_PATTERN);
 
-	A_PRINTF("org 0x4048  0x%x ......\n", HAL_WORD_REG_READ(0x10ff4048));
-	A_PRINTF("org 0x404C  0x%x ......\n", HAL_WORD_REG_READ(0x10ff404C));
-	A_PRINTF("org 0x4088  0x%x ......\n", HAL_WORD_REG_READ(0x10ff4088));
+	A_PRINTF("org 0x4048  0x%x ......\n", ioread32(0x10ff4048));
+	A_PRINTF("org 0x404C  0x%x ......\n", ioread32(0x10ff404C));
+	A_PRINTF("org 0x4088  0x%x ......\n", ioread32(0x10ff4088));
 
-	HAL_WORD_REG_WRITE(0x10ff4088,0xaaa6a);//1010.1010.1010.0110.1010 for UB94
-	HAL_WORD_REG_WRITE(0x10ff404C,0x0);
+	/* 1010.1010.1010.0110.1010 for UB94 */
+	iowrite32(0x10ff4088, 0xaaa6a);
+	iowrite32(0x10ff404C, 0x0);
 
 	A_DELAY_USECS(1000);
-	A_PRINTF("0x4048  0x%x ......\n", HAL_WORD_REG_READ(0x10ff4048));
-	A_PRINTF("0x404C  0x%x ......\n", HAL_WORD_REG_READ(0x10ff404C));
-	A_PRINTF("0x4088  0x%x ......\n", HAL_WORD_REG_READ(0x10ff4088));
+	A_PRINTF("0x4048  0x%x ......\n", ioread32(0x10ff4048));
+	A_PRINTF("0x404C  0x%x ......\n", ioread32(0x10ff404C));
+	A_PRINTF("0x4088  0x%x ......\n", ioread32(0x10ff4088));
          
 	// turn off merlin
 	turn_off_merlin();
 	// pcie ep
 	A_PRINTF("turn_off_magpie_ep_start ......\n");
 	A_DELAY_USECS(measure_time);
-	HAL_WORD_REG_WRITE( 0x40040, (HAL_WORD_REG_READ(0x40040)|BIT0|(1<<1)));
+	io32_set(0x40040, BIT0 | BIT1);
 	turn_off_phy();
-	HAL_WORD_REG_WRITE( 0x40040, (HAL_WORD_REG_READ(0x40040)&~(BIT0|(1<<1))));
+	io32_clr(0x40040, BIT0 | BIT1);
 	A_PRINTF("turn_off_magpie_ep_end ......\n");
 
 	// pcie rc 
 	A_PRINTF("turn_off_magpie_rc_start ......\n");
 	A_DELAY_USECS(measure_time);
-	HAL_WORD_REG_WRITE( 0x40040, (HAL_WORD_REG_READ(0x40040)&(~BIT0)));
+	io32_clr(0x40040, BIT0);
 	turn_off_phy_rc();
 	A_PRINTF("turn_off_magpie_rc_end ......down\n");
 	A_DELAY_USECS(measure_time);
 
-	A_PRINTF("0x4001C  %p ......\n", HAL_WORD_REG_READ(0x4001c)); 
-	A_PRINTF("0x40040  %p ......\n", HAL_WORD_REG_READ(0x40040));
+	A_PRINTF("0x4001C  %p ......\n", ioread32(0x4001c));
+	A_PRINTF("0x40040  %p ......\n", ioread32(0x40040));
     
-	// turn off pcie_pll - power down (bit16)
-	A_PRINTF(" before pwd PCIE PLL CFG:0x5601C  %p ......\n", HAL_WORD_REG_READ(0x5601C));
-	HAL_WORD_REG_WRITE(0x5601C, (HAL_WORD_REG_READ(0x5601C)|(BIT18)));   
-	A_PRINTF(" after pwd PCIE PLL CFG:0x5601C  %p ......\n", HAL_WORD_REG_READ(0x5601C));
+	/* turn off pcie_pll - power down (bit16) */
+	A_PRINTF(" before pwd PCIE PLL CFG:0x5601C: 0x%08x\n",
+		 ioread32(0x5601C));
+	io32_set(0x5601C, BIT18);
+	A_PRINTF(" after pwd PCIE PLL CFG:0x5601C:  0x%08x\n",
+		 ioread32(0x5601C));
 
 	/* set everything to reset state?, requested by Oligo */
-	HAL_WORD_REG_WRITE(0x50010, HAL_WORD_REG_READ(0x50010)|(BIT13|BIT12|BIT11|BIT9|BIT7|BIT6));
+	io32_set(0x50010, BIT13 | BIT12
+		 | BIT11 | BIT9 | BIT7 | BIT6);
 
-	HAL_WORD_REG_WRITE(0x5C000, 0);
+	iowrite32(0x5C000, 0);
 
 	A_DELAY_USECS(10);
 
 	/* reset usb DMA controller */
-	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, 0x0);
+	iowrite32_usb(ZM_SOC_USB_DMA_RESET_OFFSET, 0x0);
 
-	HAL_WORD_REG_WRITE(0x50010, (HAL_WORD_REG_READ(0x50010)|(BIT4)));
+	io32_set(0x50010, BIT4);
 	A_DELAY_USECS(5);
-	HAL_WORD_REG_WRITE(0x50010, (HAL_WORD_REG_READ(0x50010)&(~BIT4)));
+	io32_clr(0x50010, BIT4);
 
-	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, BIT0);
+	iowrite32_usb(ZM_SOC_USB_DMA_RESET_OFFSET, BIT0);
 }
 
 static void _fw_power_off()
@@ -353,25 +352,22 @@ static void _fw_power_off()
 	 *  5. set SUSPEND_ENABLE
 	 */
 
-	HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_BYPASS_ADDR, (BIT0|BIT4)); //0x56004
+	iowrite32(MAGPIE_REG_CPU_PLL_BYPASS_ADDR, BIT0 | BIT4);
 
 	A_DELAY_USECS(100); // wait for stable
 
-	HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_ADDR, (BIT16));//0x56000
+	iowrite32(MAGPIE_REG_CPU_PLL_ADDR, BIT16);
 
 	A_DELAY_USECS(100); // wait for stable
 
 	A_UART_HWINIT((40*1000*1000), 19200);
 	A_CLOCK_INIT(40);
 
-	HAL_WORD_REG_WRITE(MAGPIE_REG_ETH_PLL_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_ETH_PLL_ADDR)|(BIT16)));   //0x5600c
+	io32_set(MAGPIE_REG_ETH_PLL_ADDR, BIT16);
 
-	HAL_WORD_REG_WRITE(MAGPIE_REG_ETH_PLL_BYPASS_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_ETH_PLL_BYPASS_ADDR)|(BIT4|BIT0))); //0x56010
+	io32_set(MAGPIE_REG_ETH_PLL_BYPASS_ADDR, BIT4 | BIT0);
 
-	HAL_WORD_REG_WRITE(MAGPIE_REG_SUSPEND_ENABLE_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_SUSPEND_ENABLE_ADDR)|(0x10<<8))); //0x56030
+	io32_set(MAGPIE_REG_SUSPEND_ENABLE_ADDR, 0x10 << 8);
 }
 
 static void _fw_power_on()
@@ -384,29 +380,26 @@ static void _fw_power_on()
      *  5. turn on pcie pll
      */    
 
-	HAL_WORD_REG_WRITE(MAGPIE_REG_ETH_PLL_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_ETH_PLL_ADDR)&(~BIT16)));
+	io32_clr(MAGPIE_REG_ETH_PLL_ADDR, BIT16);
 
-	// deassert eth_pll bypass mode and trigger update bit
-	HAL_WORD_REG_WRITE(MAGPIE_REG_ETH_PLL_BYPASS_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_ETH_PLL_BYPASS_ADDR)&(~(BIT4|BIT0))));
+	/* deassert eth_pll bypass mode and trigger update bit */
+	io32_clr(MAGPIE_REG_ETH_PLL_BYPASS_ADDR, BIT4 | BIT0);
 }
-
-#define CMD_PCI_RC_RESET_ON() HAL_WORD_REG_WRITE(MAGPIE_REG_RST_RESET_ADDR, \
-			 (HAL_WORD_REG_READ(MAGPIE_REG_RST_RESET_ADDR)|	\
-			  (PCI_RC_PHY_SHIFT_RESET_BIT|PCI_RC_PLL_RESET_BIT|PCI_RC_PHY_RESET_BIT|PCI_RC_RESET_BIT)))
 
 static void _fw_restore_dma_fifo(void)
 {
-	HAL_WORD_REG_WRITE(0x5601C, (HAL_WORD_REG_READ(0x5601C)&(~(BIT18))));
+	io32_clr(0x5601C, BIT18);
     
-	// reset pcie_rc shift 
-	HAL_WORD_REG_WRITE(0x50010, (HAL_WORD_REG_READ(0x50010)&(~(BIT10|BIT8|BIT7))));
+	/* reset pcie_rc shift */
+	io32_clr(0x50010, BIT10 | BIT8 | BIT7);
 	A_DELAY_USECS(1);
-	HAL_WORD_REG_WRITE(0x50010, (HAL_WORD_REG_READ(0x50010)|(BIT10|BIT8|BIT7)));
+	io32_set(0x50010, BIT10 | BIT8 | BIT7);
 
-	// reset pci_rc phy
-	CMD_PCI_RC_RESET_ON();
+	/* reset pci_rc phy */
+	io32_set(MAGPIE_REG_RST_RESET_ADDR,
+		 PCI_RC_PHY_SHIFT_RESET_BIT
+		 | PCI_RC_PLL_RESET_BIT | PCI_RC_PHY_RESET_BIT
+		 | PCI_RC_RESET_BIT);
 	A_DELAY_USECS(20);
 
 	// enable dma swap function

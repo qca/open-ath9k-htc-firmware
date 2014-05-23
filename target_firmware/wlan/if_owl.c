@@ -895,7 +895,7 @@ static void ath_tgt_txq_add_ucast(struct ath_softc_tgt *sc, struct ath_tx_buf *b
 	} else {
 		*txq->axq_link = ATH_BUF_GET_DESC_PHY_ADDR(bf);
 
-		txe_val = OS_REG_READ(ah, 0x840);
+		txe_val = ioread32_mac(0x0840);
 		if (!(txe_val & (1<< txq->axq_qnum)))
 			ah->ah_setTxDP(ah, txq->axq_qnum, ATH_BUF_GET_DESC_PHY_ADDR(bf));
 	}

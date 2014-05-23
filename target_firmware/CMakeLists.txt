@@ -110,6 +110,8 @@ ADD_CUSTOM_COMMAND(
 	OUTPUT fw.bin
 	DEPENDS fw.elf
 	COMMAND ${CMAKE_OBJCOPY}
+		--change-section-lma .boot-0x400000
+		--change-section-vma .boot-0x400000
 		--change-section-lma .text-0x400000
 		--change-section-vma .text-0x400000
 		-O binary fw.elf fw.bin

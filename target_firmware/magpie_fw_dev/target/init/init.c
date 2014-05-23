@@ -37,6 +37,8 @@
 #include "athos_api.h"
 #include "usb_defs.h"
 
+#include "adf_os_io.h"
+
 #if defined(PROJECT_MAGPIE)
 #include "regdump.h"
 extern  uint32_t *init_htc_handle;
@@ -86,28 +88,23 @@ void fatal_exception_func()
 void
 change_magpie_clk(void)
 {
-	volatile uint32_t rd_data;
+	iowrite32(0x00056004, BIT4 | BIT0);
 
-	HAL_WORD_REG_WRITE(0x00056004, 0x11);
-	rd_data = HAL_WORD_REG_READ(0x00056004) & 0x1;
-
-	/* Wait for the update bit to get cleared */
-	while (rd_data)
-		rd_data = HAL_WORD_REG_READ(0x00056004) & 0x1;
+	/* Wait for the update bit (BIT0) to get cleared */
+	while (ioread32(0x00056004) & BIT0)
+		;
 
 	/* Put the PLL into reset */
-	rd_data = HAL_WORD_REG_READ(0x00050010) | (1<<1);
-	HAL_WORD_REG_WRITE(0x00050010,rd_data);
+	io32_set(0x00050010, BIT1);
 
 	/*
 	 * XXX: statically set the CPU clock to 200Mhz
 	 */
-	/* Setting of the PLL */
-	HAL_WORD_REG_WRITE(0x00056000, 0x325);//400 MHz
+	/* Setting PLL to 400MHz */
+	iowrite32(0x00056000, 0x325);
 
 	/* Pull CPU PLL out of Reset */
-	rd_data = HAL_WORD_REG_READ(0x00050010) & ~(1<<1);
-	HAL_WORD_REG_WRITE(0x00050010,rd_data);
+	io32_clr(0x00050010, BIT1);
 
 	A_DELAY_USECS(60); // wait for stable
 
@@ -115,11 +112,10 @@ change_magpie_clk(void)
 	/*
 	 * AHB clk = ( CPU clk / 2 )
 	 */
-	HAL_WORD_REG_WRITE(0x00056004, ((0x00001 | (1 << 16)|(1 << 8)))); // set plldiv to 2
-	rd_data = HAL_WORD_REG_READ(0x00056004) & 0x1;
+	iowrite32(0x00056004, 0x00001 | BIT16 | BIT8); /* set plldiv to 2 */
 
-	while (rd_data)
-		rd_data = HAL_WORD_REG_READ(0x00056004) & 0x1;
+	while (ioread32(0x00056004) & BIT0)
+		;
 
 	/* UART Setting */
 	A_UART_HWINIT((100*1000*1000), 115200);
@@ -137,25 +133,23 @@ void exception_reset(struct register_dump_s *dump)
 
 	/* phase II reset */
 	A_PRINTF("exception reset-phase 2\n");
-	*((volatile uint32_t*)WATCH_DOG_MAGIC_PATTERN_ADDR) = WDT_MAGIC_PATTERN;
+	iowrite32(WATCH_DOG_MAGIC_PATTERN_ADDR, WDT_MAGIC_PATTERN);
 
-	HAL_WORD_REG_WRITE(MAGPIE_REG_RST_RESET_ADDR, 
-			   HAL_WORD_REG_READ(MAGPIE_REG_RST_RESET_ADDR)|(BIT10|BIT8|BIT7|BIT6));
+	io32_set(MAGPIE_REG_RST_RESET_ADDR, BIT10 | BIT8 | BIT7 | BIT6);
 
-	HAL_WORD_REG_WRITE(MAGPIE_REG_AHB_ARB_ADDR,
-			   (HAL_WORD_REG_READ(MAGPIE_REG_AHB_ARB_ADDR)|BIT1));
+	io32_set(MAGPIE_REG_AHB_ARB_ADDR, BIT1);
 
-	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, 0x0);
-	HAL_WORD_REG_WRITE(0x50010, HAL_WORD_REG_READ(0x50010)|BIT4);
+	iowrite32_usb(ZM_SOC_USB_DMA_RESET_OFFSET, 0x0);
+	io32_set(0x50010, BIT4);
 	A_DELAY_USECS(5);
-	HAL_WORD_REG_WRITE(0x50010, HAL_WORD_REG_READ(0x50010)&~BIT4);
+	io32_clr(0x50010, BIT4);
 	A_DELAY_USECS(5);
-	USB_WORD_REG_WRITE(ZM_SOC_USB_DMA_RESET_OFFSET, BIT0);
+	iowrite32_usb(ZM_SOC_USB_DMA_RESET_OFFSET, BIT0);
 
 	// set clock to bypass mode - 40Mhz from XTAL
-	HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_BYPASS_ADDR, (BIT0|BIT4));
+	iowrite32(MAGPIE_REG_CPU_PLL_BYPASS_ADDR, BIT0 | BIT4);
 	A_DELAY_USECS(100); // wait for stable
-	HAL_WORD_REG_WRITE(MAGPIE_REG_CPU_PLL_ADDR, (BIT16));
+	iowrite32(MAGPIE_REG_CPU_PLL_ADDR, BIT16);
 
 	A_UART_HWINIT((40*1000*1000), 115200);
 
@@ -168,9 +162,9 @@ void exception_reset(struct register_dump_s *dump)
 
         A_PRINTF("Cold reboot initiated.");
 #if defined(PROJECT_MAGPIE)
-        HAL_WORD_REG_WRITE(WATCH_DOG_MAGIC_PATTERN_ADDR, 0);
+	iowrite32(WATCH_DOG_MAGIC_PATTERN_ADDR, 0);
 #elif defined(PROJECT_K2)
-        HAL_WORD_REG_WRITE(MAGPIE_REG_RST_STATUS_ADDR, 0);
+	iowrite32(MAGPIE_REG_RST_STATUS_ADDR, 0);
 #endif /* #if defined(PROJECT_MAGPIE) */
 	A_USB_JUMP_BOOT();
 }
@@ -179,10 +173,10 @@ void reset_EP4_FIFO(void)
 {
 	int i;
 
-	// reset EP4 FIFO
-	USB_BYTE_REG_WRITE(ZM_EP4_BYTE_COUNT_HIGH_OFFSET, (USB_BYTE_REG_READ(ZM_EP4_BYTE_COUNT_HIGH_OFFSET) | BIT4));
+	/* reset EP4 FIFO */
+	io8_set_usb(ZM_EP4_BYTE_COUNT_HIGH_OFFSET, BIT4);
 	for(i = 0; i < 100; i++) {}
-	USB_BYTE_REG_WRITE(ZM_EP4_BYTE_COUNT_HIGH_OFFSET, (USB_BYTE_REG_READ(ZM_EP4_BYTE_COUNT_HIGH_OFFSET) & ~BIT4)); 
+	io8_clr_usb(ZM_EP4_BYTE_COUNT_HIGH_OFFSET, BIT4);
 }
 
 LOCAL void zfGenExceptionEvent(uint32_t exccause, uint32_t pc, uint32_t badvaddr)
@@ -192,12 +186,12 @@ LOCAL void zfGenExceptionEvent(uint32_t exccause, uint32_t pc, uint32_t badvaddr
 	A_PRINTF("<Exception>Tgt Drv send an event 44332211 to Host Drv\n");
 	mUSB_STATUS_IN_INT_DISABLE();
 
-	USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0x0f);
+	iowrite32_usb(ZM_CBUS_FIFO_SIZE_OFFSET, 0x0f);
 
-	USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, pattern);
-	USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, exccause);
-	USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, pc);
-	USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, badvaddr);
+	iowrite32_usb(ZM_EP3_DATA_OFFSET, pattern);
+	iowrite32_usb(ZM_EP3_DATA_OFFSET, exccause);
+	iowrite32_usb(ZM_EP3_DATA_OFFSET, pc);
+	iowrite32_usb(ZM_EP3_DATA_OFFSET, badvaddr);
     
 	mUSB_EP3_XFER_DONE();
 }
@@ -209,10 +203,10 @@ LOCAL void zfGenWrongEpidEvent(uint32_t epid)
 	A_PRINTF("<WrongEPID>Tgt Drv send an event 44332212 to Host Drv\n");
 	mUSB_STATUS_IN_INT_DISABLE();
 
-	USB_WORD_REG_WRITE(ZM_CBUS_FIFO_SIZE_OFFSET, 0x0f);
+	iowrite32_usb(ZM_CBUS_FIFO_SIZE_OFFSET, 0x0f);
 
-	USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, pattern);
-	USB_WORD_REG_WRITE(ZM_EP3_DATA_OFFSET, epid);
+	iowrite32_usb(ZM_EP3_DATA_OFFSET, pattern);
+	iowrite32_usb(ZM_EP3_DATA_OFFSET, epid);
 
 	mUSB_EP3_XFER_DONE();
 }
@@ -355,18 +349,11 @@ static void idle_task()
 	return;
 }
 
-void wlan_task(void)
+void __noreturn wlan_task(void)
 {
 	loop_low=loop_high=0;
 
 	while(1) {
-#if defined(PROJECT_MAGPIE)
-		if (bJumptoFlash){
-			bJumptoFlash = FALSE;
-			break;
-		}
-#endif
-
 		/* update wdt timer */
 		A_WDT_TASK();
 

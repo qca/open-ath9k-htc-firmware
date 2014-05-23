@@ -43,82 +43,88 @@
 
 #include <adf_os_io_pvt.h>
 
+static inline uint8_t ioread8(const volatile uint32_t addr)
+{
+	return *(const volatile uint8_t *) addr;
+}
 
-/**
- * @brief Read an 8-bit register value
- *
- * @param[in] osdev   platform device object
- * @param[in] addr    register addr
- *
- * @return An 8-bit register value.
- */
-#define adf_os_reg_read8(osdev, addr)         __adf_os_reg_read8(osdev, addr)
+static inline uint16_t ioread16(const volatile uint32_t addr)
+{
+	return *(const volatile uint16_t *) addr;
+}
 
-/**
- * @brief Read a 16-bit register value
- *
- * @param[in] osdev   platform device object
- * @param[in] addr    register addr
- *
- * @return A 16-bit register value.
- */
-#define adf_os_reg_read16(osdev, addr)        __adf_os_reg_read16(osdev, addr)
+static inline uint32_t ioread32(const volatile uint32_t addr)
+{
+	return *(const volatile uint32_t *) addr;
+}
 
-/**
- * @brief Read a 32-bit register value
- *
- * @param[in] osdev   platform device object
- * @param[in] addr    register addr
- *
- * @return A 32-bit register value.
- */
-#define adf_os_reg_read32(osdev, addr)        __adf_os_reg_read32(osdev, addr)
+static inline void iowrite8(volatile uint32_t addr, const uint8_t b)
+{
+	*(volatile uint8_t *) addr = b;
+}
 
-/**
- * @brief Read a 64-bit register value
- *
- * @param[in] osdev   platform device object
- * @param[in] addr    register addr
- *
- * @return A 64-bit register value.
- */
-#define adf_os_reg_read64(osdev, addr)        __adf_os_reg_read64(osdev, addr)
+static inline void iowrite16(volatile uint32_t addr, const uint16_t b)
+{
+	*(volatile uint16_t *) addr = b;
+}
 
-/**
- * @brief Write an 8-bit value into register
- *
- * @param[in] osdev   platform device object
- * @param[in] addr    register addr
- * @param[in] b       the 8-bit value to be written
- */
-#define adf_os_reg_write8(osdev, addr, b)     __adf_os_reg_write8(osdev, addr, b)
+static inline void iowrite32(volatile uint32_t addr, const uint32_t b)
+{
+	*(volatile uint32_t *) addr = b;
+}
 
-/**
- * @brief Write a 16-bit value into register
- *
- * @param[in] osdev   platform device object
- * @param[in] addr    register addr
- * @param[in] w       the 16-bit value to be written
- */
-#define adf_os_reg_write16(osdev, addr, w)    __adf_os_reg_write16(osdev, addr, w)
+static inline void io8_rmw(volatile uint32_t addr,
+			    const uint8_t set, const uint8_t clr)
+{
+	uint8_t val;
 
-/**
- * @brief Write a 32-bit value into register
- *
- * @param[in] osdev   platform device object
- * @param[in] addr    register addr
- * @param[in] l       the 32-bit value to be written
- */
-#define adf_os_reg_write32(osdev, addr, l)    __adf_os_reg_write32(osdev, addr, l)
+	val = ioread8(addr);
+	val &= ~clr;
+	val |= set;
+	iowrite8(addr, val);
+}
 
-/**
- * @brief Write a 64-bit value into register
- *
- * @param[in] osdev   platform device object
- * @param[in] addr    register addr
- * @param[in] q       the 64-bit value to be written
- */
-#define adf_os_reg_write64(osdev, addr, q)    __adf_os_reg_write64(osdev, addr, q)
+static inline void io32_rmw(volatile uint32_t addr,
+			    const uint32_t set, const uint32_t clr)
+{
+	uint32_t val;
+
+	val = ioread32(addr);
+	val &= ~clr;
+	val |= set;
+	iowrite32(addr, val);
+}
+
+/* generic functions */
+#define io8_set(addr, s)	io8_rmw((addr), (s), 0)
+#define io8_clr(addr, c)	io8_rmw((addr), 0, (c))
+#define io32_set(addr, s)	io32_rmw((addr), (s), 0)
+#define io32_clr(addr, c)	io32_rmw((addr), 0, (c))
+
+/* mac specific functions */
+#define ioread32_mac(addr)	ioread32(WLAN_BASE_ADDRESS + (addr))
+#define iowrite32_mac(addr, b)	iowrite32(WLAN_BASE_ADDRESS + (addr), (b))
+
+/* usb specific functions */
+#define ioread8_usb(addr)	ioread8(USB_CTRL_BASE_ADDRESS | (addr)^3)
+#define ioread16_usb(addr)	ioread16(USB_CTRL_BASE_ADDRESS | (addr))
+#define ioread32_usb(addr)	ioread32(USB_CTRL_BASE_ADDRESS | (addr))
+
+#define iowrite8_usb(addr, b)	iowrite8(USB_CTRL_BASE_ADDRESS | (addr)^3, (b))
+#define iowrite16_usb(addr, b)	iowrite16(USB_CTRL_BASE_ADDRESS | (addr), (b))
+#define iowrite32_usb(addr, b)	iowrite32(USB_CTRL_BASE_ADDRESS | (addr), (b))
+
+#define io8_rmw_usb(addr, s, c)	\
+		io8_rmw(USB_CTRL_BASE_ADDRESS | (addr)^3, (s), (c))
+#define io8_set_usb(addr, s)	\
+		io8_rmw(USB_CTRL_BASE_ADDRESS | (addr)^3, (s), 0)
+#define io8_clr_usb(addr, c)	\
+		io8_rmw(USB_CTRL_BASE_ADDRESS | (addr)^3, 0, (c))
+
+#define io32_rmw_usb(addr, s, c) \
+		io32_rmw(USB_CTRL_BASE_ADDRESS | (addr), (s), (c))
+#define io32_set_usb(addr, s)	io32_rmw(USB_CTRL_BASE_ADDRESS | (addr), (s), 0)
+#define io32_clr_usb(addr, c)	io32_rmw(USB_CTRL_BASE_ADDRESS | (addr), 0, (c))
 
 /**
  * @brief Convert a 16-bit value from network byte order to host byte order
@@ -141,63 +147,8 @@
 #define adf_os_htonl(x)                         __adf_os_htonl(x)
 
 /**
- * @brief Convert a 16-bit value from CPU byte order to big-endian byte order
- */
-#define adf_os_cpu_to_be16(x)                   __adf_os_cpu_to_be16(x)
-
-/**
- * @brief Convert a 32-bit value from CPU byte order to big-endian byte order
- */
-#define adf_os_cpu_to_be32(x)                   __adf_os_cpu_to_be32(x)
-
-/**
- * @brief Convert a 64-bit value from CPU byte order to big-endian byte order
- */
-#define adf_os_cpu_to_be64(x)                   __adf_os_cpu_to_be64(x)
-
-/**
  * @brief Convert a 16-bit value from CPU byte order to little-endian byte order
  */
 #define adf_os_cpu_to_le16(x)                   __adf_os_cpu_to_le16(x)
-
-/**
- * @brief Convert a 32-bit value from CPU byte order to little-endian byte order
- */
-#define adf_os_cpu_to_le32(x)                   __adf_os_cpu_to_le32(x)
-
-/**
- * @brief Convert a 64-bit value from CPU byte order to little-endian byte order
- */
-#define adf_os_cpu_to_le64(x)                   __adf_os_cpu_to_le64(x)
-
-/**
- * @brief Convert a 16-bit value from big-endian byte order to CPU byte order
- */
-#define adf_os_be16_to_cpu(x)                   __adf_os_be16_to_cpu(x)
-
-/**
- * @brief Convert a 32-bit value from big-endian byte order to CPU byte order
- */
-#define adf_os_be32_to_cpu(x)                   __adf_os_be32_to_cpu(x)
-
-/**
- * @brief Convert a 64-bit value from big-endian byte order to CPU byte order
- */
-#define adf_os_be64_to_cpu(x)                   __adf_os_be64_to_cpu(x)
-
-/**
- * @brief Convert a 16-bit value from little-endian byte order to CPU byte order
- */
-#define adf_os_le16_to_cpu(x)                   __adf_os_le16_to_cpu(x)
-
-/**
- * @brief Convert a 32-bit value from little-endian byte order to CPU byte order
- */
-#define adf_os_le32_to_cpu(x)                   __adf_os_le32_to_cpu(x)
-
-/**
- * @brief Convert a 64-bit value from little-endian byte order to CPU byte order
- */
-#define adf_os_le64_to_cpu(x)                   __adf_os_le64_to_cpu(x)
 
 #endif

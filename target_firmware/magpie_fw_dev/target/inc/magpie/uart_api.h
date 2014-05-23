@@ -50,10 +50,6 @@
 
 #include "reg_defs.h"
 
-/************************* Register Process marco ************************/
-#define UART_REG_WRITE(addr, val)       HAL_WORD_REG_WRITE(UART_BASE_ADDRESS|(uint32_t)(addr), (val))
-#define UART_REG_READ(addr)             HAL_WORD_REG_READ(UART_BASE_ADDRESS|(uint32_t)(addr))
-
 /************************** Register deinition ***************************/
 #define RBR_ADDRESS                              0x00051000
 #define RBR_OFFSET                               0x00000000

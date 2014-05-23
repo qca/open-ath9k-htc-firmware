@@ -146,13 +146,6 @@ extern  a_uint32_t __ahdecl ath_hal_getuptime(struct ath_hal *);
 #define __bswap16(_x)	(_x)
 #endif
 
-#define OS_REG_WRITE(_ah, _reg, _val)   ath_hal_reg_write_target(_ah, _reg, _val)
-#define OS_REG_READ(_ah, _reg)      ath_hal_reg_read_target(_ah, _reg)
-
-extern  void __ahdecl ath_hal_reg_write_target(struct ath_hal *ah,
-        a_uint32_t reg, a_uint32_t val);
-extern  a_uint32_t __ahdecl ath_hal_reg_read_target(struct ath_hal *ah, a_uint32_t reg);
-
 #define AH_USE_EEPROM     0x00000001
 extern  struct ath_hal *_ath_hal_attach_tgt( a_uint32_t, HAL_SOFTC, adf_os_device_t,
        a_uint32_t flags, void* status);

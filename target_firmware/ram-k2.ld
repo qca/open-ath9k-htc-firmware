@@ -203,6 +203,9 @@ SECTIONS
     /*_stack_sentry = ALIGN(0x8);*/
   } >dram_seg :dram_phdr
 
+  .boot :
+    { *(.boot) } > iram_seg :iram_phdr
+
   .text :
   {
     _stext = .;

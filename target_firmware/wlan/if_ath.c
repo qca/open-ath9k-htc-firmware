@@ -1384,17 +1384,17 @@ static a_int32_t ath_reg_read_filter(struct ath_hal *ah, a_int32_t addr)
 {
 	if ((addr & 0xffffe000) == 0x2000) {
 		/* SEEPROM registers */
-		ath_hal_reg_read_target(ah, addr);
+		ioread32_mac(addr);
 		if (!ath_hal_wait(ah, 0x407c, 0x00030000, 0))
 			adf_os_print("SEEPROM Read fail: 0x%08x\n", addr);
 
-		return (ath_hal_reg_read_target(ah, 0x407c) & 0x0000ffff);
+		return ioread32_mac(0x407c) & 0x0000ffff;
 	} else if (addr > 0xffff)
 		/* SoC registers */
-		return HAL_WORD_REG_READ(addr);
+		return ioread32(addr);
 	else
 		/* MAC registers */
-		return ath_hal_reg_read_target(ah, addr);
+		return ioread32_mac(addr);
 }
 
 static void ath_hal_reg_read_tgt(void *Context, A_UINT16 Command,
@@ -1424,20 +1424,20 @@ static void ath_pll_reset_ones(struct ath_hal *ah)
 	if(reset_pll == 0) {
 #if defined(PROJECT_K2)
 		/* here we write to core register */
-		HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
+		iowrite32(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x0);
 		/* and here to mac register */
-		ath_hal_reg_write_target(ah, 0x786c,
-			 ath_hal_reg_read_target(ah,0x786c) | 0x6000000);
-		ath_hal_reg_write_target(ah, 0x786c,
-			 ath_hal_reg_read_target(ah,0x786c) & (~0x6000000));
+		iowrite32_mac(0x786c,
+			 ioread32_mac(0x786c) | 0x6000000);
+		iowrite32_mac(0x786c,
+			 ioread32_mac(0x786c) & (~0x6000000));
 
-		HAL_WORD_REG_WRITE(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x20);
+		iowrite32(MAGPIE_REG_RST_PWDN_CTRL_ADDR, 0x20);
 
 #elif defined(PROJECT_MAGPIE) && !defined (FPGA)
-		ath_hal_reg_write_target(ah, 0x7890,
-			 ath_hal_reg_read_target(ah,0x7890) | 0x1800000);
-		ath_hal_reg_write_target(ah, 0x7890,
-			 ath_hal_reg_read_target(ah,0x7890) & (~0x1800000));
+		iowrite32_mac(0x7890,
+			 ioread32_mac(0x7890) | 0x1800000);
+		iowrite32_mac(0x7890,
+			 ioread32_mac(0x7890) & (~0x1800000));
 #endif
 		reset_pll = 1;
 	}
@@ -1447,7 +1447,7 @@ static void ath_hal_reg_write_filter(struct ath_hal *ah,
 			a_uint32_t reg, a_uint32_t val)
 {
 	if(reg > 0xffff) {
-		HAL_WORD_REG_WRITE(reg, val);
+		iowrite32(reg, val);
 #if defined(PROJECT_K2)
 		if(reg == 0x50040) {
 			static uint8_t flg=0;
@@ -1466,7 +1466,7 @@ static void ath_hal_reg_write_filter(struct ath_hal *ah,
 		if(reg == 0x7014)
 			ath_pll_reset_ones(ah);
 
-		ath_hal_reg_write_target(ah, reg, val);
+		iowrite32_mac(reg, val);
 	}
 }
 
