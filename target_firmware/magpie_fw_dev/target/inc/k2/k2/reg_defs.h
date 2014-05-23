@@ -52,29 +52,6 @@
 #define BIT_SET(bit)	(1<<bit)
 #define BIT_CLR(bit)	(0<<bit)
 
-#define HAL_WORD_REG_WRITE(addr, val)					\
-	do {								\
-		(*((volatile uint32_t *)(addr&0xfffffffc))) = (uint32_t)(val); \
-	} while (0)
-
-#define HAL_WORD_REG_READ(addr) (*((volatile uint32_t *)(addr&0xfffffffc)))
-
-
-#define HAL_HALF_WORD_REG_WRITE(addr, val)				\
-	do {								\
-		(*((volatile uint16_t *)(addr&0xfffffffe))) = (uint16_t)(val); \
-	} while (0)
-
-#define HAL_HALF_WORD_REG_READ(addr) (*((volatile uint16_t *)(addr&0xfffffffe))) 
-
-
-#define HAL_BYTE_REG_WRITE(addr, val)					\
-	do {								\
-		(*((volatile uint8_t *)(addr))) = (uint8_t)(val);	\
-	} while (0)
-
-#define HAL_BYTE_REG_READ(addr) (*((volatile uint8_t *)(addr))) 
-
 /***** REGISTER BASE ADDRESS DEFINITION *****/
 #define RESET_VECTOR_ADDRESS        0x8e0000
 /********************************************/
