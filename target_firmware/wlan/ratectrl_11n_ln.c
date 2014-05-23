@@ -369,7 +369,7 @@ rcSibUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	rcInitValidTxMask(pRc);
 
 	for (i = 0; i < WLAN_RC_PHY_MAX; i++) {
-		for (j = 0; j < MAX_TX_RATE_PHY; j++) {
+		for (j = 0; j < MAX_TX_RATE_TBL; j++) {
 			mPhyCtrlState.validPhyRateIndex[i][j] = 0;
 		}   
 		mPhyCtrlState.validPhyRateCount[i] = 0;

@@ -117,10 +117,8 @@ enum {
 
 #ifdef MAGPIE_MERLIN  
 #define MAX_TX_RATE_TBL         46
-#define MAX_TX_RATE_PHY         48
 #else
 #define MAX_TX_RATE_TBL         54//46
-#define MAX_TX_RATE_PHY         56//48
 #endif
 
 /*
