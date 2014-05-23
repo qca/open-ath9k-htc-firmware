@@ -69,8 +69,6 @@ ELSEIF(TARGET_MAGPIE)
 	)
 	INCLUDE_DIRECTORIES(
 		${CMAKE_SOURCE_DIR}/magpie_fw_dev/target/adf
-		magpie_fw_dev/build/magpie_1_1/inc
-		magpie_fw_dev/build/magpie_1_1/inc/magpie
 	)
 	SET(PLATFORM_NAME magpie)
 	SET(FIRMWARE_NAME htc_7010.fw)
@@ -79,9 +77,8 @@ ELSE()
 ENDIF()
 
 INCLUDE_DIRECTORIES(
-	${CMAKE_SOURCE_DIR}/magpie_fw_dev/build/include
-	${CMAKE_SOURCE_DIR}/magpie_fw_dev/build/include/xtensa-elf
 	${CMAKE_SOURCE_DIR}/magpie_fw_dev/target/inc
+	${CMAKE_SOURCE_DIR}/magpie_fw_dev/target/inc/xtensa-elf
 	${CMAKE_SOURCE_DIR}/magpie_fw_dev/target/inc/${PLATFORM_NAME}
 	${CMAKE_SOURCE_DIR}/magpie_fw_dev/target/inc/${PLATFORM_NAME}/${PLATFORM_NAME}
 	${CMAKE_SOURCE_DIR}/wlan
