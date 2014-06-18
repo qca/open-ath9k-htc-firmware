@@ -2,28 +2,33 @@ GMP_VER=5.0.5
 GMP_URL=https://ftp.gnu.org/gnu/gmp/gmp-$(GMP_VER).tar.bz2
 GMP_TAR=gmp-$(GMP_VER).tar.bz2
 GMP_DIR=gmp-$(GMP_VER)
+GMP_SUM=1f588aaccc41bb9aed946f9fe38521c26d8b290d003c5df807f65690f2aadec9
 
 MPFR_VER=3.1.1
 MPFR_URL=https://ftp.gnu.org/gnu/mpfr/mpfr-$(MPFR_VER).tar.bz2
 MPFR_TAR=mpfr-$(MPFR_VER).tar.bz2
 MPFR_DIR=mpfr-$(MPFR_VER)
+MPFR_SUM=7b66c3f13dc8385f08264c805853f3e1a8eedab8071d582f3e661971c9acd5fd
 
 MPC_VER=1.0.1
 MPC_URL=https://ftp.gnu.org/gnu/mpc/mpc-$(MPC_VER).tar.gz
 MPC_TAR=mpc-$(MPC_VER).tar.gz
 MPC_DIR=mpc-$(MPC_VER)
+MPC_SUM=ed5a815cfea525dc778df0cb37468b9c1b554aaf30d9328b1431ca705b7400ff
 
 BINUTILS_VER=2.23.1
 BINUTILS_URL=https://ftp.gnu.org/gnu/binutils/binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_TAR=binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_DIR=binutils-$(BINUTILS_VER)
 BINUTILS_PATCHES=local/patches/binutils.patch
+BINUTILS_SUM=2ab2e5b03e086d12c6295f831adad46b3e1410a3a234933a2e8fac66cb2e7a19
 
 GCC_VER=4.7.2
 GCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.bz2
 GCC_TAR=gcc-$(GCC_VER).tar.bz2
 GCC_DIR=gcc-$(GCC_VER)
 GCC_PATCHES=local/patches/gcc.patch
+GCC_SUM=8a9283d7010fb9fe5ece3ca507e0af5c19412626384f8a5e9434251ae100b084
 
 BASEDIR=$(shell pwd)
 TOOLCHAIN_DIR=$(BASEDIR)/toolchain
@@ -97,6 +102,7 @@ define Build
 $(DL_DIR)/$($(1)_TAR):
 	mkdir -p $(DL_DIR)
 	wget -N -P $(DL_DIR) $($(1)_URL)
+	printf "%s  %s\n" $($(1)_SUM) $$@ | sha256sum -c
 
 $(DL_DIR)/$($(1)_DIR)/.prepared: $(DL_DIR)/$($(1)_TAR)
 	tar -C $(DL_DIR) -x$(if $(findstring bz2,$($(1)_TAR)),j,z)f $(DL_DIR)/$($(1)_TAR)
