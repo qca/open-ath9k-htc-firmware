@@ -71,7 +71,8 @@ endef
 
 define BINUTILS/Compile
 	$(call Common/Compile,BINUTILS, \
-		--target=$(TARGET), \
+		--target=$(TARGET) \
+		--disable-werror, \
 		$(MAKE) && $(MAKE) -j1 install \
 	)
 endef
