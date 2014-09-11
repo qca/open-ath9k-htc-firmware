@@ -556,6 +556,8 @@ void ath_tx_status_update(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 	if (txs == NULL)
 		return;
 
+	txs->txstatus[txs->cnt].ts_flags = 0;
+
 	txs->txstatus[txs->cnt].cookie = bf->bf_cookie;
 	txs->txstatus[txs->cnt].ts_rate = SM(bf->bf_endpt, ATH9K_HTC_TXSTAT_EPID);
 
