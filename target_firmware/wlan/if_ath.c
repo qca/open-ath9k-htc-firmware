@@ -88,20 +88,13 @@ static u_int64_t ath_extend_tsf(struct ath_softc_tgt *sc, u_int32_t rstamp)
 {
 	struct ath_hal *ah = sc->sc_ah;
 	u_int64_t tsf;
-	u_int32_t tsf_low;
-	u_int64_t tsf64;
 
 	tsf = ah->ah_getTsf64(ah);
-	tsf_low = tsf & 0xffffffff;
-	tsf64 = (tsf & ~0xffffffffULL) | rstamp;
 
-	if (rstamp > tsf_low && (rstamp - tsf_low > 0x10000000))
-		tsf64 -= 0x100000000ULL;
+	if (rstamp > (tsf & 0xffffffffULL))
+		tsf -= 0x100000000ULL;
 
-	if (rstamp < tsf_low && (tsf_low - rstamp > 0x10000000))
-		tsf64 += 0x100000000ULL;
-
-	return tsf64;
+	return ((tsf & ~0xffffffffULL) | rstamp);
 }
 
 static a_int32_t ath_rate_setup(struct ath_softc_tgt *sc, a_uint32_t mode)
