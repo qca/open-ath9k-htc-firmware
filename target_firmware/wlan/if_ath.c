@@ -93,6 +93,8 @@ void ath_tgt_tx_sched_nonaggr(struct ath_softc_tgt *sc,struct ath_buf * bf_host)
  * extend(0x0000001200000004, 0x00000006) == 0x0000001200000006
  * extend(0x0000001200000004, 0x00000002) == 0x0000001200000002
  * extend(0x0000001200000004, 0xfffffffe) == 0x00000011fffffffe  ! tsfhigh--
+ * extend(0x000000127ffffffe, 0x80000002) == 0x0000001280000002
+ * extend(0x0000001280000002, 0x7ffffffe) == 0x000000127ffffffe
  * extend(0x00000012fffffffc, 0xfffffffe) == 0x00000012fffffffe
  * extend(0x00000012fffffffc, 0xfffffffa) == 0x00000012fffffffa
  * extend(0x00000012fffffffc, 0x00000002) == 0x0000001300000002  ! tsfhigh++
@@ -101,13 +103,13 @@ static u_int64_t ath_extend_tsf(struct ath_softc_tgt *sc, u_int32_t rstamp)
 {
 	struct ath_hal *ah = sc->sc_ah;
 	u_int64_t tsf;
-	a_int32_t tsf_low;
+	u_int32_t tsf_low;
 	a_int64_t tsf_delta;  /* signed int64 */
 
 	tsf = ah->ah_getTsf64(ah);
-	tsf_low = tsf & 0xffffffff;
+	tsf_low = tsf & 0xffffffffUL;
 
-	tsf_delta = (a_int32_t)rstamp - (a_int64_t)tsf_low;
+	tsf_delta = (a_int32_t)((rstamp - tsf_low) & 0xffffffffUL);
 
 	return (tsf + (u_int64_t)tsf_delta);
 }
