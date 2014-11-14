@@ -74,7 +74,7 @@ ieee80211_tgt_crypto_encap(struct ieee80211_frame *wh,
 
 	/* set the offset to 32 if the mesh control field is present */
 	wh_mesh = (struct ieee80211_qosframe_addr4 *)wh;
-	if (wh_mesh->i_qos[1] == 0x01)
+	if (wh_mesh->i_qos[1] & 0x01)
 		offset = 32;
 
 	iv = (a_uint8_t *) wh;
