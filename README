@@ -45,7 +45,10 @@ How do I build it?
 
 You're in for a treat.
 
-* Install the cmake build tool (http://www.cmake.org/).  Major distributions have packages for this.
+* Install the cmake build tool (http://www.cmake.org/).
+  Major distributions have packages for this.
+
+* For FreeBSD - install gmake and wget.
 
 * You first have to build the toolchain.
 
