@@ -82,26 +82,36 @@ void ath_tgt_tx_sched_normal(struct ath_softc_tgt *sc, struct ath_buf *bf);
 void ath_tgt_tx_sched_nonaggr(struct ath_softc_tgt *sc,struct ath_buf * bf_host);
 
 /*
- * Extend a 32 bit TSF to 64 bit, taking wrapping into account.
+ * Extend a 32 bit TSF to nearest 64 bit TSF value.
+ * When the adapter is a STATION, its local TSF is periodically modified by
+ * the hardware to match the BSS TSF (as received in beacon packets), and
+ * rstamp may appear to be from the future or from the past (with reference
+ * to the current local TSF) because of jitter. This is mostly noticable in
+ * highly congested channels. The code uses signed modulo arithmetic to
+ * handle both past/future cases and signed-extension to avoid branches.
+ * Test cases:
+ * extend(0x0000001200000004, 0x00000006) == 0x0000001200000006
+ * extend(0x0000001200000004, 0x00000002) == 0x0000001200000002
+ * extend(0x0000001200000004, 0xfffffffe) == 0x00000011fffffffe  ! tsfhigh--
+ * extend(0x000000127ffffffe, 0x80000002) == 0x0000001280000002
+ * extend(0x0000001280000002, 0x7ffffffe) == 0x000000127ffffffe
+ * extend(0x00000012fffffffc, 0xfffffffe) == 0x00000012fffffffe
+ * extend(0x00000012fffffffc, 0xfffffffa) == 0x00000012fffffffa
+ * extend(0x00000012fffffffc, 0x00000002) == 0x0000001300000002  ! tsfhigh++
  */
 static u_int64_t ath_extend_tsf(struct ath_softc_tgt *sc, u_int32_t rstamp)
 {
 	struct ath_hal *ah = sc->sc_ah;
 	u_int64_t tsf;
 	u_int32_t tsf_low;
-	u_int64_t tsf64;
+	a_int64_t tsf_delta;  /* signed int64 */
 
 	tsf = ah->ah_getTsf64(ah);
-	tsf_low = tsf & 0xffffffff;
-	tsf64 = (tsf & ~0xffffffffULL) | rstamp;
+	tsf_low = tsf & 0xffffffffUL;
 
-	if (rstamp > tsf_low && (rstamp - tsf_low > 0x10000000))
-		tsf64 -= 0x100000000ULL;
+	tsf_delta = (a_int32_t)((rstamp - tsf_low) & 0xffffffffUL);
 
-	if (rstamp < tsf_low && (tsf_low - rstamp > 0x10000000))
-		tsf64 += 0x100000000ULL;
-
-	return tsf64;
+	return (tsf + (u_int64_t)tsf_delta);
 }
 
 static a_int32_t ath_rate_setup(struct ath_softc_tgt *sc, a_uint32_t mode)
