@@ -28869,16 +28869,6 @@ diff --git a/include/xtensa-config.h b/include/xtensa-config.h
 index 30f4f41..fe9b051 100644
 --- a/include/xtensa-config.h
 +++ b/include/xtensa-config.h
-@@ -1,7 +1,7 @@
- /* Xtensa configuration settings.
--   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010
-+   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007
-    Free Software Foundation, Inc.
--   Contributed by Bob Wilson (bob.wilson@acm.org) at Tensilica.
-+   Contributed by Bob Wilson (bwilson@tensilica.com) at Tensilica.
- 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
 @@ -44,10 +44,7 @@
  #define XCHAL_HAVE_L32R			1
  
