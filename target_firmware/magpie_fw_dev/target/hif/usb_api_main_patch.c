@@ -1,5 +1,8 @@
 /* shared patches for k2 and magpie */
 
+#include <ah_osdep.h>
+#include <rom.h>
+
 #include "usb_defs.h"
 #include "usb_type.h"
 #include "usb_pre.h"

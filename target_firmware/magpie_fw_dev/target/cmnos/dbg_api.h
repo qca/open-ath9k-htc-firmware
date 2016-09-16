@@ -72,5 +72,6 @@ struct dbg_api {
     void (*_dbg_task)(void);
 };
 
+void cmnos_dbg_module_install(struct dbg_api *apis);
 
 #endif

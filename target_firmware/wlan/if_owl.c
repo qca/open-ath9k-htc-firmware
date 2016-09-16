@@ -57,6 +57,7 @@
 #include "if_athrate.h"
 #include "if_athvar.h"
 #include "ah_desc.h"
+#include "ah_internal.h"
 
 #define ath_tgt_free_skb  adf_nbuf_free
 
@@ -147,6 +148,8 @@ static void ath_tx_comp_cleanup(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 int ath_tgt_tx_add_to_aggr(struct ath_softc_tgt *sc,
 			   struct ath_buf *bf,int datatype,
 			   ath_atx_tid_t *tid, int is_burst);
+int ath_tgt_tx_form_aggr(struct ath_softc_tgt *sc, ath_atx_tid_t *tid,
+			 ath_tx_bufhead *bf_q);
 
 struct ieee80211_frame *ATH_SKB_2_WH(adf_nbuf_t skb)
 {

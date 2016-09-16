@@ -43,6 +43,9 @@
 #ifndef _WLAN_PCI_H
 #define _WLAN_PCI_H
 
+#include <adf_os_stdtypes.h>
+#include <adf_os_types.h>
+
 typedef int (*A_PCI_INIT_FUNC)(void);
 
 //extern A_PCI_INIT_FUNC g_pci_init_func;

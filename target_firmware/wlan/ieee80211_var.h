@@ -219,4 +219,9 @@ ieee80211_anyhdrsize(const void *data)
 		return ieee80211_hdrsize(data);
 }
 
+a_status_t
+ieee80211_tgt_crypto_encap(struct ieee80211_frame *wh,
+			   struct ieee80211_node_target *ni,
+		           a_uint8_t keytype);
+
 #endif

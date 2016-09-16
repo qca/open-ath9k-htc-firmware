@@ -183,9 +183,4 @@ void rcUpdate_11n(struct ath_softc_tgt *sc,
 		  int nBad,
 		  int sh_lo_retry);
 
-void ath_tx_status_update_rate(struct ath_softc_tgt *sc,
-			       struct ath_rc_series rcs[],
-			       int series,
-			       WMI_TXSTATUS_EVENT *txs);
-
 #endif /* _RATECTRL11N_H_ */

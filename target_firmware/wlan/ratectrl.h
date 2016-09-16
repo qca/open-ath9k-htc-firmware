@@ -284,4 +284,17 @@ struct fusion_rate_info {
 
 void ar5416AttachRateTables(struct atheros_softc *sc);
 
+void ath_rate_node_update(struct ath_softc_tgt *sc,
+			  struct ath_node_target *an,
+			  a_int32_t isnew,
+			  a_uint32_t capflag,
+			  struct ieee80211_rate *rs);
+
+
+void ath_rate_newstate(struct ath_softc_tgt *sc,
+		       struct ieee80211vap_target *vap,
+		       enum ieee80211_state state,
+		       a_uint32_t capflag,
+		       struct ieee80211_rate *rs);
+
 #endif /* _RATECTRL_H_ */

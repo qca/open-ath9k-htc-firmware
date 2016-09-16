@@ -32,6 +32,11 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#include <wlan_pci.h>
+#include <Magpie_api.h>
+#include <rom.h>
+
 #include "dt_defs.h"
 #include "athos_api.h"
 
@@ -41,6 +46,7 @@
 #include "adf_os_io.h"
 
 #include "init.h"
+#include "app_start.h"
 #include <linux/compiler.h>
 
 // @TODO: Should define the memory region later~
