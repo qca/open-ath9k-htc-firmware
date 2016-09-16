@@ -62,14 +62,11 @@
 #define ATH_VER_MINOR_NUMBER        "0"
 #define ATH_VER_BUILD_NUMBER        "3"
 
-#define ATH_VER_DATES               __DATE__" "__TIME__
-
 #define ATH_VERSION_STR             "["ATH_VER_RELEASE_CODE       "." \
                                     ATH_VER_PLATFORM_NUMBER "." \
                                     ATH_VER_MAJOR_NUMBER    "." \
                                     ATH_VER_MINOR_NUMBER    "." \
-                                    ATH_VER_BUILD_NUMBER    "] " \
-                                    ATH_VER_DATES
+                                    ATH_VER_BUILD_NUMBER    "]"
 
 /* ROM Code Version (16 bit)
  * Bit 15   : 0 means ASIC, 1 means FPGA

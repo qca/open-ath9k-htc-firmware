@@ -65,8 +65,6 @@ uint32_t idle_cnt = 0;
 int (* save_cmnos_printf)(const char * fmt, ...);
 #endif
 
-#define ATH_DATE_STRING     __DATE__" "__TIME__
-
 static void idle_task();
 
 #if defined(PROJECT_MAGPIE)
