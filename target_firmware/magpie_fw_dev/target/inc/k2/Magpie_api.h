@@ -43,7 +43,9 @@
 #ifndef _MAGPIE_API_H
 #define _MAGPIE_API_H
 
+#include <dbg_api.h>
 #include <sys_cfg.h>
+
 #include "cmnos_api.h"
 #include "vbuf_api.h"
 #include "vdesc_api.h"

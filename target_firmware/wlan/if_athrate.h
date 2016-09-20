@@ -113,4 +113,10 @@ void ath_rate_tx_complete(struct ath_softc_tgt *, struct ath_node_target *,
 void ath_rate_stateupdate(struct ath_softc_tgt *sc, struct ath_node_target *an, 
 			  enum ath_rc_cwmode cwmode);
 
+
+void ath_tx_status_update_rate(struct ath_softc_tgt *sc,
+			       struct ath_rc_series rcs[],
+			       int series,
+			       WMI_TXSTATUS_EVENT *txs);
+
 #endif /* _ATH_RATECTRL_H_ */

@@ -56,6 +56,8 @@
 #include "if_athvar.h"
 #include "ah_desc.h"
 #include "ah.h"
+#include "ratectrl.h"
+#include "ah_internal.h"
 
 static a_int32_t ath_numrxbufs = -1;
 static a_int32_t ath_numrxdescs = -1;

@@ -34,6 +34,9 @@
  */
 #if defined(_RAM_)
 
+#include <wlan_pci.h>
+#include <rom.h>
+
 #include "athos_api.h"
 #include "usb_defs.h"
 

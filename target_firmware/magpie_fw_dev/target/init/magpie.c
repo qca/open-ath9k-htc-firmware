@@ -33,6 +33,7 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "sys_cfg.h"
+#include "app_start.h"
 
 #if defined(_RAM_)
 

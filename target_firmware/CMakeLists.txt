@@ -77,6 +77,8 @@ ELSE()
 ENDIF()
 
 INCLUDE_DIRECTORIES(
+	${CMAKE_SOURCE_DIR}/include
+	${CMAKE_SOURCE_DIR}/magpie_fw_dev/target/
 	${CMAKE_SOURCE_DIR}/magpie_fw_dev/target/inc
 	${CMAKE_SOURCE_DIR}/magpie_fw_dev/target/inc/xtensa-elf
 	${CMAKE_SOURCE_DIR}/magpie_fw_dev/target/inc/${PLATFORM_NAME}

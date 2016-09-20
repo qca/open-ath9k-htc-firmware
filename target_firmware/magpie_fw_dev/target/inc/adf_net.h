@@ -121,20 +121,6 @@ adf_net_dev_create(adf_drv_handle_t   hdl,
     return (__adf_net_dev_create(hdl, op, info));
 }
 
-
-/**
- * @brief unregister a real device with the kernel
- * 
- * @param[in] hdl opaque device handle returned by adf_net_dev_create()
- * @see adf_net_dev_create()
- */
-static inline void
-adf_net_dev_delete(adf_net_handle_t hdl)
-{
-    __adf_net_dev_delete(hdl);
-}
-
-
 /**
  * @brief register a virtual device with the kernel.
  * A virtual device is always backed by a real device.
@@ -156,66 +142,6 @@ adf_net_vdev_create(adf_net_handle_t   dev_hdl,
 {
     return (__adf_net_vdev_create(dev_hdl, hdl, op, info));
 }
-
-
-/**
- * @brief unregister the virtual device with the kernel.
- * 
- * @param[in] hdl opaque device handle returned by adf_net_vdev_create()
- *
- * @see adf_net_vdev_create()
- */
-static inline void
-adf_net_vdev_delete(adf_net_handle_t hdl)
-{
-    __adf_net_vdev_delete(hdl);
-}
-
-
-/**
- * @brief open the real device
- * 
- * @param[in] hdl opaque device handle
- * 
- * @return status of the operation
- *
- * @see adf_net_dev_create()
- */
-static inline a_status_t
-adf_net_dev_open(adf_net_handle_t hdl)
-{
-        return (__adf_net_dev_open(hdl));
-}
-
-
-/**
- * @brief close the real device
- * 
- * @param[in] hdl opaque device handle
- * 
- * @see adf_net_dev_open()
- */
-static inline void
-adf_net_dev_close(adf_net_handle_t hdl)
-{
-    __adf_net_dev_close(hdl);
-}
-
-
-/**
- * @brief transmit a network buffer using a device
- * 
- * @param[in] hdl opaque device handle
- * @param[in] pkt network buffer to transmit
- * 
- * @return status of the operation
- */
-static inline a_status_t 
-adf_net_dev_tx(adf_net_handle_t hdl, adf_nbuf_t pkt)
-{
-       return (__adf_net_dev_tx(hdl,pkt));
-}
-
 
 /**
  * @brief Checks if the interface is running or not
@@ -344,45 +270,6 @@ adf_net_queue_stopped(adf_net_handle_t hdl)
     return(__adf_net_queue_stopped(hdl));
 }
 
-
-/**
- * @brief This indicates a packet to the networking stack
- * (minus the FCS). The driver should just strip
- * the FCS and give the packet as a whole. This is
- * necessary because different native stacks have
- * different expectation of how they want to recv the
- * packet. This fucntion will strip off whatever is
- * required for the OS interface. The routine will also
- * figure out whether its being called in irq context and
- * call the appropriate OS API.
- * 
- * @param[in] hdl opaque device handle
- * @param[in] pkt network buffer to indicate
- * @param[in] len length of buffer
- */
-static inline void 
-adf_net_indicate_packet(adf_net_handle_t hdl, adf_nbuf_t pkt, a_uint32_t len)
-{
-    __adf_net_indicate_packet(hdl, pkt, len);
-}
-
-/**
- * @brief use this when indicating a vlan tagged packet on RX
- * 
- * @param[in] hdl opaque device handle
- * @param[in] pkt network buffer to indicate
- * @param[in] len length of buffer
- * @param[in] vid vlan id
- * 
- * @return status of operation
- */
-static inline a_status_t 
-adf_net_indicate_vlanpkt(adf_net_handle_t hdl, adf_nbuf_t pkt, 
-                         a_uint32_t len, adf_net_vid_t *vid)
-{
-    return (__adf_net_indicate_vlanpkt(hdl, pkt, len, vid));
-}
-
 /**
  * @brief get interface name
  * 
@@ -394,60 +281,6 @@ static inline const a_uint8_t *
 adf_net_ifname(adf_net_handle_t  hdl)
 {
     return (__adf_net_ifname(hdl));
-}
-
-/**
- * @brief send management packets to apps (listener).
- * This is used for wireless applications.
- * 
- * @param[in] hdl opaque device handle
- * @param[in] pkt network buffer to send
- * @param[in] len length of buffer
- */
-static inline void
-adf_net_fw_mgmt_to_app(adf_net_handle_t hdl, adf_nbuf_t pkt, a_uint32_t len)
-{
-    __adf_net_fw_mgmt_to_app(hdl, pkt, len);
-}
-/**
- * @brief send wireless events to listening applications
- * 
- * @param[in] hdl opaque device handle
- * @param[in] what event to send
- * @param[in] data information about event
- * @param[in] data_len length of accompanying information
- */
-static inline void
-adf_net_send_wireless_event(adf_net_handle_t hdl, 
-                            adf_net_wireless_event_t what, 
-                            void *data, adf_os_size_t data_len)
-{
-    __adf_net_send_wireless_event(hdl, what, data, data_len); 
-}
-
-/**
- * @brief schedule the poll controller.
- * 
- * @param[in] hdl opaque device handle
- */
-static inline void 
-adf_net_poll_schedule(adf_net_handle_t hdl)
-{
-    __adf_net_poll_schedule(hdl);
-}
-
-
-/**
- * @brief per cpu deffered callback (e.g. for RSS)
- * 
- * @param[in] hdl opaque device handle
- * @param[in] cpu_msk
- * @param[in] arg
- */
-static inline void 
-adf_net_poll_schedule_cpu(adf_net_handle_t hdl, a_uint32_t cpu_msk, void *arg)
-{
-    __adf_net_poll_schedule_cpu(hdl, cpu_msk, arg);
 }
 
 /**

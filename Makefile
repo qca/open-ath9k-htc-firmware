@@ -1,25 +1,25 @@
-GMP_VER=5.0.5
+GMP_VER=6.1.1
 GMP_URL=https://ftp.gnu.org/gnu/gmp/gmp-$(GMP_VER).tar.bz2
 GMP_TAR=gmp-$(GMP_VER).tar.bz2
 GMP_DIR=gmp-$(GMP_VER)
 
-MPFR_VER=3.1.1
+MPFR_VER=3.1.4
 MPFR_URL=https://ftp.gnu.org/gnu/mpfr/mpfr-$(MPFR_VER).tar.bz2
 MPFR_TAR=mpfr-$(MPFR_VER).tar.bz2
 MPFR_DIR=mpfr-$(MPFR_VER)
 
-MPC_VER=1.0.1
+MPC_VER=1.0.3
 MPC_URL=https://ftp.gnu.org/gnu/mpc/mpc-$(MPC_VER).tar.gz
 MPC_TAR=mpc-$(MPC_VER).tar.gz
 MPC_DIR=mpc-$(MPC_VER)
 
-BINUTILS_VER=2.23.1
+BINUTILS_VER=2.26.1
 BINUTILS_URL=https://ftp.gnu.org/gnu/binutils/binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_TAR=binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_DIR=binutils-$(BINUTILS_VER)
-BINUTILS_PATCHES=local/patches/binutils.patch local/patches/binutils-elf32-xtensa-sec_cache.patch
+BINUTILS_PATCHES=local/patches/binutils.patch
 
-GCC_VER=4.7.4
+GCC_VER=6.2.0
 GCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.bz2
 GCC_TAR=gcc-$(GCC_VER).tar.bz2
 GCC_DIR=gcc-$(GCC_VER)

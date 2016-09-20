@@ -488,5 +488,14 @@ typedef enum {
 } owl_txq_state_t;
 
 a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *avp);
+void ath_tgt_tx_cleanup(struct ath_softc_tgt *sc, struct ath_node_target *an,
+			ath_atx_tid_t *tid, a_uint8_t discard_all);
+void ath_tgt_handle_normal(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
+void ath_tgt_handle_aggr(struct ath_softc_tgt *sc, struct ath_tx_buf *bf);
+void ath_tgt_tid_drain(struct ath_softc_tgt *sc, struct ath_atx_tid *tid);
+void ath_tx_status_clear(struct ath_softc_tgt *sc);
+
+void wmi_event(wmi_handle_t handle, WMI_EVENT_ID evt_id,
+	       void *buffer, a_int32_t Length);
 
 #endif /* _DEV_ATH_ATHVAR_H */

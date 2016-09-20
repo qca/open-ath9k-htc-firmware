@@ -32,6 +32,9 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#include <rom.h>
+
 #include "sys_cfg.h"
 #include "athos_api.h"
 
