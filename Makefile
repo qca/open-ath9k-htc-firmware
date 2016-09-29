@@ -16,12 +16,12 @@ MPC_TAR=mpc-$(MPC_VER).tar.gz
 MPC_DIR=mpc-$(MPC_VER)
 MPC_SUM=617decc6ea09889fb08ede330917a00b16809b8db88c29c31bfbb49cbf88ecc3
 
-BINUTILS_VER=2.26.1
+BINUTILS_VER=2.27
 BINUTILS_URL=https://ftp.gnu.org/gnu/binutils/binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_TAR=binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_DIR=binutils-$(BINUTILS_VER)
-BINUTILS_PATCHES=local/patches/binutils.patch
-BINUTILS_SUM=39c346c87aa4fb14b2f786560aec1d29411b6ec34dce3fe7309fe3dd56949fd8
+BINUTILS_PATCHES=local/patches/binutils.patch local/patches/binutils-2.27_fixup.patch
+BINUTILS_SUM=369737ce51587f92466041a97ab7d2358c6d9e1b6490b3940eb09fb0a9a6ac88
 
 GCC_VER=6.2.0
 GCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.bz2
