@@ -37,7 +37,9 @@
 #ifndef _ATH_APP_START_H_
 #define _ATH_APP_START_H_
 
-#include <linux/compiler.h>
+#define __noreturn     __attribute__((noreturn))
+#define __section(s)   __attribute__((section("." # s)))
+#define __visible      __attribute__((externally_visible))
 
 void __section(boot) __noreturn __visible app_start(void);
 void Magpie_init(void);
