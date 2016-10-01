@@ -101,6 +101,7 @@ ADD_CUSTOM_COMMAND(
 	DEPENDS firmware
 	COMMAND ${CMAKE_C_COMPILER}
 		-nostdlib
+		-fno-lto
 		-Wl,--start-group
 		${CMAKE_BINARY_DIR}/libfirmware.a
 		-Wl,--end-group
