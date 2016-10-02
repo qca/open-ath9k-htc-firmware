@@ -36,8 +36,8 @@
 #define ALLOCRAM_START       ( ((unsigned int)&_fw_image_end) + 4)
 #define ALLOCRAM_SIZE        ( SYS_RAM_SZIE - ( ALLOCRAM_START - SYS_D_RAM_REGION_0_BASE) - SYS_D_RAM_STACK_SIZE)
 
+#include "app_start.h"
 #include "regdump.h"
-#include <linux/compiler.h>
 
 #define SBOOT_PATTERN 0x5342
 #define IS_FLASHBOOT() (((DEBUG_SYSTEM_STATE&~(0x0000ffff))>>16==SBOOT_PATTERN))

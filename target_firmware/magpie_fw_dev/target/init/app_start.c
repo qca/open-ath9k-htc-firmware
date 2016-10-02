@@ -47,7 +47,6 @@
 
 #include "init.h"
 #include "app_start.h"
-#include <linux/compiler.h>
 
 // @TODO: Should define the memory region later~
 #define ALLOCRAM_START       ( ((unsigned int)&_fw_image_end) + 4)
