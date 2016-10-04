@@ -32,6 +32,8 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+
 #include <stdio.h>
 #include <string.h>
 
@@ -43,14 +45,15 @@ static void crc16ccitt_init(unsigned short *uCcitt16)
 	*uCcitt16 = 0xFFFF;
 }
 
-static void crc16ccitt_update(unsigned short *uCcitt16, unsigned char *pBuffer, unsigned long uBufSize)
+static void crc16ccitt_update(unsigned short *uCcitt16,
+			      unsigned char *pBuffer, unsigned long uBufSize)
 {
 	unsigned long i = 0;
 	unsigned long j = 0;
 
 	for(i = 0; i < uBufSize; i++)
 	{
-		for(j=0; j<3; j++)
+		for(j=0; j < 3; j++)
 		{
 			*uCcitt16 = (*uCcitt16 >> 8) | (*uCcitt16 << 8);
 			*uCcitt16 ^= pBuffer[3-j];
@@ -66,7 +69,8 @@ static void crc16ccitt_final(unsigned short *uCcitt16)
 	*uCcitt16 = ~(*uCcitt16);
 }
 
-void write_file(unsigned short crc, unsigned short file_size, FILE *out, FILE *in)
+void write_file(unsigned short crc, unsigned short file_size,
+		FILE *out, FILE *in)
 {
 	unsigned char buffer[MAX_READ_SIZE];
 	unsigned short size;
@@ -79,25 +83,26 @@ void write_file(unsigned short crc, unsigned short file_size, FILE *out, FILE *i
 	{
 		size = fread(buffer, sizeof(unsigned char), sizeof(buffer), in);
 	
-		if (size<MAX_READ_SIZE)
+		if (size < MAX_READ_SIZE)
 		{
-			if( size%4==1 )
+		        const char tmp = size % 4;
+			if( tmp == 1 )
 			{
 				buffer[size] = 0x0;
 				buffer[size+1] = 0x0;
 				buffer[size+2] = 0x0;
-				size+=3;
+				size += 3;
 			}
-			else if ( size%4==2 )
+			else if ( tmp == 2 )
 			{
 				buffer[size] = 0x0;
 				buffer[size+1] = 0x0;
-				size+=2;
+				size += 2;
 			}
-			else if ( size%4==3 )
+			else if ( tmp == 3 )
 			{
 				buffer[size] = 0x0;
-				size+=1;
+				size += 1;
 			}
 			fwrite(buffer, sizeof(unsigned char), size, out);
 			goto ERR_DONE;
@@ -129,20 +134,21 @@ unsigned short cal_crc(FILE *in)
 		size = fread(buffer, sizeof(unsigned char), sizeof(buffer), in);
 		file_size += size;
 
-		if( size%4==1 )
+		const char tmp = size % 4;
+		if( tmp == 1 )
 		{
 			buffer[size] = 0x0;
 			buffer[size+1] = 0x0;
 			buffer[size+2] = 0x0;
 			size+=3;
 		}
-		else if ( size%4==2 )
+		else if ( tmp == 2 )
 		{
 			buffer[size] = 0x0;
 			buffer[size+1] = 0x0;
 			size+=2;
 		}
-		else if ( size%4==3 )
+		else if ( tmp == 3 )
 		{
 			buffer[size] = 0x0;
 			size+=1;
@@ -163,25 +169,28 @@ ERR_DONE:
 }
 
 
-int main(int argc, char* argv[])
+#define BUF_LEN 80
+
+int main(int argc, const char* argv[])
 {
 	FILE *in, *out;
-	int retVal;
-	int i=0;
 	unsigned short crc = 0;
 	unsigned short size = 0;
-	char input_file_name[80];
-	char output_file_name[80];
+	char input_file_name [BUF_LEN];
+	char output_file_name[BUF_LEN];
 	
 	in = out = 0x0;
 
 	if( argc < 3 )
 	{
-		printf("\"imghdr [input_file] [output_file] - calculate the image and prefix to the binary \"!\n\r");
+		printf("\"imghdr [input_file] [output_file] "
+		       "- calculate the image and prefix to the binary \"!\n\r");
 		goto ERR_DONE;
 	}
-	strcpy(input_file_name, argv[1]);
-	strcpy(output_file_name, argv[2]);
+	strncpy(input_file_name,  argv[1], BUF_LEN);
+	strncpy(output_file_name, argv[2], BUF_LEN);
+	input_file_name [BUF_LEN -1] = '\0';
+	output_file_name[BUF_LEN -1] = '\0';
 
 	printf("imghdr %s %s!\n\r", input_file_name, output_file_name);
 
@@ -197,7 +206,8 @@ int main(int argc, char* argv[])
 	size = ftell(in);    // get file length
 	fseek( in, 0, SEEK_SET );
 	
-	printf(" ==> (2) output crc 0x%04x with file size 0x%04x\n\r", crc, size);
+	printf(" ==> (2) output crc 0x%04x with file size 0x%04x\n\r",
+	       crc, size);
 	write_file(crc, size, out, in);
 
 
@@ -207,5 +217,4 @@ ERR_DONE:
 	if(out) fclose(out);
 
 	return 0;
-
 }

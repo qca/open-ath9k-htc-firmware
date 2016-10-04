@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013 Qualcomm Atheros, Inc.
+ * Copyright (c) 2016 Nicola Spanti.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,36 +33,46 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include <stdio.h>
+#include <string.h>
 
-#define BUF_LEN 256
+#define BUF_LEN     256
+#define BUF_LEN_IN  BUF_LEN
+#define BUF_LEN_OUT (2 * BUF_LEN)
 
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
    FILE *file_in, *file_out;
-   char line_in_buf[BUF_LEN], line_out_buf[2 * BUF_LEN];
+   char line_in_buf[BUF_LEN_IN], line_out_buf[BUF_LEN_OUT];
 
 
    if ((file_in = fopen("tmp1_file", "r")) == NULL)
    {
       fprintf(stderr, "Can not open input file: <<tmp1_file>>\n"); 
-      exit(1);
+      return 1;
    }
 
    if ((file_out = fopen("tmp2_file", "w")) == NULL)
    {
       fprintf(stderr, "Can not open output file: <<tmp2_file>>\n");
       fclose(file_in);
-      exit(1);
+      return 1;
    }
 
    while (fgets(line_in_buf, BUF_LEN, file_in) != NULL)
    {
       if (line_in_buf[0] != ' ')
       {
-         strcpy(line_out_buf, argv[1]);
-         strcat(line_out_buf, line_in_buf);
+	 if(argc > 1)
+	 {
+	     fclose(file_in);
+	     fclose(file_out);
+	     return 1;
+	 }
+	 strncpy(line_out_buf, argv[1], BUF_LEN_OUT);
+	 strcat(line_out_buf, line_in_buf);
       }
       else
       {
@@ -73,4 +84,5 @@ int main(int argc, char **argv)
 
    fclose(file_in);
    fclose(file_out);
+   return 0;
 }

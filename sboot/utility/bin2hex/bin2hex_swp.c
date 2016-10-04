@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013 Qualcomm Atheros, Inc.
+ * Copyright (c) 2016 Nicola Spanti.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +33,8 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+
 #include <stdio.h>
 #include <string.h>
 
@@ -39,39 +42,40 @@
 
 unsigned long checksum = 0;
 
-void write_file(FILE *out, unsigned char *buf, unsigned long size, unsigned char *endian, unsigned char nl)
+void write_file(FILE *out, unsigned char *buf, unsigned long size,
+		unsigned char *endian, unsigned char nl)
 {
-	int i=0;
+	unsigned long i=0;
 	unsigned char tmp_buf[4];
 
-	for(i=0; i<size; i+=4)
+	for(i=0; i < size; i+=4)
 	{
 		if( nl==1 )
 		{
-			if(i%16 == 0){
-				fprintf(out, "\n");
-			}
-
+		    if(i%16 == 0){
+		        fputc('\n', out);
+		    }
 
         	    tmp_buf[0] = buf[i];
         	    tmp_buf[1] = buf[i+1];
         	    tmp_buf[2] = buf[i+2];
         	    tmp_buf[3] = buf[i+3];
 #if 0
-            if( i+4>=size)
+            if(i+4 >= size)
             {
-                if(i%4==3)
+                const int8_t tmp = i % 4;
+                if(tmp == 3)
                 {
         			tmp_buf[3] = 0x0;   // padding
         			printf("3: i:%d size:%d\n\r", i, size);
                 }
-                else if (i%4==2)
+                else if (tmp == 2)
                 {
         			tmp_buf[2] = 0x0;   // padding
         			tmp_buf[3] = 0x0;   // padding
         			printf("2: i:%d size:%d\n\r", i, size);
                 }
-                else if (i%4==1)
+                else if (tmp == 1)
                 {
         			tmp_buf[1] = 0x0;   // padding
         			tmp_buf[2] = 0x0;   // padding
@@ -80,13 +84,14 @@ void write_file(FILE *out, unsigned char *buf, unsigned long size, unsigned char
                 }
             }
 #endif
-			fprintf(out, "0x%08X, ", *((unsigned long *)(&tmp_buf[0])));
+			fprintf(out, "0x%08X, ",
+				*((unsigned long *)(&tmp_buf[0])));
 		}
 		else
 		{
 
 			if(i%16 == 0){
-				fprintf(out, "\n");
+			      fputc('\n', out);
 			}
 
 			tmp_buf[0] = buf[i+3];
@@ -94,22 +99,23 @@ void write_file(FILE *out, unsigned char *buf, unsigned long size, unsigned char
 			tmp_buf[2] = buf[i+1];
 			tmp_buf[3] = buf[i+0];
 #if 0
-            if( i+4>=size)
+            if(i+4 >= size)
             {
-                if(i%4==3)
+                const int8_t tmp = i % 4;
+                if(tmp == 3)
                 {
-        			tmp_buf[0] = 0x0;   // padding
+		  tmp_buf[0] = 0x0;   // padding
                 }
-                else if (i%4==2)
+                else if (tmp == 2)
                 {
-        			tmp_buf[0] = 0x0;   // padding
-        			tmp_buf[1] = 0x0;   // padding
+		  tmp_buf[0] = 0x0;   // padding
+		  tmp_buf[1] = 0x0;   // padding
                 }
-                else if (i%4==1)
+                else if (tmp == 1)
                 {
-                    tmp_buf[0] = 0x0;   // padding
-        			tmp_buf[1] = 0x0;   // padding
-        			tmp_buf[2] = 0x0;   // padding
+		  tmp_buf[0] = 0x0;   // padding
+		  tmp_buf[1] = 0x0;   // padding
+		  tmp_buf[2] = 0x0;   // padding
                 }
             }
             else
@@ -117,7 +123,8 @@ void write_file(FILE *out, unsigned char *buf, unsigned long size, unsigned char
 
             }
 #endif
-			fprintf(out, "0x%08X, ", *((unsigned long *)(&tmp_buf[0])));
+			fprintf(out, "0x%08X, ",
+				*((unsigned long *)(&tmp_buf[0])));
 		}
         checksum = checksum ^ *((unsigned long *)(&tmp_buf[0]));
 	}
@@ -225,24 +232,28 @@ ERR_DONE:
 }
 
 
-int main(int argc, char* argv[])
+#define BUF_LEN 80
+
+int main(int argc, const char* argv[])
 {
 	FILE *in, *out;
-	int retVal;
-	int i=0;
-	char input_file_name[80];
-	char output_file_name[80];
+	char input_file_name [BUF_LEN];
+	char output_file_name[BUF_LEN];
 
 	in = out = 0x0;
 
 	if( argc < 3 )
 	{
-		printf("\"bin2hex [input_file] [output_file] - gen array data\"!\n\r");
-		printf("\"bin2hex [input_file] [output_file] [rom]- gen rom code\"!\n\r");
+		printf("\"bin2hex [input_file] [output_file] "
+		       "- gen array data\"!\n\r");
+		printf("\"bin2hex [input_file] [output_file] [rom] "
+		       "- gen rom code\"!\n\r");
 		goto ERR_DONE;
 	}
-	strcpy(input_file_name, argv[1]);
-	strcpy(output_file_name, argv[2]);
+	strncpy(input_file_name,  argv[1], BUF_LEN);
+	strncpy(output_file_name, argv[2], BUF_LEN);
+	input_file_name [BUF_LEN -1] = '\0';
+	output_file_name[BUF_LEN -1] = '\0';
 
 	printf("bin2h %s %s!\n\r", input_file_name, output_file_name);
 	//goto ERR_DONE;
@@ -265,5 +276,4 @@ ERR_DONE:
 	if(out) fclose(out);
 
 	return 0;
-
 }
