@@ -223,7 +223,7 @@ static a_uint32_t ath_pkt_duration(struct ath_softc_tgt *sc,
 
 static void ath_dma_map(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
-	adf_nbuf_t skb = bf->bf_skb;
+	adf_nbuf_t skb;
 
 	skb = adf_nbuf_queue_first(&bf->bf_skbhead);
 	adf_nbuf_map(sc->sc_dev, bf->bf_dmamap, skb, ADF_OS_DMA_TO_DEVICE);
@@ -231,7 +231,7 @@ static void ath_dma_map(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 
 static void ath_dma_unmap(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
-	adf_nbuf_t skb = bf->bf_skb;
+	adf_nbuf_t skb;
 
 	skb = adf_nbuf_queue_first(&bf->bf_skbhead);
 	adf_nbuf_unmap( sc->sc_dev, bf->bf_dmamap, ADF_OS_DMA_TO_DEVICE);
@@ -884,14 +884,13 @@ static void ath_tgt_txq_add_ucast(struct ath_softc_tgt *sc, struct ath_tx_buf *b
 {
 	struct ath_hal *ah = sc->sc_ah;
 	struct ath_txq *txq;
-	HAL_STATUS status;
 	volatile a_int32_t txe_val;
 
 	adf_os_assert(bf);
 
 	txq = bf->bf_txq;
 
-	status = ah->ah_procTxDesc(ah, bf->bf_lastds);
+	ah->ah_procTxDesc(ah, bf->bf_lastds);
 
 	ATH_TXQ_INSERT_TAIL(txq, bf, bf_list);
 
@@ -1006,11 +1005,13 @@ ath_tx_freebuf(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 	bf->bf_node = NULL;
 	bf->bf_next = NULL;
 	bf = ath_buf_toggle(sc, bf, 0);
-	bf->bf_retries = 0;
-	bf->bf_isretried = 0;
 
 	if (bf != NULL)
+	{
+         	bf->bf_retries = 0;
+	        bf->bf_isretried = 0;
 		asf_tailq_insert_tail(&sc->sc_txbuf, bf, bf_list);
+	}
 }
 
 static void

@@ -217,7 +217,7 @@ a_uint8_t ath_get_minrateidx(struct ath_softc_tgt *sc, struct ath_vap_target *av
 {
 	if (sc->sc_curmode == IEEE80211_MODE_11NG)
 		return avp->av_minrateidx[0];
-	else if (sc->sc_curmode == IEEE80211_MODE_11NA)
+	if (sc->sc_curmode == IEEE80211_MODE_11NA)
 		return avp->av_minrateidx[1];
 
 	return 0;
@@ -387,7 +387,7 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 		}
 
 		retval = ah->ah_procRxDescFast(ah, ds, ds->ds_daddr,
-						PA2DESC(sc, ds->ds_link), &bf->bf_rx_status);
+					       PA2DESC(sc, ds->ds_link), &bf->bf_rx_status);
 		if (HAL_EINPROGRESS == retval) {
 			break;
 		}
@@ -686,7 +686,7 @@ static void ath_tgt_txq_setup(struct ath_softc_tgt *sc)
 
 	sc->sc_txqsetup=0;
 
-	for (qnum=0;qnum<HAL_NUM_TX_QUEUES;qnum++) {
+	for (qnum=0; qnum < HAL_NUM_TX_QUEUES; qnum++) {
 		txq= &sc->sc_txq[qnum];
 		txq->axq_qnum = qnum;
 		txq->axq_link = NULL;
@@ -1124,7 +1124,7 @@ static void ath_enable_intr_tgt(void *Context, A_UINT16 Command,
 	}
 
 	ah->ah_setInterrupts(ah, sc->sc_imask);
-	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo,NULL, 0);
+	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
 static void ath_init_tgt(void *Context, A_UINT16 Command,
@@ -1944,7 +1944,7 @@ a_int32_t ath_tgt_attach(a_uint32_t devid, struct ath_softc_tgt *sc, adf_os_devi
 	sc->sc_rc = ath_rate_attach(sc);
 	if (sc->sc_rc == NULL) {
 		error = EIO;
-		goto bad2;
+		goto bad;
 	}
 
 	for (i=0; i < TARGET_NODE_MAX; i++) {
@@ -1964,7 +1964,6 @@ a_int32_t ath_tgt_attach(a_uint32_t devid, struct ath_softc_tgt *sc, adf_os_devi
 
 	return 0;
 bad:
-bad2:
 	ath_desc_free(sc);
 	if (ah)
 		ah->ah_detach(ah);
