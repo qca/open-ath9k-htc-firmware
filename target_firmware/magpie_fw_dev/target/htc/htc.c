@@ -771,7 +771,6 @@ LOCAL void RedistributeCredit(adf_nbuf_t buf, int toPipeId)
 /* callback from the mailbox hardware layer when a full message arrives */
 LOCAL void HTCMsgRecvHandler(adf_nbuf_t hdr_buf, adf_nbuf_t buffer, void *context)
 {
-	A_UINT16 totsz;
 	HTC_ENDPOINT  *pEndpoint;
 	A_UINT32 eidMask;
 	int eid;
@@ -791,8 +790,6 @@ LOCAL void HTCMsgRecvHandler(adf_nbuf_t hdr_buf, adf_nbuf_t buffer, void *contex
 
 	adf_nbuf_peek_header(tmp_nbuf, &anbdata, &anblen);
 	pHTCHdr = (HTC_FRAME_HDR *)anbdata;
-
-	totsz = adf_os_ntohs(pHTCHdr->PayloadLen);
 
 	eid = pHTCHdr->EndpointID;
 
