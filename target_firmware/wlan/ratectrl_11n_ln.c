@@ -423,7 +423,6 @@ static A_UINT8
 rcRateFind_ht(struct ath_softc_tgt *sc, struct atheros_node *pSib,
 	      const RATE_TABLE_11N *pRateTable, A_BOOL probeAllowed, A_BOOL *isProbing)
 {
-	A_UINT32             dt;
 	A_UINT32             bestThruput, thisThruput;
 	A_UINT32             nowMsec;
 	A_UINT8              rate, nextRate, bestRate;
@@ -445,7 +444,6 @@ rcRateFind_ht(struct ath_softc_tgt *sc, struct atheros_node *pSib,
 	 */
 
 	nowMsec = A_MS_TICKGET();
-	dt = nowMsec - pRc->rssiTime;
 
 	/*
 	 * Now look up the rate in the rssi table and return it.
