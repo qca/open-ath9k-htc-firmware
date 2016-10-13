@@ -44,18 +44,18 @@
 
 /**
  * @brief Specify the module's entry point.
- */ 
+ */
 #define adf_os_pseudo_module_init(_fn)     __adf_os_pseudo_module_init(_fn)
 
 /**
  * @brief Specify the module's exit point.
- */ 
+ */
 #define adf_os_pseudo_module_exit(_fn)     __adf_os_pseudo_module_exit(_fn)
 
 /**
  * @brief Setup the following driver information: name, pseudo IDs of devices
  * supported and some device handlers.
- */ 
+ */
 #define adf_os_pseudo_set_drv_info(_name, _ifname, _pseudo_ids, _attach, _detach,  \
         _suspend, _resume) \
     __adf_os_pseudo_set_drv_info(_name, _ifname, _pseudo_ids, \

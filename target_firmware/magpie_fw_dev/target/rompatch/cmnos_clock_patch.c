@@ -38,7 +38,7 @@
 a_uint32_t ref_clk = 0;
 extern a_uint32_t cticks;
 
-// clock change 
+// clock change
 //
 void cmnos_clock_init_patch(a_uint32_t refclk)
 {
@@ -57,7 +57,7 @@ void cmnos_delay_us_patch(int us)
 {
     a_uint32_t start_time = NOW();
     unsigned int num_ticks = us*ref_clk; // system_freq == number of ticks per 1us
-    
+
     while ( (NOW() - start_time) < num_ticks) {
         /* busy spin */
         ;
@@ -84,6 +84,6 @@ void cmnos_tick_patch(void)
 a_uint32_t cmnos_milliseconds_patch(void)
 {
     cmnos_tick_patch();
-    
+
     return (cticks);
 }

@@ -48,7 +48,7 @@ struct clock_api {
     A_UINT32 (* _refclk_speed_get)(void);
     A_UINT32 (* _milliseconds)(void);
     void (* _sysclk_change)(void);
-    
+
     void (* _clock_tick)(void);
 };
 

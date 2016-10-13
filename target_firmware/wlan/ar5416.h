@@ -77,8 +77,8 @@ typedef enum Ar5416_Rates {
 #define AR5416_PWR_TABLE_OFFSET  -5
 #define AR5416_LEGACY_CHAINMASK		1
 #define AR5416_1_CHAINMASK		1
-#define AR5416_2LOHI_CHAINMASK          5	
-#define AR5416_2LOMID_CHAINMASK         3	
+#define AR5416_2LOHI_CHAINMASK          5
+#define AR5416_2LOMID_CHAINMASK         3
 #define AR5416_3_CHAINMASK		7
 
 #define AH5416(_ah) ((struct ath_hal_5416 *)(_ah))
@@ -104,10 +104,10 @@ struct ath_hal_5416
 	struct ath_hal_private  ah_priv;    /* base class */
 	a_uint16_t   ah_antennaSwitchSwap;       /* Controls mapping of OID request */
 	a_uint32_t   ah_maskReg; 	/* copy of AR_IMR */
-           
+
 	a_uint32_t   ah_slottime;        /* user-specified slot time */
 	a_int16_t    ah_txPowerIndexOffset;
-           
+
 	a_uint32_t   ah_intrTxqs;
 	void         *ah_cal_mem;
 	a_uint16_t   ah_ratesArray[Ar5416RateSize];

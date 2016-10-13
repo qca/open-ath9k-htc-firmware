@@ -59,15 +59,15 @@
 
 /* instruction port area */
 #define SYS_I_R0M_REGION_0_BASE         0x8e0000
-                                        
+
 #define SYS_I_RAM_REGION_0_BASE         0x900000
 #define SYS_I_RAM_REGION_1_BASE         (SYS_I_RAM_REGION_0_BASE+SYS_RAM_BLOCK_SIZE)
 #define SYS_I_RAM_REGION_2_BASE         (SYS_I_RAM_REGION_1_BASE+SYS_RAM_BLOCK_SIZE)
 #define SYS_I_RAM_REGION_3_BASE         (SYS_I_RAM_REGION_2_BASE+SYS_RAM_BLOCK_SIZE)
-                                        
-/* data port area */                    
+
+/* data port area */
 #define SYS_D_R0M_REGION_0_BASE         0x4e0000
-                                        
+
 #define SYS_D_RAM_REGION_0_BASE         0x500000
 #define SYS_D_RAM_REGION_1_BASE         (SYS_D_RAM_REGION_0_BASE+SYS_RAM_BLOCK_SIZE)
 #define SYS_D_RAM_REGION_2_BASE         (SYS_D_RAM_REGION_1_BASE+SYS_RAM_BLOCK_SIZE)
@@ -106,7 +106,7 @@
 
 #define USB_DEVICE_PID_SIZE                 1                       // PID SIZE, 1 halfword offset
 #define USB_DEVICE_VID_SIZE                 1                       // VID SIZE, 1 halfword offset
-    
+
 #define USB_DESC_IN_EEPROM_FLAG_OFFSET      USB_DESCRIPTOR_ADDR
 #define USB_DEVICE_DESCRIPTOR_OFFSET        (USB_DESC_IN_EEPROM_FLAG_OFFSET+USB_DESC_IN_EEPROM_SIZE)
 #define USB_STRING00_DESCRIPTOR_OFFSET      (USB_DEVICE_DESCRIPTOR_OFFSET+USB_DEVICE_DESCRIPTOR_SIZE)

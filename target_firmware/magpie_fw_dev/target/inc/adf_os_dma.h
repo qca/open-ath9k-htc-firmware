@@ -55,13 +55,13 @@
  * @param[in]  size      DMA buffer size
  * @param[in]  coherent  0 => cached.
  * @param[out] dmap      opaque coherent memory handle
- * 
+ *
  * @return     returns the virtual address of the memory
  */
 static inline void *
-adf_os_dmamem_alloc(adf_os_device_t     osdev, 
-                    adf_os_size_t       size, 
-                    a_bool_t            coherent, 
+adf_os_dmamem_alloc(adf_os_device_t     osdev,
+                    adf_os_size_t       size,
+                    a_bool_t            coherent,
                     adf_os_dma_map_t   *dmap)
 {
     return __adf_os_dmamem_alloc(osdev, size, coherent, dmap);
@@ -69,7 +69,7 @@ adf_os_dmamem_alloc(adf_os_device_t     osdev,
 
 /**
  * @brief Free a previously mapped DMA buffer
- * 
+ *
  * @param[in] osdev     platform device instance
  * @param[in] size      DMA buffer size
  * @param[in] coherent  0 => cached.
@@ -107,8 +107,8 @@ adf_os_dmamem_map2addr(adf_os_dma_map_t dmap)
  * @param[in] op        op code for sync type, (see @ref adf_os_types.h)
  */
 static inline void
-adf_os_dmamem_cache_sync(adf_os_device_t      osdev, 
-                         adf_os_dma_map_t     dmap, 
+adf_os_dmamem_cache_sync(adf_os_device_t      osdev,
+                         adf_os_dma_map_t     dmap,
                          adf_os_cache_sync_t  op)
 {
     __adf_os_dmamem_cache_sync(osdev, dmap, op);
@@ -116,7 +116,7 @@ adf_os_dmamem_cache_sync(adf_os_device_t      osdev,
 
 /**
  * @brief Get the cpu cache line size
- * 
+ *
  * @return The CPU cache line size in bytes.
  */
 static inline adf_os_size_t

@@ -127,7 +127,7 @@ typedef enum inum_intr {
     A_INTR_USB_DMA,
     A_INTR_ERROR,
     /* add intr above here */
-    A_INTR_NUM        
+    A_INTR_NUM
 }A_INUM_INTR_T;
 
 //////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ typedef int (* A_handler_t)(void *);
  * An Interrupt Service Routine, which must be called
  * directly in interrupt context (not delayed), and which
  * must be very small and may not have access to all OS
- * functions.  These are for use only when interrupt 
+ * functions.  These are for use only when interrupt
  * latency is critical; otherwise, an A_handler_t ("dsr")
  * is preferable.
  */
@@ -170,7 +170,7 @@ struct intr_api {
     void (* _intr_mask_inum)(uint32_t inum);
     void (* _intr_unmask_inum)(uint32_t inum);
     void (* _intr_attach_isr)(uint32_t inum, A_isr_t isr, void *arg);
-/*    
+/*
     BOOLEAN (*_intr_dsrs_pending)(void);
     void (* _intr_handle_pending_dsrs)(void);
     uint32_t (* _intr_nmi)(void *);

@@ -44,9 +44,9 @@ typedef a_uint32_t  __adf_os_atomic_t;
 
 /**
  * @brief This initiallizes the varriable to zero
- * 
+ *
  * @param __adf_os_atomic_t (int pointer)
- * 
+ *
  */
 static inline void
 __adf_os_atomic_init(__adf_os_atomic_t *v)
@@ -78,7 +78,7 @@ static inline void
 __adf_os_atomic_write(__adf_os_atomic_t *v,a_uint32_t p)
 {
 	atomic_store_rel_int(v,(int)p);
-} 
+}
  */
 
 #endif

@@ -33,18 +33,18 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
- * @File: 
- * 
+ * @File:
+ *
  * @Abstract: Wireless Module Interface Service Implementation
- * 
- * @Notes: 
+ *
+ * @Notes:
  */
 #include <osapi.h>
 #include <Magpie_api.h>
 #include <htc.h>
 #include <htc_services.h>
 #include <wmi_svc_api.h>
-#include <adf_os_mem.h> 
+#include <adf_os_mem.h>
 #include <adf_os_io.h>
 
 #include "wmi_internal.h"
@@ -55,9 +55,9 @@ static void WMIRecvMessageHandler(HTC_ENDPOINT_ID EndPt, adf_nbuf_t hdr_buf,
 	void *pContext;
 	WMI_SVC_CONTEXT *pWMI = (WMI_SVC_CONTEXT *)arg;
 	WMI_DISPATCH_TABLE *pCurrentTable;
-	WMI_DISPATCH_ENTRY*pCurrentEntry;    
+	WMI_DISPATCH_ENTRY*pCurrentEntry;
 	WMI_CMD_HANDLER pCmdHandler;
-	A_UINT8* pCmdBuffer; 
+	A_UINT8* pCmdBuffer;
 	int i;
 	A_UINT16 cmd;
 	A_UINT16 seq;
@@ -65,76 +65,76 @@ static void WMIRecvMessageHandler(HTC_ENDPOINT_ID EndPt, adf_nbuf_t hdr_buf,
 	a_uint8_t *anbdata;
 	a_uint32_t anblen;
 	WMI_CMD_HDR *cmdHdr;
-            
+
 	adf_os_assert(hdr_buf == ADF_NBUF_NULL);
 
 	do {
 		length = adf_nbuf_len(pHTCBuf);
 		if (length < sizeof(WMI_CMD_HDR)) {
-			break;    
+			break;
 		}
 
 		adf_nbuf_peek_header(pHTCBuf, &anbdata, &anblen);
-        
+
 		pCurrentTable = pWMI->pDispatchHead;
 		length = length - sizeof(WMI_CMD_HDR);
-        
+
 		cmdHdr = (WMI_CMD_HDR *)anbdata;
 		cmd = adf_os_ntohs(cmdHdr->commandId);
 		seq = adf_os_ntohs(cmdHdr->seqNo);
-        
-		pCmdBuffer = anbdata + sizeof(WMI_CMD_HDR); 
+
+		pCmdBuffer = anbdata + sizeof(WMI_CMD_HDR);
 		pCmdHandler = NULL;
-        
+
 		while (pCurrentTable != NULL) {
-            
+
 			pContext = pCurrentTable->pContext;
 			pCurrentEntry = pCurrentTable->pTable;
-        
+
 			/* scan table entries */
 			for (i = 0; i < pCurrentTable->NumberOfEntries; i++, pCurrentEntry++) {
 				if (pCurrentEntry->CmdID == cmd) {
 					/* found a match */
 					pCmdHandler = pCurrentEntry->pCmdHandler;
-        
+
 					/* optionally check length */
 					if ((pCurrentEntry->CheckLength != 0) &&
 					    (length < pCurrentEntry->CheckLength)) {
 						/* do not process command */
 						pCmdHandler = NULL;
 					}
-					/* end search */                
-					break;    
-				}                        
-			} 
-            
+					/* end search */
+					break;
+				}
+			}
+
 			if (pCmdHandler != NULL) {
 				/* found a handler */
 				break;
 			}
-                
+
 			/* scan next table */
 			pCurrentTable = pCurrentTable->pNext;
 		}
-         
+
 		if (NULL == pCmdHandler) {
-			break;    
+			break;
 		}
-            
+
 		/* if we get here, we have a command handler to dispatch */
-                
+
 		/* call dispatch function */
 		pCmdHandler(pContext, cmd, seq, pCmdBuffer, length);
-                  
+
 	} while (FALSE);
-    
-    
+
+
         /* Invalidate the buffer (including HTC header). Note : we only need to invalidate up to the portion
-	 * that was used (cache invalidate will also round up to the nearest cache line).  
+	 * that was used (cache invalidate will also round up to the nearest cache line).
 	 * The rest of the buffer should still be coherent.
 	 * */
 
-	HTC_ReturnBuffers(pWMI->HtcHandle, EndPt, pHTCBuf);         
+	HTC_ReturnBuffers(pWMI->HtcHandle, EndPt, pHTCBuf);
 }
 
 /* send completion handler when any HTC buffers are returned */
@@ -143,70 +143,70 @@ static void _WMI_SendCompleteHandler(HTC_ENDPOINT_ID Endpt, adf_nbuf_t pHTCBuf, 
 	WMI_SVC_CONTEXT *pWMI = (WMI_SVC_CONTEXT *)arg;
 	WMI_BUF_CONTEXT *ctx;
 	BUF_POOL_ID poolId;
-    
+
 	ctx = (WMI_BUF_CONTEXT *)adf_nbuf_get_priv(pHTCBuf);
-        
+
 	if ( ctx->EventClass == WMI_EVT_CLASS_CMD_EVENT ) {
 		poolId = POOL_ID_WMI_SVC_EVENT;
 	} else {
 		poolId = POOL_ID_WMI_SVC_CMD_REPLY;
 	}
-        
+
 	BUF_Pool_free_buf(pWMI->PoolHandle, poolId, pHTCBuf);
 }
 
 static A_UINT8 WMIServiceConnect(HTC_SERVICE *pService,
-                                 HTC_ENDPOINT_ID eid, 
-                                 A_UINT8 *pDataIn, 
+                                 HTC_ENDPOINT_ID eid,
+                                 A_UINT8 *pDataIn,
                                  int LengthIn,
                                  A_UINT8 *pDataOut,
                                  int *pLengthOut)
 {
 	WMI_SVC_CONTEXT *pWMI = (WMI_SVC_CONTEXT *)pService->ServiceCtx;
-    
+
         /* save the eid to use */
 	pWMI->ControlEp = eid;
 	return HTC_SERVICE_SUCCESS;
 }
 
 /**************  public APIS ********************************************/
-    
+
 static wmi_handle_t _WMI_Init(WMI_SVC_CONFIG *pWmiConfig)
 {
 	WMI_SVC_CONTEXT *pWMI = NULL;
 	int eventSize = WMI_SVC_MAX_BUFFERED_EVENT_SIZE + sizeof(WMI_CMD_HDR) + HTC_HDR_SZ;
-    
+
 	pWMI = (WMI_SVC_CONTEXT *)adf_os_mem_alloc(sizeof(WMI_SVC_CONTEXT));
 	if (pWMI == NULL) {
-		return NULL;    
+		return NULL;
 	}
-        
+
 	pWMI->pDispatchHead = NULL;
 	pWMI->PoolHandle = pWmiConfig->PoolHandle;
-	pWMI->HtcHandle = pWmiConfig->HtcHandle;    
-                                         
-	BUF_Pool_create_pool(pWmiConfig->PoolHandle, POOL_ID_WMI_SVC_CMD_REPLY, 
+	pWMI->HtcHandle = pWmiConfig->HtcHandle;
+
+	BUF_Pool_create_pool(pWmiConfig->PoolHandle, POOL_ID_WMI_SVC_CMD_REPLY,
 			     pWmiConfig->MaxCmdReplyEvts, eventSize);
-        
-	BUF_Pool_create_pool(pWmiConfig->PoolHandle, POOL_ID_WMI_SVC_EVENT, 
+
+	BUF_Pool_create_pool(pWmiConfig->PoolHandle, POOL_ID_WMI_SVC_EVENT,
 			     pWmiConfig->MaxEventEvts, eventSize);
-            
-	/* NOTE: since RAM allocation is zero-initialized, there is nothing to do for the 
+
+	/* NOTE: since RAM allocation is zero-initialized, there is nothing to do for the
 	 * direct event pool */
-     
+
         /* register the WMI control service */
 	pWMI->WMIControlService.ProcessRecvMsg = A_INDIR(wmi_svc_api._WMI_RecvMessageHandler);
 	pWMI->WMIControlService.ProcessSendBufferComplete = A_INDIR(wmi_svc_api._WMI_SendCompleteHandler);
 	pWMI->WMIControlService.ProcessConnect = A_INDIR(wmi_svc_api._WMI_ServiceConnect);
 	pWMI->WMIControlService.MaxSvcMsgSize = WMI_SVC_MSG_SIZE + sizeof(WMI_CMD_HDR);
-        /* all buffers that are sent through the control endpoint are at least WMI_SVC_MAX_BUFFERED_EVENT_SIZE 
+        /* all buffers that are sent through the control endpoint are at least WMI_SVC_MAX_BUFFERED_EVENT_SIZE
          * in size.  Any WMI event that supplies a data buffer must insure that the space in the buffer
          * is at least this size. */
-	pWMI->WMIControlService.TrailerSpcCheckLimit = WMI_SVC_MAX_BUFFERED_EVENT_SIZE; 
+	pWMI->WMIControlService.TrailerSpcCheckLimit = WMI_SVC_MAX_BUFFERED_EVENT_SIZE;
 	pWMI->WMIControlService.ServiceID = WMI_CONTROL_SVC;
 	pWMI->WMIControlService.ServiceCtx = pWMI;
 	HTC_RegisterService(pWmiConfig->HtcHandle, &pWMI->WMIControlService);
-    
+
 	return pWMI;
 }
 
@@ -226,35 +226,35 @@ static void _WMI_RegisterDispatchTable(wmi_handle_t handle,
 				       WMI_DISPATCH_TABLE *pDispatchTable)
 {
 	WMI_SVC_CONTEXT *pWMI = (WMI_SVC_CONTEXT *)handle;
-    
+
 	if (NULL == pWMI->pDispatchHead) {
 		pWMI->pDispatchHead = pDispatchTable;
-		pWMI->pDispatchTail = pDispatchTable;        
+		pWMI->pDispatchTail = pDispatchTable;
 	} else {
 		/* link to the tail */
 		pWMI->pDispatchTail->pNext = pDispatchTable;
-		pWMI->pDispatchTail = pDispatchTable;        
+		pWMI->pDispatchTail = pDispatchTable;
 	}
 }
 
 static adf_nbuf_t _WMI_AllocEvent(wmi_handle_t handle, WMI_EVT_CLASS EventClass,
 				  int Length)
-{     
+{
 	BUF_POOL_ID poolId;
 	WMI_SVC_CONTEXT *pWMI = (WMI_SVC_CONTEXT *)handle;
 	adf_nbuf_t buf;
 	WMI_BUF_CONTEXT *ctx;
-    
+
 	if ( EventClass == WMI_EVT_CLASS_CMD_EVENT ) {
 		poolId = POOL_ID_WMI_SVC_EVENT;
 	} else {
 		poolId = POOL_ID_WMI_SVC_CMD_REPLY;
 	}
-    
-	buf = BUF_Pool_alloc_buf(pWMI->PoolHandle, 
-				 poolId, 
+
+	buf = BUF_Pool_alloc_buf(pWMI->PoolHandle,
+				 poolId,
 				 sizeof(WMI_CMD_HDR) + HTC_GetReservedHeadroom(pWMI->HtcHandle));
-     
+
 	if ( buf != NULL ) {
 		ctx = (WMI_BUF_CONTEXT *)adf_nbuf_get_priv(buf);
 		ctx->EventClass = EventClass;
@@ -262,17 +262,17 @@ static adf_nbuf_t _WMI_AllocEvent(wmi_handle_t handle, WMI_EVT_CLASS EventClass,
 	return buf;
 }
 
-static void _WMI_SendEvent(wmi_handle_t handle, adf_nbuf_t pEvt, 
+static void _WMI_SendEvent(wmi_handle_t handle, adf_nbuf_t pEvt,
                            A_UINT16 EventId, A_UINT16 SeqNo, int Length)
 {
 	WMI_SVC_CONTEXT *pWMI = (WMI_SVC_CONTEXT *)handle;
 	A_UINT8 *pBuffer;
-        
+
 	pBuffer = adf_nbuf_push_head(pEvt, sizeof(WMI_CMD_HDR));
-	A_SET_UINT16_FIELD(pBuffer, WMI_CMD_HDR, commandId, adf_os_htons(EventId));        
+	A_SET_UINT16_FIELD(pBuffer, WMI_CMD_HDR, commandId, adf_os_htons(EventId));
 	A_SET_UINT16_FIELD(pBuffer, WMI_CMD_HDR, seqNo, adf_os_htons(SeqNo));
-	
-	HTC_SendMsg(pWMI->HtcHandle, pWMI->ControlEp, pEvt);    
+
+	HTC_SendMsg(pWMI->HtcHandle, pWMI->ControlEp, pEvt);
 }
 
 static void _WMI_Shutdown(wmi_handle_t handle)

@@ -44,7 +44,7 @@
 #define __ADF_PCI_BAR0      0x10
 
 
-a_status_t 
+a_status_t
 __adf_net_register_drv(adf_drv_info_t *drv);
 
 void
@@ -80,7 +80,7 @@ __adf_net_carrier_on(adf_net_handle_t hdl)
 
 static inline void
 __adf_net_start_queue(adf_net_handle_t hdl)
-{   
+{
 
 }
 
@@ -118,8 +118,8 @@ static inline adf_net_handle_t __adf_net_dev_create(adf_drv_handle_t hdl, adf_de
     return NULL;
 }
 
-static inline adf_net_handle_t __adf_net_vdev_create(adf_net_handle_t dev_hdl, 
-                                       adf_drv_handle_t hdl, adf_vdev_sw_t *op, 
+static inline adf_net_handle_t __adf_net_vdev_create(adf_net_handle_t dev_hdl,
+                                       adf_drv_handle_t hdl, adf_vdev_sw_t *op,
                                        adf_net_dev_info_t *info)
 {
     return NULL;
@@ -140,6 +140,6 @@ static inline adf_os_handle_t
 __adf_net_hdl_to_os(adf_net_handle_t hdl)
 {
     return NULL;
-}    
+}
 
 #endif

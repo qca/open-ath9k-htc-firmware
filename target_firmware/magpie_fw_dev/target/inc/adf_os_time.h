@@ -45,7 +45,7 @@
 /**
  * @brief count the number of ticks elapsed from the time when
  *        the system booted
- * 
+ *
  * @return ticks
  */
 static inline unsigned long
@@ -59,7 +59,7 @@ adf_os_ticks(void)
  *
  * @param[in] ticks number of ticks
  * @return time in milliseconds
- */ 
+ */
 static inline a_uint32_t
 adf_os_ticks_to_msecs(unsigned long ticks)
 {
@@ -71,7 +71,7 @@ adf_os_ticks_to_msecs(unsigned long ticks)
  *
  * @param[in] time in milliseconds
  * @return number of ticks
- */ 
+ */
 static inline unsigned long
 adf_os_msecs_to_ticks(a_uint32_t msecs)
 {
@@ -111,19 +111,19 @@ adf_os_mdelay(int msecs)
 
 /**
  * @brief Check if _a is later than _b.
- */ 
+ */
 #define adf_os_time_after(_a, _b)       __adf_os_time_after(_a, _b)
 
 /**
  * @brief Check if _a is prior to _b.
- */ 
+ */
 #define adf_os_time_before(_a, _b)      __adf_os_time_before(_a, _b)
 
 /**
  * @brief Check if _a atleast as recent as _b, if not later.
- */ 
+ */
 #define adf_os_time_after_eq(_a, _b)    __adf_os_time_after_eq(_a, _b)
 
 #endif
-    
+
 

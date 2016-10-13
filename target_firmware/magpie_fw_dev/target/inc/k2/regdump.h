@@ -44,7 +44,7 @@
  * XTensa CPU state
  * This must match the state saved by the target exception handler.
  */
- 
+
 #define RD_SIZE sizeof(CPU_exception_frame_t)
 
 /*

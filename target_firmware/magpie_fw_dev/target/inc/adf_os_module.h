@@ -47,36 +47,36 @@ typedef a_status_t (*module_init_func_t)(void);
 
 /**
  * @brief Specify the module's entry point.
- */ 
+ */
 #define adf_os_virt_module_init(_mod_init_func)  __adf_os_virt_module_init(_mod_init_func)
 
 /**
  * @brief Specify the module's exit point.
- */ 
+ */
 #define adf_os_virt_module_exit(_mod_exit_func)  __adf_os_virt_module_exit(_mod_exit_func)
 
 /**
  * @brief Specify the module's dependency on another module.
- */ 
+ */
 #define adf_os_module_dep(_name,_dep)       __adf_os_module_dep(_name,_dep)
 
 /**
  * @brief Export a symbol from a module.
- */ 
+ */
 #define adf_os_export_symbol(_sym)         __adf_os_export_symbol(_sym)
-     
+
 /**
  * @brief Module parameter of type integer.
- */ 
+ */
 #define ADF_OS_PARAM_TYPE_INT32             __ADF_OS_PARAM_TYPE_INT32
 
 /**
  * @brief Module parameter of type string.
- */ 
+ */
 #define ADF_OS_PARAM_TYPE_STRING            __ADF_OS_PARAM_TYPE_STRING
 
 /**
- * @brief Declare a module parameter. 
+ * @brief Declare a module parameter.
  *
  * @param[in] name name of the parameter
  * @param[in] type type of the parameter
@@ -86,8 +86,8 @@ typedef a_status_t (*module_init_func_t)(void);
  * Only two types are supported
  * ADF_OS_PARAM_TYPE_STRING
  * ADF_OS_PARAM_TYPE_INT32
- * For example, say, the parameters name "my_int" and "my_name" are of 
- * variables of type int and string respectively. Then you would declare them 
+ * For example, say, the parameters name "my_int" and "my_name" are of
+ * variables of type int and string respectively. Then you would declare them
  * as follows:
  * @code
  * adf_os_declare_param(my_int, ADF_OS_PARAM_TYPE_INT32);
@@ -99,7 +99,7 @@ typedef a_status_t (*module_init_func_t)(void);
  * adf_os_read_param(my_name, &softc->sc_my_name);
  * @endcode
  *
- * or 
+ * or
  * @code
  * st = adf_os_read_param(my_int, &softc->sc_my_int);
  * @endcode

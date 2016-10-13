@@ -173,7 +173,7 @@ void usb_status_in_patch(void)
 }
 
 /*
- * support more than 64 bytes command on ep4 
+ * support more than 64 bytes command on ep4
  */
 void usb_reg_out_patch(void)
 {

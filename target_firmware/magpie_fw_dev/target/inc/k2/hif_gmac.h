@@ -50,7 +50,7 @@
 #define ATH_P_MAGNORM           0x13 /*Magpie GMAC 19 for HTC & others*/
 
 #define ETH_P_ATH               0x88bd
-     
+
 typedef enum hif_gmac_pipe{
     HIF_GMAC_PIPE_RX = 1, /*Normal Priority RX*/
     HIF_GMAC_PIPE_TX = 2, /*Normal Priority TX*/

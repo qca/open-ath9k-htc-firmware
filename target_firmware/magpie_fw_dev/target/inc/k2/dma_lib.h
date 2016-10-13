@@ -68,7 +68,7 @@ struct dma_lib_api{
     A_UINT16  (*rx_init)(dma_engine_t eng_no, dma_iftype_t  if_type);
     void        (*rx_config)(dma_engine_t eng_no, a_uint16_t num_desc,
     						 a_uint16_t   gran);
-    void        (*rx_start)(dma_engine_t  eng_no); 
+    void        (*rx_start)(dma_engine_t  eng_no);
     A_UINT32  (*intr_status)(dma_iftype_t  if_type);
     A_UINT16  (*hard_xmit)(dma_engine_t eng_no, VBUF *buf);
     void        (*flush_xmit)(dma_engine_t  eng_no);
@@ -83,7 +83,7 @@ struct dma_lib_api{
 /**
  * @brief Install the DMA lib api's this for ROM patching
  *        support
- * 
+ *
  * @param apis
  */
 void        dma_lib_module_install(struct dma_lib_api  *apis);

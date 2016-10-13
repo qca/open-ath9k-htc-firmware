@@ -64,7 +64,7 @@ struct XTensa_exception_frame_s {
     } wb[MAGPIE_REGDUMP_FRAMES];
 };
 
-typedef struct XTensa_exception_frame_s CPU_exception_frame_t; 
+typedef struct XTensa_exception_frame_s CPU_exception_frame_t;
 #define RD_SIZE sizeof(CPU_exception_frame_t)
 
 #endif

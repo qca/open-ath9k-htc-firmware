@@ -43,8 +43,8 @@
 
 #define PCI_MAX_DATA_PKT_LEN            1664
 #define PCI_MAX_CMD_PKT_LEN             512
-#define PCI_MAX_BOOT_DESC               2 
-     
+#define PCI_MAX_BOOT_DESC               2
+
 typedef enum hif_pci_pipe_rx{
     HIF_PCI_PIPE_RX0, /*Normal Priority RX*/
     HIF_PCI_PIPE_RX1,
@@ -68,7 +68,7 @@ struct hif_pci_api{
     hif_handle_t  (*pci_init)(HIF_CONFIG *pConfig);
     void          (*pci_reset)(void);
     void          (*pci_enable)(void);
-    void          (*pci_reap_xmitted)(__pci_softc_t  *sc, 
+    void          (*pci_reap_xmitted)(__pci_softc_t  *sc,
                                       dma_engine_t  eng_no);
     void          (*pci_reap_recv)(__pci_softc_t  *sc, dma_engine_t  eng_no);
     A_UINT8       (*pci_get_pipe)(dma_engine_t   eng);

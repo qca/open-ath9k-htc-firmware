@@ -60,7 +60,7 @@ struct VBUF_QUEUE
 
     /* the mailbox hardware layer context */
 typedef struct _HIF_USB_CONTEXT {
-    HIF_CALLBACK                hifCb; 
+    HIF_CALLBACK                hifCb;
     struct zsDmaQueue           dnQ;
     struct zsTxDmaQueue         upQ;
 #if SYSTEM_MODULE_HP_EP5
@@ -72,11 +72,11 @@ typedef struct _HIF_USB_CONTEXT {
     //struct VBUF_QUEUE           upVbufQ;
     VBUF                 		*cmdQueue;
     struct VBUF_QUEUE           eventBufQ;
-    
+
     // Left a door for extension the structure
-    void *pReserved;      
+    void *pReserved;
 } HIF_USB_CONTEXT;
 
 void hif_usb_module_install(struct hif_api *apis);
-             
+
 #endif

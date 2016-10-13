@@ -449,7 +449,7 @@ cmnos_sflash_init(void)
 
     /* "Autosize-determination of the address size of serial flash" is obsolete according to Brian Yang's mail :
      *    The designers reached an conclusion that the spi master (the apb_spi interface control) will be
-     *    modified as ¡§presuming the attached flash model to be 24-bit addressing¡¨, i.e., no more
+     *    modified as presuming the attached flash model to be 24-bit addressing, i.e., no more
      *    auto-size detection!
      *    Hence you are free to force the 24-bit addressing in the *.c test code.
      */

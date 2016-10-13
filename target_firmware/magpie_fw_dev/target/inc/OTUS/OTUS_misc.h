@@ -53,7 +53,7 @@
  *
  * By convention, hostless boards set INTERFACE to SDIO, and INFO to
  * something OTHER than SDIO_NORMAL or 0.
- * 
+ *
  * Layout of Board HW Cfg Info is below.  These values are captured at
  * reset and made available to software.
  *

@@ -34,9 +34,9 @@
  */
 /*
  * @File: Magpie_api.h
- * 
+ *
  * @Abstract: Magpie FW api
- * 
+ *
  * @Notes:
  */
 
@@ -115,8 +115,8 @@
 #define dma_lib_tx_init(eng_no, if_type)            A_INDIR(dma_lib.tx_init(eng_no, if_type))
 #define dma_lib_rx_init(eng_no, if_type)            A_INDIR(dma_lib.rx_init(eng_no, if_type))
 #define dma_lib_rx_config(eng_no, desc, gran)       A_INDIR(dma_lib.rx_config(eng_no, desc, gran))
-#define dma_lib_tx_start(eng_no)                    A_INDIR(dma_lib.tx_start(eng_no)) 
-#define dma_lib_rx_start(eng_no)                    A_INDIR(dma_lib.rx_start(eng_no)) 
+#define dma_lib_tx_start(eng_no)                    A_INDIR(dma_lib.tx_start(eng_no))
+#define dma_lib_rx_start(eng_no)                    A_INDIR(dma_lib.rx_start(eng_no))
 #define dma_lib_intr_status(if_type)                A_INDIR(dma_lib.intr_status(if_type))
 #define dma_lib_hard_xmit(eng_no, buf)              A_INDIR(dma_lib.hard_xmit(eng_no, buf))
 #define dma_lib_flush_xmit(eng_no)                  A_INDIR(dma_lib.flush_xmit(eng_no))
@@ -142,11 +142,11 @@
 #define HIF_init(pConfig)                           A_INDIR(hif._init(pConfig))
 #define HIF_shutdown(h)                             A_INDIR(hif._shutdown(h))
 #define HIF_register_callback(h, pConfig)           A_INDIR(hif._register_callback(h, pConfig))
-#define HIF_start(h)                                A_INDIR(hif._start(h))  
-#define HIF_config_pipe(h, pipe, desc_list)         A_INDIR(hif._config_pipe(h, pipe, desc_list)) 
-#define HIF_send_buffer(h, pipe, buf)               A_INDIR(hif._send_buffer(h, pipe, buf)) 
-#define HIF_return_recv_buf(h, pipe, buf)           A_INDIR(hif._return_recv_buf(h, pipe, buf)) 
-#define HIF_isr_handler(h)                          A_INDIR(hif._isr_handler(h)) 
+#define HIF_start(h)                                A_INDIR(hif._start(h))
+#define HIF_config_pipe(h, pipe, desc_list)         A_INDIR(hif._config_pipe(h, pipe, desc_list))
+#define HIF_send_buffer(h, pipe, buf)               A_INDIR(hif._send_buffer(h, pipe, buf))
+#define HIF_return_recv_buf(h, pipe, buf)           A_INDIR(hif._return_recv_buf(h, pipe, buf))
+#define HIF_isr_handler(h)                          A_INDIR(hif._isr_handler(h))
 #define HIF_is_pipe_supported(h, pipe)              A_INDIR(hif._is_pipe_supported(h, pipe))
 #define HIF_get_max_msg_len(h, pipe)                A_INDIR(hif._get_max_msg_len(h, pipe))
 #define HIF_get_reserved_headroom(h)                A_INDIR(hif._get_reserved_headroom(h))
@@ -181,7 +181,7 @@ typedef void (*HIF_INSTALL_FUNC_T)(struct hif_api *apis);
 #define HTC_GetReservedHeadroom(h)                  A_INDIR(htc._HTC_GetReservedHeadroom(h))
 
 #define HTC_NotifyTargetInserted(h)
-#define HTC_NotifyTargetDetached(h)                   
+#define HTC_NotifyTargetDetached(h)
 
 /* WMI SVC module */
 #define WMI_SERVICE_MODULE_INSTALL()                WMI_service_module_install(&_A_MAGPIE_INDIRECTION_TABLE->wmi_svc_api)
@@ -225,14 +225,14 @@ typedef struct _A_magpie_indirection_table {
 //#endif
     struct hif_api                      hif;
     struct htc_apis                     htc;
-    WMI_SVC_APIS                        wmi_svc_api;     
+    WMI_SVC_APIS                        wmi_svc_api;
     struct usbfifo_api                  usbfifo_api;
     struct buf_pool_api                 buf_pool;
-#ifdef MAGPIE_FW_BUILD    
+#ifdef MAGPIE_FW_BUILD
     struct vbuf_api                     vbuf;
     struct vdesc_api                    vdesc;
     struct allocram_api                 allocram;
-#endif        
+#endif
     struct dma_engine_api               dma_engine;
     struct dma_lib_api                  dma_lib;
 

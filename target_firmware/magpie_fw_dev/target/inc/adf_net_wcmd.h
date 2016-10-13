@@ -34,7 +34,7 @@
  */
 /**
  * Copyright (c) Atheros Communications Inc. 2002-2008
- * 
+ *
  */
 
 #ifndef __ADF_NET_WCMD_H
@@ -50,8 +50,8 @@
  * Defines
  */
 #define ADF_NET_WCMD_NAME_SIZE          __ADF_OS_NAME_SIZE
-#define ADF_NET_WCMD_NICK_NAME          32 /**< Max Device nick name size*/     
-#define ADF_NET_WCMD_MODE_NAME_LEN      6 
+#define ADF_NET_WCMD_NICK_NAME          32 /**< Max Device nick name size*/
+#define ADF_NET_WCMD_MODE_NAME_LEN      6
 #define ADF_NET_WCMD_IE_MAXLEN          256 /** Max Len for IE */
 
 #define ADF_NET_WCMD_MAX_BITRATES       32
@@ -64,7 +64,7 @@
  * @brief key set/get info
  */
 #define ADF_NET_WCMD_KEYBUF_SIZE        16
-#define ADF_NET_WCMD_MICBUF_SIZE        16/**< space for tx+rx keys */ 
+#define ADF_NET_WCMD_MICBUF_SIZE        16/**< space for tx+rx keys */
 #define ADF_NET_WCMD_KEY_DEFAULT        0x80/**< default xmit key */
 #define ADF_NET_WCMD_ADDR_LEN           6
 #define ADF_NET_WCMD_KEYDATA_SZ          \
@@ -75,8 +75,8 @@
  */
 #define ADF_NET_WCMD_VAPKEY_XMIT        0x01/**< xmit */
 #define ADF_NET_WCMD_VAPKEY_RECV        0x02/**< recv */
-#define ADF_NET_WCMD_VAPKEY_GROUP       0x04/**< WPA group*/ 
-#define ADF_NET_WCMD_VAPKEY_SWCRYPT     0x10/**< Encrypt/decrypt*/ 
+#define ADF_NET_WCMD_VAPKEY_GROUP       0x04/**< WPA group*/
+#define ADF_NET_WCMD_VAPKEY_SWCRYPT     0x10/**< Encrypt/decrypt*/
 #define ADF_NET_WCMD_VAPKEY_SWMIC       0x20/**< Enmic/Demic */
 #define ADF_NET_WCMD_VAPKEY_DEFAULT     0x80/**< Default key */
 
@@ -101,9 +101,9 @@
  * @brief Ethtool specific
  */
 #define ADF_NET_WCMD_BUSINFO_LEN        32
-#define ADF_NET_WCMD_DRIVSIZ            32  
-#define ADF_NET_WCMD_VERSIZ             32  
-#define ADF_NET_WCMD_FIRMSIZ            32  
+#define ADF_NET_WCMD_DRIVSIZ            32
+#define ADF_NET_WCMD_VERSIZ             32
+#define ADF_NET_WCMD_FIRMSIZ            32
 /**
  * *******************************Enums******************
  */
@@ -133,21 +133,21 @@ typedef enum adf_net_wcmd_ciphermode{
  */
 typedef enum adf_net_wcmd_type{
     /* net80211 */
-    ADF_NET_WCMD_GET_RTS_THRES,     
-    ADF_NET_WCMD_SET_RTS_THRES,     
-    ADF_NET_WCMD_GET_FRAGMENT,  
-    ADF_NET_WCMD_SET_FRAGMENT,  
-    ADF_NET_WCMD_GET_VAPMODE,   
+    ADF_NET_WCMD_GET_RTS_THRES,
+    ADF_NET_WCMD_SET_RTS_THRES,
+    ADF_NET_WCMD_GET_FRAGMENT,
+    ADF_NET_WCMD_SET_FRAGMENT,
+    ADF_NET_WCMD_GET_VAPMODE,
     ADF_NET_WCMD_SET_VAPMODE,
-    ADF_NET_WCMD_GET_BSSID, 
-    ADF_NET_WCMD_SET_BSSID, 
-    ADF_NET_WCMD_GET_NICKNAME,      
-    ADF_NET_WCMD_SET_NICKNAME,      
-    ADF_NET_WCMD_GET_FREQUENCY,     
-    ADF_NET_WCMD_SET_FREQUENCY,     
-    ADF_NET_WCMD_GET_ESSID, 
-    ADF_NET_WCMD_SET_ESSID, 
-    ADF_NET_WCMD_GET_TX_POWER,  
+    ADF_NET_WCMD_GET_BSSID,
+    ADF_NET_WCMD_SET_BSSID,
+    ADF_NET_WCMD_GET_NICKNAME,
+    ADF_NET_WCMD_SET_NICKNAME,
+    ADF_NET_WCMD_GET_FREQUENCY,
+    ADF_NET_WCMD_SET_FREQUENCY,
+    ADF_NET_WCMD_GET_ESSID,
+    ADF_NET_WCMD_SET_ESSID,
+    ADF_NET_WCMD_GET_TX_POWER,
     ADF_NET_WCMD_SET_TX_POWER,
     ADF_NET_WCMD_GET_PARAM,
     ADF_NET_WCMD_SET_PARAM,
@@ -158,14 +158,14 @@ typedef enum adf_net_wcmd_type{
     ADF_NET_WCMD_SET_ENC,
     ADF_NET_WCMD_GET_KEY,
     ADF_NET_WCMD_SET_KEY,
-    ADF_NET_WCMD_GET_SCAN,      
-    ADF_NET_WCMD_SET_SCAN,      
-    ADF_NET_WCMD_GET_MODE,  
-    ADF_NET_WCMD_SET_MODE,  
-    ADF_NET_WCMD_GET_CHAN_LIST, 
-    ADF_NET_WCMD_SET_CHAN_LIST, 
-    ADF_NET_WCMD_GET_WMM_PARAM, 
-    ADF_NET_WCMD_SET_WMM_PARAM, 
+    ADF_NET_WCMD_GET_SCAN,
+    ADF_NET_WCMD_SET_SCAN,
+    ADF_NET_WCMD_GET_MODE,
+    ADF_NET_WCMD_SET_MODE,
+    ADF_NET_WCMD_GET_CHAN_LIST,
+    ADF_NET_WCMD_SET_CHAN_LIST,
+    ADF_NET_WCMD_GET_WMM_PARAM,
+    ADF_NET_WCMD_SET_WMM_PARAM,
     ADF_NET_WCMD_GET_VAPNAME,
     ADF_NET_WCMD_GET_IC_CAPS,
     ADF_NET_WCMD_GET_RETRIES,
@@ -202,7 +202,7 @@ typedef enum adf_net_wcmd_type{
     ADF_NET_WCMD_GET_DEV_DIALOG,
     ADF_NET_WCMD_GET_DEV_PHYERR,
     ADF_NET_WCMD_GET_DEV_CWM,
-    ADF_NET_WCMD_GET_DEV_ETHTOOL,       
+    ADF_NET_WCMD_GET_DEV_ETHTOOL,
     ADF_NET_WCMD_SET_DEV_MAC,
     ADF_NET_WCMD_SET_DEV_CAP,/*ATH_CAP*/
     /* Device write specific */
@@ -348,7 +348,7 @@ typedef enum adf_net_wcmd_param_id{
     ADF_NET_WCMD_PARAM_FAST_CC,/**< fast channel change */
     /**
      * 11n A-MPDU, A-MSDU support
-     */ 
+     */
     ADF_NET_WCMD_PARAM_AMPDU,/**< 11n a-mpdu support */
     ADF_NET_WCMD_PARAM_AMPDU_LIMIT,/**< a-mpdu length limit */
     ADF_NET_WCMD_PARAM_AMPDU_DENSITY,/**< a-mpdu density */
@@ -369,7 +369,7 @@ typedef enum adf_net_wcmd_param_id{
     ADF_NET_WCMD_PARAM_RB,/**< Switch in/out of RB */
     /**
      * RB Detection knobs.
-     */ 
+     */
     ADF_NET_WCMD_PARAM_RB_DETECT,/**< Do RB detection */
     ADF_NET_WCMD_PARAM_RB_SKIP_THRESHOLD,/**< seqno-skip-by-1s to detect */
     ADF_NET_WCMD_PARAM_RB_TIMEOUT,/**< (in ms) to restore non-RB */
@@ -419,7 +419,7 @@ typedef enum adf_net_wcmd_wmmparams{
     ADF_NET_WCMD_WMMPARAMS_AIFS,
     ADF_NET_WCMD_WMMPARAMS_TXOPLIMIT,
     ADF_NET_WCMD_WMMPARAMS_ACM,
-    ADF_NET_WCMD_WMMPARAMS_NOACKPOLICY, 
+    ADF_NET_WCMD_WMMPARAMS_NOACKPOLICY,
 }adf_net_wcmd_wmmparams_t;
 
 /**
@@ -448,8 +448,8 @@ typedef enum adf_net_wcmd_txpow_flags{
     ADF_NET_WCMD_TXPOW_DBM = 0,/**< dBm */
     ADF_NET_WCMD_TXPOW_MWATT = 0x1,/**< mW */
     ADF_NET_WCMD_TXPOW_RELATIVE = 0x2,/**< Arbitrary units */
-    ADF_NET_WCMD_TXPOW_TYPE = 0xFF,/**< Type of value */    
-    ADF_NET_WCMD_TXPOW_RANGE = 0x1000/**< Range (min - max) */ 
+    ADF_NET_WCMD_TXPOW_TYPE = 0xFF,/**< Type of value */
+    ADF_NET_WCMD_TXPOW_RANGE = 0x1000/**< Range (min - max) */
 }adf_net_wcmd_txpow_flags_t;
 /**
  * @brief Retry flags
@@ -460,7 +460,7 @@ typedef enum adf_net_wcmd_retry_flags{
     ADF_NET_WCMD_RETRY_MAX = 0x2,/**< Maximum */
     ADF_NET_WCMD_RETRY_RELATIVE = 0x4,/**< Not in seconds/ms/us */
     ADF_NET_WCMD_RETRY_SHORT = 0x10,/**< Short packets  */
-    ADF_NET_WCMD_RETRY_LONG = 0x20,/**< Long packets */ 
+    ADF_NET_WCMD_RETRY_LONG = 0x20,/**< Long packets */
     ADF_NET_WCMD_RETRY_MODIFIER = 0xFF,/**< Modify a parameter */
     ADF_NET_WCMD_RETRY_LIMIT = 0x1000,/**< Max retries*/
     ADF_NET_WCMD_RETRY_LIFETIME = 0x2000,/**< Max retries us*/
@@ -495,7 +495,7 @@ typedef enum adf_net_wcmd_cwm_event{
     ADF_NET_WCMD_CWMEVENT_EXTCHRESUME,/**< ext channel sensing resume */
     ADF_NET_WCMD_CWMEVENT_DESTCW20,   /**< dest channel width changed to 20 */
     ADF_NET_WCMD_CWMEVENT_DESTCW40,   /**< dest channel width changed to 40 */
-    ADF_NET_WCMD_CWMEVENT_MAX 
+    ADF_NET_WCMD_CWMEVENT_MAX
 } adf_net_wcmd_cwm_event_t;
 
 /**
@@ -510,7 +510,7 @@ typedef enum adf_net_wcmd_ethtool_cmd{
     ADF_NET_WCMD_ETHTOOL_SWOL,/**< Set wake-on-lan options. */
     ADF_NET_WCMD_ETHTOOL_GMSGLVL,/**< Get driver message level */
     ADF_NET_WCMD_ETHTOOL_SMSGLVL,/**< Set driver msg level */
-    ADF_NET_WCMD_ETHTOOL_NWAY_RST,/**< Restart autonegotiation. */ 
+    ADF_NET_WCMD_ETHTOOL_NWAY_RST,/**< Restart autonegotiation. */
     ADF_NET_WCMD_ETHTOOL_GEEPROM,/**< Get EEPROM data */
     ADF_NET_WCMD_ETHTOOL_SEEPROM,/** < Set EEPROM data. */
     ADF_NET_WCMD_ETHTOOL_GCOALESCE,/** < Get coalesce config */
@@ -582,7 +582,7 @@ typedef struct  adf_net_wcmd_discard{
  * @brief Link quality info
  */
 typedef struct  adf_net_wcmd_linkqty{
-    a_uint8_t       qual;/*link quality(retries, SNR, missed beacons)*/ 
+    a_uint8_t       qual;/*link quality(retries, SNR, missed beacons)*/
     a_uint8_t       level;/*Signal level (dBm) */
     a_uint8_t       noise;/*Noise level (dBm) */
     a_uint8_t       updated;/*Update flag*/
@@ -601,7 +601,7 @@ typedef struct  adf_net_wcmd_freq{
  * @brief VAP parameter range info
  */
 typedef struct adf_net_wcmd_vapparam_range{
-    
+
     /**
      * @brief Informative stuff (to choose between different
      * interface) In theory this value should be the maximum
@@ -612,7 +612,7 @@ typedef struct adf_net_wcmd_vapparam_range{
      * benchmark...
      */
     a_uint32_t           throughput;/**< To give an idea... */
-    
+
     /** @brief NWID (or domain id) */
     a_uint32_t           min_nwid;/**< Min NWID to set */
     a_uint32_t           max_nwid;/**< Max NWID to set */
@@ -648,9 +648,9 @@ typedef struct adf_net_wcmd_vapparam_range{
      * quality level (using a geometric subdivision centered on the
      * average). I expect that people doing the user space apps will
      * feedback us on which value we need to put in each
-     * driver... 
+     * driver...
      */
-    adf_net_wcmd_linkqty_t       avg_qual; 
+    adf_net_wcmd_linkqty_t       avg_qual;
 
     /**@brief Rates */
     a_uint8_t           num_bitrates; /**< Number of entries in the list */
@@ -684,11 +684,11 @@ typedef struct adf_net_wcmd_vapparam_range{
     a_uint16_t          txpower_capa;/**< options supported */
     a_uint8_t           num_txpower;/**< Number of entries in the list */
     a_int32_t           txpower[ADF_NET_WCMD_MAX_TXPOWER];/**< in bps */
-    
+
     /**@brief Wireless Extension version info */
     a_uint8_t           we_version_compiled;/**< Must be WIRELESS_EXT */
     a_uint8_t           we_version_source;/**< Last update of source */
-    
+
     /**@brief Retry limits and lifetime */
     a_uint16_t          retry_capa;/**< retry options supported */
     a_uint16_t          retry_flags;/**< decode max/min retry limit*/
@@ -697,7 +697,7 @@ typedef struct adf_net_wcmd_vapparam_range{
     a_int32_t           max_retry;/**< Max retries */
     a_int32_t           min_r_time;/**< Min retry lifetime */
     a_int32_t           max_r_time;/**< Max retry lifetime */
-    
+
     /**@brief Frequency */
     a_uint16_t          num_channels;/**< Num channels [0 - (num - 1)] */
     a_uint8_t           num_frequency;/**< Num entries*/
@@ -706,7 +706,7 @@ typedef struct adf_net_wcmd_vapparam_range{
      * numbers, because each entry contain its channel index
      */
     adf_net_wcmd_freq_t    freq[ADF_NET_WCMD_MAX_FREQ];
-    
+
     a_uint32_t          enc_capa; /**< IW_ENC_CAPA_* bit field */
 }adf_net_wcmd_vapparam_range_t;
 /**
@@ -751,12 +751,12 @@ typedef struct adf_net_wcmd_param{
 typedef adf_net_ie_info_t  adf_net_wcmd_optie_t;
 
 /**
- * @brief status of VAP interface 
- */ 
+ * @brief status of VAP interface
+ */
 typedef struct adf_net_wcmd_vapstats{
     a_uint8_t                  status;/**< Status*/
     adf_net_wcmd_linkqty_t     qual;/**< Quality of the link*/
-    adf_net_wcmd_discard_t     discard;/**< Packet discarded counts */ 
+    adf_net_wcmd_discard_t     discard;/**< Packet discarded counts */
     adf_net_wcmd_miss_t        miss;/**< Packet missed counts */
 } adf_net_wcmd_vapstats_t;
 
@@ -807,7 +807,7 @@ typedef struct adf_net_wcmd_delba{
  * @brief MLME
  */
 typedef struct adf_net_wcmd_mlme{
-    adf_net_wcmd_mlme_op_type_t  op;/**< operation to perform */ 
+    adf_net_wcmd_mlme_op_type_t  op;/**< operation to perform */
     a_uint8_t                    reason;/**< 802.11 reason code */
     //a_uint8_t                         macaddr[ADF_NET_WCMD_ADDR_LEN];
     adf_net_ethaddr_t            mac;
@@ -845,8 +845,8 @@ typedef struct adf_net_wcmd_chaninfo{
 }adf_net_wcmd_chaninfo_t;
 
 /**
- * @brief wmm-param info 
- */ 
+ * @brief wmm-param info
+ */
 typedef struct adf_net_wcmd_wmmparaminfo{
     adf_net_wcmd_wmmparams_t  cmd;
     a_uint32_t                ac;
@@ -923,8 +923,8 @@ typedef struct adf_net_wcmd_txpower{
 }adf_net_wcmd_txpower_t;
 
 /**
- * @brief tx-power-limit info 
- */ 
+ * @brief tx-power-limit info
+ */
 typedef a_uint32_t  adf_net_wcmd_txpowlimit_t;
 
 
@@ -961,7 +961,7 @@ typedef struct adf_net_wcmd_scan{
  */
 typedef struct adf_net_wcmd_vaplist{
     a_uint8_t          list[ADF_NET_WCMD_MAX_AP];
-    a_uint32_t         len;   
+    a_uint32_t         len;
 }adf_net_wcmd_vaplist_t;
 /**
  * @brief list of stations
@@ -973,10 +973,10 @@ typedef struct adf_net_wcmd_stainfo{
 /**
  * @brief ath caps info
  */
-typedef struct adf_net_wcmd_devcap{ 
-    a_int32_t   cap; 
-    a_int32_t   setting; 
-}adf_net_wcmd_devcap_t; 
+typedef struct adf_net_wcmd_devcap{
+    a_int32_t   cap;
+    a_int32_t   setting;
+}adf_net_wcmd_devcap_t;
 
 /**
  * @brief station stats
@@ -992,7 +992,7 @@ typedef struct adf_net_wcmd_stastats{
         a_uint64_t  ns_rx_bytes;/**< rx data count (bytes) */
         a_uint64_t  ns_rx_beacons;/**< rx beacon frames */
         a_uint32_t  ns_rx_proberesp;/**< rx probe response frames */
-        
+
         a_uint32_t  ns_rx_dup;/**< rx discard 'cuz dup */
         a_uint32_t  ns_rx_noprivacy;/**< rx w/ wep but privacy off */
         a_uint32_t  ns_rx_wepfail;/**< rx wep processing failed */
@@ -1005,7 +1005,7 @@ typedef struct adf_net_wcmd_stastats{
         a_uint32_t  ns_rx_decryptcrc;/**< rx decrypt failed on crc */
         a_uint32_t  ns_rx_unauth;/**< rx on unauthorized port */
         a_uint32_t  ns_rx_unencrypted;/**< rx unecrypted w/ privacy */
-    
+
         a_uint32_t  ns_tx_data;/**< tx data frames */
         a_uint32_t  ns_tx_mgmt;/**< tx management frames */
         a_uint32_t  ns_tx_ucast;/**< tx unicast frames */
@@ -1013,16 +1013,16 @@ typedef struct adf_net_wcmd_stastats{
         a_uint64_t  ns_tx_bytes;/**< tx data count (bytes) */
         a_uint32_t  ns_tx_probereq;/**< tx probe request frames */
         a_uint32_t  ns_tx_uapsd;/**< tx on uapsd queue */
-        
+
         a_uint32_t  ns_tx_novlantag;/**< tx discard 'cuz no tag */
         a_uint32_t  ns_tx_vlanmismatch;/**< tx discard 'cuz bad tag */
-    
+
         a_uint32_t  ns_tx_eosplost;/**< uapsd EOSP retried out */
-    
+
         a_uint32_t  ns_ps_discard;/**< ps discard 'cuz of age */
-    
+
         a_uint32_t  ns_uapsd_triggers;/**< uapsd triggers */
-    
+
         /* MIB-related state */
         a_uint32_t  ns_tx_assoc;/**< [re]associations */
         a_uint32_t  ns_tx_assoc_fail;/**< [re]association failures */
@@ -1124,8 +1124,8 @@ typedef struct adf_net_wcmd_11n_stats {
 
 
 /**
- * @brief ampdu info 
- */ 
+ * @brief ampdu info
+ */
 typedef struct adf_net_wcmd_ampdu_trc {
     a_uint32_t   tr_head;
     a_uint32_t   tr_tail;
@@ -1140,8 +1140,8 @@ typedef struct adf_net_wcmd_ampdu_trc {
 } adf_net_wcmd_ampdu_trc_t;
 
 /**
- * @brief phy stats info 
- */ 
+ * @brief phy stats info
+ */
 typedef struct adf_net_wcmd_phystats{
     a_uint32_t   ast_watchdog;/**< device reset by watchdog */
     a_uint32_t   ast_hardware;/**< fatal hardware error interrupts */
@@ -1245,8 +1245,8 @@ typedef struct adf_net_wcmd_phystats{
 } adf_net_wcmd_phystats_t;
 
 /**
- * @brief diag info 
- */ 
+ * @brief diag info
+ */
 typedef struct adf_net_wcmd_diag{
     a_int8_t     ad_name[ADF_NET_WCMD_NAME_SIZE];/**< if name*/
     a_uint16_t   ad_id;
@@ -1283,7 +1283,7 @@ typedef struct adf_net_wcmd_cwminfo{
 typedef struct adf_net_wcmd_cwmdbg{
     adf_net_wcmd_cwm_cmd_t    dc_cmd;/**< dbg commands*/
     adf_net_wcmd_cwm_event_t  dc_arg;/**< events*/
-} adf_net_wcmd_cwmdbg_t;    
+} adf_net_wcmd_cwmdbg_t;
 
 /**
  * @brief device cwm info
@@ -1309,11 +1309,11 @@ typedef struct adf_net_wcmd_ethtool{
     a_int8_t    driver[ADF_NET_WCMD_DRIVSIZ];/**< driver short name */
     a_int8_t    version[ADF_NET_WCMD_VERSIZ];/**< driver ver string */
     a_int8_t    fw_version[ADF_NET_WCMD_FIRMSIZ];/**< firmware ver string*/
-    a_int8_t    bus_info[ADF_NET_WCMD_BUSINFO_LEN];/**< Bus info */ 
+    a_int8_t    bus_info[ADF_NET_WCMD_BUSINFO_LEN];/**< Bus info */
     a_int8_t    reserved1[32];
     a_int8_t    reserved2[16];
     a_uint32_t  n_stats;/**< number of u64's from ETHTOOL_GSTATS */
-    a_uint32_t  testinfo_len;   
+    a_uint32_t  testinfo_len;
     a_uint32_t  eedump_len;/**< Size of data from EEPROM(bytes) */
     a_uint32_t  regdump_len;/**< Size of data from REG(bytes) */
 }adf_net_wcmd_ethtool_t ;
@@ -1323,12 +1323,12 @@ typedef struct adf_net_wcmd_ethtool_info{
     adf_net_wcmd_ethtool_t         drv;
 }adf_net_wcmd_ethtool_info_t;
 
-/** 
- * @brief vap create flag info 
- */ 
+/**
+ * @brief vap create flag info
+ */
 typedef enum adf_net_wcmd_vapcreate_flags{
     ADF_NET_WCMD_CLONE_BSSID=0x1,/**< allocate unique mac/bssid */
-    ADF_NET_WCMD_NO_STABEACONS/**< Do not setup the sta beacon timers*/ 
+    ADF_NET_WCMD_NO_STABEACONS/**< Do not setup the sta beacon timers*/
 }adf_net_wcmd_vapcreate_flags_t;
 
 /**
@@ -1355,7 +1355,7 @@ typedef struct adf_net_wcmd_devstats{
     a_uint64_t   tx_dropped;/**< no space available in linux  */
     a_uint64_t   multicast;/**< multicast packets received   */
     a_uint64_t   collisions;
-    
+
     /* detailed rx_errors: */
     a_uint64_t   rx_length_errors;
     a_uint64_t   rx_over_errors;/**< receiver ring buff overflow  */
@@ -1363,14 +1363,14 @@ typedef struct adf_net_wcmd_devstats{
     a_uint64_t   rx_frame_errors;/**< recv'd frame alignment error */
     a_uint64_t   rx_fifo_errors;/**< recv'r fifo overrun          */
     a_uint64_t   rx_missed_errors;/**< receiver missed packet       */
-    
+
     /* detailed tx_errors */
     a_uint64_t   tx_aborted_errors;
     a_uint64_t   tx_carrier_errors;
     a_uint64_t   tx_fifo_errors;
     a_uint64_t   tx_heartbeat_errors;
     a_uint64_t   tx_window_errors;
-    
+
     /* for cslip etc */
     a_uint64_t   rx_compressed;
     a_uint64_t   tx_compressed;
@@ -1442,11 +1442,11 @@ typedef union adf_net_wcmd_data{
 
 /**
  * @brief ioctl structure to configure the wireless interface.
- */ 
+ */
 typedef struct adf_net_wcmd{
     char                     if_name[ADF_NET_WCMD_NAME_SIZE];/**< Iface name*/
     adf_net_wcmd_type_t      type;             /**< Type of wcmd */
-    adf_net_wcmd_data_t      data;             /**< Data */       
+    adf_net_wcmd_data_t      data;             /**< Data */
 } adf_net_wcmd_t;
 /**
  * @brief helper macros
@@ -1505,19 +1505,19 @@ typedef struct adf_net_wcmd_chansw{
     a_uint8_t    chan;
     a_uint8_t    ttbt;
 }adf_net_wcmd_chansw_t;
-/** 
+/**
  * ***************************Unresoloved*******************
  */
 // typedef struct adf_net_wcmd_chansw_info{
 //     a_uint8_t    chan;
 //     a_uint8_t   ttbt;
 // }adf_net_wcmd_chansw_info_t;
-// 
+//
 /**
  * @brief ath mac info
  */
 // typedef struct {
 //     a_uint16_t sa_family;/**< address family, AF_xxx*/
-//     a_int8_t   sa_data[ADF_NET_WCMD_ADDR_LEN];/**< 14 bytes address */ 
+//     a_int8_t   sa_data[ADF_NET_WCMD_ADDR_LEN];/**< 14 bytes address */
 // }adf_net_wcmd_ath_mac_info_t;
 #endif

@@ -56,13 +56,13 @@
 #include "ratectrl.h"
 #include "ratectrl11n.h"
 
-static void ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew, 
+static void ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew,
 				  unsigned int capflag, struct ieee80211_rate *rs);
 
 
-static void ath_rate_tx_complete_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, 
+static void ath_rate_tx_complete_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
                                      struct ath_tx_desc *ds,
-                                     struct ath_rc_series rcs[], int nframes, 
+                                     struct ath_rc_series rcs[], int nframes,
                                      int nbad);
 
 static void ath_rate_findrate_11n(struct ath_softc_tgt *sc,
@@ -82,7 +82,7 @@ rcSortValidRates(const RATE_TABLE_11N *pRateTable, TX_RATE_CTRL *pRc)
 
 	for (i=pRc->maxValidRate-1; i > 0; i--) {
 		for (j=0; j <= i-1; j++) {
-#ifdef MAGPIE_MERLIN      
+#ifdef MAGPIE_MERLIN
 			if (pRateTable->info[pRc->validRateIndex[j]].rateKbps >
 			    pRateTable->info[pRc->validRateIndex[j+1]].rateKbps)
 #else
@@ -122,7 +122,7 @@ rcSetValidTxMask(TX_RATE_CTRL *pRc, A_UINT8 index, A_BOOL validTxRate)
 
 /* Iterators for validTxRateMask */
 static INLINE A_BOOL
-rcGetNextValidTxRate(const RATE_TABLE_11N *pRateTable, TX_RATE_CTRL *pRc, 
+rcGetNextValidTxRate(const RATE_TABLE_11N *pRateTable, TX_RATE_CTRL *pRc,
                      A_UINT8 curValidTxRate, A_UINT8 *pNextIndex)
 {
 	A_UINT8 i;
@@ -136,12 +136,12 @@ rcGetNextValidTxRate(const RATE_TABLE_11N *pRateTable, TX_RATE_CTRL *pRc,
 
 	/* No more valid rates */
 	*pNextIndex = 0;
-    
+
 	return FALSE;
 }
 
 static INLINE A_BOOL
-rcGetNextLowerValidTxRate(const RATE_TABLE_11N *pRateTable, TX_RATE_CTRL *pRc,  
+rcGetNextLowerValidTxRate(const RATE_TABLE_11N *pRateTable, TX_RATE_CTRL *pRc,
                           A_UINT8 curValidTxRate, A_UINT8 *pNextIndex)
 {
 	A_INT8 i;
@@ -181,12 +181,12 @@ rcIsValidPhyRate(A_UINT32 phy, A_UINT32 capflag, A_BOOL ignoreCW)
 			return FALSE;
 		}
 	}
-    
+
 	return TRUE;
 }
 
-/* 
- * Initialize the Valid Rate Index from valid entries in Rate Table 
+/*
+ * Initialize the Valid Rate Index from valid entries in Rate Table
  */
 static A_UINT8 rcSibInitValidRates(const RATE_TABLE_11N *pRateTable,
 				   TX_RATE_CTRL *pRc,
@@ -196,18 +196,18 @@ static A_UINT8 rcSibInitValidRates(const RATE_TABLE_11N *pRateTable,
 	A_UINT8 i, hi = 0;
 	A_UINT8 singleStream = (capflag & WLAN_RC_DS_FLAG) ? 0 : 1;
 	A_UINT8 valid;
-    
+
 	for (i = 0; i < pRateTable->rateCount; i++) {
 		if (singleStream) {
 			valid = pRateTable->info[i].validSingleStream;
 		} else {
 			valid = pRateTable->info[i].valid;
 		}
-            
+
 		if (valid == TRUE) {
 			A_UINT32 phy = pRateTable->info[i].phy;
 
-			if (!rcIsValidPhyRate(phy, capflag, FALSE)) 
+			if (!rcIsValidPhyRate(phy, capflag, FALSE))
 				continue;
 
 			pPhyStateCtrl->validPhyRateIndex[phy][pPhyStateCtrl->validPhyRateCount[phy]] = i;
@@ -217,17 +217,17 @@ static A_UINT8 rcSibInitValidRates(const RATE_TABLE_11N *pRateTable,
 
 			hi = A_MAX(hi, i);
 		}
-	} 
-    
+	}
+
 	return hi;
 }
 
-/* 
- * Initialize the Valid Rate Index from Rate Set 
+/*
+ * Initialize the Valid Rate Index from Rate Set
  */
 static A_UINT8
 rcSibSetValidRates(const RATE_TABLE_11N *pRateTable,
-		   TX_RATE_CTRL *pRc, 
+		   TX_RATE_CTRL *pRc,
                    struct ieee80211_rateset *pRateSet,
 		   A_UINT32 capflag,
 		   struct ath_node_target *an,
@@ -236,7 +236,7 @@ rcSibSetValidRates(const RATE_TABLE_11N *pRateTable,
 	A_UINT8 i, j, hi = 0;
 	A_UINT8 singleStream = (capflag & WLAN_RC_DS_FLAG) ? 0 : 1;
 	A_UINT32 valid;
-       
+
 	/* Use intersection of working rates and valid rates */
 	for (i = 0; i < pRateSet->rs_nrates; i++) {
 		for (j = 0; j < pRateTable->rateCount; j++) {
@@ -249,22 +249,22 @@ rcSibSetValidRates(const RATE_TABLE_11N *pRateTable,
 			} else if (singleStream) {
 #else
 			if (singleStream) {
-#endif            
+#endif
 				valid = pRateTable->info[j].validSingleStream;
 			} else {
 				valid = pRateTable->info[j].valid;
 			}
-        
+
 			/*
 			 * We allow a rate only if its valid and the capflag matches one of
 			 * the validity (TRUE/TRUE_20/TRUE_40) flags
 			 */
 
-			if (((pRateSet->rs_rates[i] & 0x7F) == 
+			if (((pRateSet->rs_rates[i] & 0x7F) ==
 			     (pRateTable->info[j].dot11Rate & 0x7F))
-			    && ((valid & WLAN_RC_CAP_MODE(capflag)) == 
+			    && ((valid & WLAN_RC_CAP_MODE(capflag)) ==
 				WLAN_RC_CAP_MODE(capflag)) && !WLAN_RC_PHY_HT(phy)) {
-				if (!rcIsValidPhyRate(phy, capflag, FALSE)) 
+				if (!rcIsValidPhyRate(phy, capflag, FALSE))
 					continue;
 
 				pPhyStateCtrl->validPhyRateIndex[phy][pPhyStateCtrl->validPhyRateCount[phy]] = j;
@@ -275,13 +275,13 @@ rcSibSetValidRates(const RATE_TABLE_11N *pRateTable,
 			}
 		}
 	}
-  
+
 	return hi;
 }
 
 static A_UINT8
 rcSibSetValidHtRates(const RATE_TABLE_11N *pRateTable,
-		     TX_RATE_CTRL *pRc, 
+		     TX_RATE_CTRL *pRc,
                      A_UINT8 *pMcsSet,
 		     A_UINT32 capflag,
 		     struct ath_node_target *an,
@@ -290,7 +290,7 @@ rcSibSetValidHtRates(const RATE_TABLE_11N *pRateTable,
 	A_UINT8 i, j, hi = 0;
 	A_UINT8 singleStream = (capflag & WLAN_RC_DS_FLAG) ? 0 : 1;
 	A_UINT8 valid;
-    
+
 	/* Use intersection of working rates and valid rates */
 	for (i = 0; i <  ((struct ieee80211_rateset *)pMcsSet)->rs_nrates; i++) {
 		for (j = 0; j < pRateTable->rateCount; j++) {
@@ -308,21 +308,21 @@ rcSibSetValidHtRates(const RATE_TABLE_11N *pRateTable,
 			} else {
 				valid = pRateTable->info[j].valid;
 			}
-                           
-			if (((((struct ieee80211_rateset *)pMcsSet)->rs_rates[i] & 0x7F) 
-			     != (pRateTable->info[j].dot11Rate & 0x7F)) 
-			    || !WLAN_RC_PHY_HT(phy) 
+
+			if (((((struct ieee80211_rateset *)pMcsSet)->rs_rates[i] & 0x7F)
+			     != (pRateTable->info[j].dot11Rate & 0x7F))
+			    || !WLAN_RC_PHY_HT(phy)
 			    || !WLAN_RC_PHY_HT_VALID(valid, capflag)
-			    || ((pRateTable->info[j].dot11Rate == 15) && 
-				(valid & TRUE_20) && 
+			    || ((pRateTable->info[j].dot11Rate == 15) &&
+				(valid & TRUE_20) &&
 				(capflag & WLAN_RC_WEP_TKIP_FLAG)) )
 			{
 				continue;
 			}
-    
-			if (!rcIsValidPhyRate(phy, capflag, FALSE)) 
+
+			if (!rcIsValidPhyRate(phy, capflag, FALSE))
 				continue;
-    
+
 			pPhyStateCtrl->validPhyRateIndex[phy][pPhyStateCtrl->validPhyRateCount[phy]] = j;
 			pPhyStateCtrl->validPhyRateCount[phy] += 1;
 
@@ -351,7 +351,7 @@ rcSibUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	struct atheros_softc *asc = (struct atheros_softc*)sc->sc_rc;
 	A_UINT8 *phtMcs = (A_UINT8*)&pRateSet->htrates;
 	TX_RATE_CTRL *pRc = (TX_RATE_CTRL *)(pSib);
-	PHY_STATE_CTRL mPhyCtrlState;  
+	PHY_STATE_CTRL mPhyCtrlState;
 
 	A_UINT8 i, j, k, hi = 0, htHi = 0;
 
@@ -371,7 +371,7 @@ rcSibUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	for (i = 0; i < WLAN_RC_PHY_MAX; i++) {
 		for (j = 0; j < MAX_TX_RATE_TBL; j++) {
 			mPhyCtrlState.validPhyRateIndex[i][j] = 0;
-		}   
+		}
 		mPhyCtrlState.validPhyRateCount[i] = 0;
 	}
 
@@ -395,21 +395,21 @@ rcSibUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an,
 
 	pRc->rateTableSize = hi + 1;
 	pRc->rateMaxPhy    = 0;
-    
+
 	ASSERT(pRc->rateTableSize <= MAX_TX_RATE_TBL);
 
 	for (i = 0, k = 0; i < WLAN_RC_PHY_MAX; i++) {
 		for (j = 0; j < mPhyCtrlState.validPhyRateCount[i]; j++) {
 			pRc->validRateIndex[k++] = mPhyCtrlState.validPhyRateIndex[i][j];
-		}   
+		}
 
 		if (!rcIsValidPhyRate(i, pRateTable->initialRateMax, TRUE) ||
-		    !mPhyCtrlState.validPhyRateCount[i]) 
+		    !mPhyCtrlState.validPhyRateCount[i])
 			continue;
 
-		pRc->rateMaxPhy = mPhyCtrlState.validPhyRateIndex[i][j-1];	
+		pRc->rateMaxPhy = mPhyCtrlState.validPhyRateIndex[i][j-1];
 	}
-    
+
 	ASSERT(pRc->rateTableSize <= MAX_TX_RATE_TBL);
 	ASSERT(k <= MAX_TX_RATE_TBL);
 
@@ -457,21 +457,21 @@ rcRateFind_ht(struct ath_softc_tgt *sc, struct atheros_node *pSib,
 
 	minIndex = 0;
 	bestRate = minIndex;
-    
+
 	/*
 	 * Try the higher rate first. It will reduce memory moving time
 	 * if we have very good channel characteristics.
 	 */
 	for (index = maxIndex; index >= minIndex ; index--) {
 		A_UINT8 perThres;
-    
+
 		rate = pRc->validRateIndex[index];
 		if (rate > pRc->rateMaxPhy) {
 			continue;
 		}
 
 		/* if the best throughput is already larger than the userRateKbps..
-		 * then we could skip of rest of calculation.. 
+		 * then we could skip of rest of calculation..
 		 */
 		if( bestThruput >= pRateTable->info[rate].userRateKbps)
 			break;
@@ -511,7 +511,7 @@ rcRateFind_ht(struct ath_softc_tgt *sc, struct atheros_node *pSib,
 
 		/* Probe the next allowed phy state */
 		/* FIXME: Check to make sure ratMax is checked properly */
-		if (rcGetNextValidTxRate( pRateTable, pRc, rate, &nextRate) && 
+		if (rcGetNextValidTxRate( pRateTable, pRc, rate, &nextRate) &&
 		    (nowMsec - pRc->probeTime > pRateTable->probeInterval) &&
 		    (pRc->hwMaxRetryPktCnt >= 1))
 		{
@@ -551,14 +551,14 @@ rcRateSetseries(const RATE_TABLE_11N *pRateTable ,
 		A_BOOL rtsctsenable, A_UINT32 chainmask,int stbc)
 {
 	series->tries = tries;
-	series->flags = (rtsctsenable? ATH_RC_RTSCTS_FLAG : 0) | 
-		(WLAN_RC_PHY_DS(pRateTable->info[rix].phy) ? ATH_RC_DS_FLAG : 0) | 
-		(WLAN_RC_PHY_40(pRateTable->info[rix].phy) ? ATH_RC_CW40_FLAG : 0) | 
+	series->flags = (rtsctsenable? ATH_RC_RTSCTS_FLAG : 0) |
+		(WLAN_RC_PHY_DS(pRateTable->info[rix].phy) ? ATH_RC_DS_FLAG : 0) |
+		(WLAN_RC_PHY_40(pRateTable->info[rix].phy) ? ATH_RC_CW40_FLAG : 0) |
 		(WLAN_RC_PHY_SGI(pRateTable->info[rix].phy) ? ATH_RC_HT40_SGI_FLAG : 0);
 #ifdef MAGPIE_MERLIN
 	if (stbc) {
 		/* For now, only single stream STBC is supported */
-		if (pRateTable->info[rix].rateCode >= 0x80 && 
+		if (pRateTable->info[rix].rateCode >= 0x80 &&
 		    pRateTable->info[rix].rateCode <= 0x87)
 		{
 			series->flags |= ATH_RC_TX_STBC_FLAG;
@@ -569,31 +569,31 @@ rcRateSetseries(const RATE_TABLE_11N *pRateTable ,
 	series->max4msframelen = pRateTable->info[rix].max4msframelen;
 	series->txrateKbps = pRateTable->info[rix].rateKbps;
 
-	/* If the hardware is capable of multiple transmit chains (chainmask is 3, 5 or 7), 
+	/* If the hardware is capable of multiple transmit chains (chainmask is 3, 5 or 7),
 	 * then choose the number of transmit chains dynamically based on entries in the rate table.
 	 */
 #ifndef ATH_ENABLE_WLAN_FOR_K2
 	if(chainmask == 7)
 		series->tx_chainmask = pRateTable->info[rix].txChainMask_3ch;
-	else if(chainmask == 1) 
+	else if(chainmask == 1)
 		series->tx_chainmask = 1;
-	else 
+	else
 		series->tx_chainmask = pRateTable->info[rix].txChainMask_2ch;  /*Chainmask is 3 or 5*/
 #else
 	series->tx_chainmask = 1;
 #endif
 }
 
-static A_UINT8 
-rcRateGetIndex(struct ath_softc_tgt *sc, struct ath_node_target *an,        
-               const RATE_TABLE_11N *pRateTable , 
+static A_UINT8
+rcRateGetIndex(struct ath_softc_tgt *sc, struct ath_node_target *an,
+               const RATE_TABLE_11N *pRateTable ,
                A_UINT8 rix, A_UINT16 stepDown, A_UINT16 minRate)
 {
 	A_UINT32                j;
 	A_UINT8                 nextIndex;
 	struct atheros_node     *pSib = ATH_NODE_ATHEROS(an);
 	TX_RATE_CTRL            *pRc = (TX_RATE_CTRL *)(pSib);
-    
+
 	if (minRate) {
 		for (j = RATE_TABLE_11N_SIZE; j > 0; j-- ) {
 			if (rcGetNextLowerValidTxRate(pRateTable, pRc, rix, &nextIndex)) {
@@ -615,11 +615,11 @@ rcRateGetIndex(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	return rix;
 }
 
-void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, 
+void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 		    int numTries, int numRates, int stepDnInc,
 		    unsigned int rcflag, struct ath_rc_series series[], int *isProbe)
 {
-	A_UINT8 i = 0; 
+	A_UINT8 i = 0;
 	A_UINT8 tryPerRate  = 0;
 	struct atheros_softc *asc = (struct atheros_softc*)sc->sc_rc;
 	RATE_TABLE_11N *pRateTable = (RATE_TABLE_11N *)asc->hwRateTable[sc->sc_curmode];
@@ -628,7 +628,7 @@ void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	A_UINT8 dot11Rate;
 	WLAN_PHY phy;
 
-	rix = rcRateFind_ht(sc, asn, pRateTable, (rcflag & ATH_RC_PROBE_ALLOWED) ? 1 : 0, 
+	rix = rcRateFind_ht(sc, asn, pRateTable, (rcflag & ATH_RC_PROBE_ALLOWED) ? 1 : 0,
 			    isProbe);
 	nrix = rix;
 
@@ -636,7 +636,7 @@ void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 		/* set one try for probe rates. For the probes don't enable rts */
 		rcRateSetseries(pRateTable, &series[i++], 1, nrix,
 				FALSE, asc->tx_chainmask, asn->stbc);
-          
+
 		/*
 		 * Get the next tried/allowed rate. No RTS for the next series
 		 * after the probe rate
@@ -667,7 +667,7 @@ void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 
 	/*
 	 * BUG 26545:
-	 * Change rate series to enable aggregation when operating at lower MCS rates. 
+	 * Change rate series to enable aggregation when operating at lower MCS rates.
 	 * When first rate in series is MCS2 in HT40 @ 2.4GHz, series should look like:
 	 *    {MCS2, MCS1, MCS0, MCS0}.
 	 * When first rate in series is MCS3 in HT20 @ 2.4GHz, series should look like:
@@ -678,8 +678,8 @@ void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 		dot11Rate = pRateTable->info[rix].dot11Rate;
 		phy = pRateTable->info[rix].phy;
 		if (i == 4 &&
-		    ((dot11Rate == 2 && phy == WLAN_RC_PHY_HT_40_SS) || 
-		     (dot11Rate == 3 && phy == WLAN_RC_PHY_HT_20_SS))) 
+		    ((dot11Rate == 2 && phy == WLAN_RC_PHY_HT_40_SS) ||
+		     (dot11Rate == 3 && phy == WLAN_RC_PHY_HT_20_SS)))
 		{
 			series[3].rix = series[2].rix;
 			series[3].flags = series[2].flags;
@@ -695,14 +695,14 @@ void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	if (sc->sc_curmode == IEEE80211_MODE_11NG) {
 		dot11Rate = pRateTable->info[rix].dot11Rate;
 		if (dot11Rate <= 3 ) {
-			series[0].flags |= ATH_RC_RTSCTS_FLAG;         
+			series[0].flags |= ATH_RC_RTSCTS_FLAG;
 		}
 	}
 }
 
 static void
-rcUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an, int txRate, 
-            A_BOOL Xretries, int retries, A_UINT8 curTxAnt, 
+rcUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an, int txRate,
+            A_BOOL Xretries, int retries, A_UINT8 curTxAnt,
             A_UINT16 nFrames, A_UINT16 nBad)
 {
 	TX_RATE_CTRL *pRc;
@@ -733,7 +733,7 @@ rcUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an, int txRate,
 
 	ASSERT(retries >= 0 && retries < MAX_TX_RETRIES);
 	ASSERT(txRate >= 0);
-    
+
 	if (txRate < 0) {
 		return;
 	}
@@ -756,7 +756,7 @@ rcUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an, int txRate,
 			}
 
 			/* new_PER = 7/8*old_PER + 1/8*(currentPER) */
-			pRc->state[txRate].per = (A_UINT8)(pRc->state[txRate].per - 
+			pRc->state[txRate].per = (A_UINT8)(pRc->state[txRate].per -
 						   (pRc->state[txRate].per / 8) + ((100) / 8));
 		}
 
@@ -789,13 +789,13 @@ rcUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an, int txRate,
 			 * of the sum of these two terms.
 			 */
 			if (nFrames > 0)
-				pRc->state[txRate].per = (A_UINT8)(pRc->state[txRate].per - 
-					   (pRc->state[txRate].per / 8) + 
+				pRc->state[txRate].per = (A_UINT8)(pRc->state[txRate].per -
+					   (pRc->state[txRate].per / 8) +
 					   ((100*(retries*nFrames + nBad)/(nFrames*(retries+1))) / 8));
 		} else {
 			/* new_PER = 7/8*old_PER + 1/8*(currentPER) */
 
-			pRc->state[txRate].per = (A_UINT8)(pRc->state[txRate].per - 
+			pRc->state[txRate].per = (A_UINT8)(pRc->state[txRate].per -
 				   (pRc->state[txRate].per / 8) + (nRetry2PerLookup[retries] / 8));
 		}
 
@@ -856,18 +856,18 @@ rcUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an, int txRate,
 
 	/* For all cases */
 
-	ASSERT((pRc->rateMaxPhy >= 0 && pRc->rateMaxPhy <= pRc->rateTableSize && 
+	ASSERT((pRc->rateMaxPhy >= 0 && pRc->rateMaxPhy <= pRc->rateTableSize &&
 		pRc->rateMaxPhy != INVALID_RATE_MAX));
-    
+
 	/*
 	 * If this rate looks bad (high PER) then stop using it for
 	 * a while (except if we are probing).
 	 */
 	if (pRc->state[txRate].per >= 55 && txRate > 0 &&
-	    pRateTable->info[txRate].rateKbps <= 
+	    pRateTable->info[txRate].rateKbps <=
             pRateTable->info[pRc->rateMaxPhy].rateKbps)
 	{
-		rcGetNextLowerValidTxRate(pRateTable, pRc, (A_UINT8) txRate, 
+		rcGetNextLowerValidTxRate(pRateTable, pRc, (A_UINT8) txRate,
 					  &pRc->rateMaxPhy);
 
 		/* Don't probe for a little while. */
@@ -910,9 +910,9 @@ rcUpdate_ht(struct ath_softc_tgt *sc, struct ath_node_target *an, int txRate,
  * the status of previous frames.
  */
 void rcUpdate_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
-		  A_UINT8 curTxAnt, 
+		  A_UINT8 curTxAnt,
 		  int finalTSIdx, int Xretries,
-		  struct ath_rc_series rcs[], int nFrames, 
+		  struct ath_rc_series rcs[], int nFrames,
 		  int nBad, int long_retry)
 {
 	A_UINT32 series = 0;
@@ -941,7 +941,7 @@ void rcUpdate_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 			if (rcs[series].tries != 0) {
 				flags = rcs[series].flags;
 				/* If HT40 and we have switched mode from 40 to 20 => don't update */
-				if ((flags & ATH_RC_CW40_FLAG) && 
+				if ((flags & ATH_RC_CW40_FLAG) &&
 				    (pRc->rcPhyMode != (flags & ATH_RC_CW40_FLAG))) {
 					return;
 				}
@@ -956,7 +956,7 @@ void rcUpdate_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 				}
 
 				/* FIXME:XXXX, too many args! */
-				rcUpdate_ht(sc, an, rix, Xretries? 1 : 2, rcs[series].tries, 
+				rcUpdate_ht(sc, an, rix, Xretries? 1 : 2, rcs[series].tries,
 					    curTxAnt, nFrames, nFrames);
 			}
 		}
@@ -973,7 +973,7 @@ void rcUpdate_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 
 	flags = rcs[series].flags;
 	/* If HT40 and we have switched mode from 40 to 20 => don't update */
-	if ((flags & ATH_RC_CW40_FLAG) && 
+	if ((flags & ATH_RC_CW40_FLAG) &&
 	    (pRc->rcPhyMode != (flags & ATH_RC_CW40_FLAG))) {
 		return;
 	}
@@ -988,7 +988,7 @@ void rcUpdate_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	}
 
 	/* FIXME:XXXX, too many args! */
-	rcUpdate_ht(sc, an, rix, Xretries, long_retry, curTxAnt, 
+	rcUpdate_ht(sc, an, rix, Xretries, long_retry, curTxAnt,
 		    nFrames, nBad);
 }
 
@@ -1036,7 +1036,7 @@ ath_rate_attach(struct ath_softc_tgt *sc)
 	ar5416AttachRateTables(asc);
 
 	asc->tx_chainmask = 1;
-    
+
 	return &asc->arc;
 }
 
@@ -1068,14 +1068,14 @@ void
 ath_rate_tx_complete(struct ath_softc_tgt *sc,
 		     struct ath_node_target *an,
 		     struct ath_tx_desc *ds,
-		     struct ath_rc_series rcs[], 
+		     struct ath_rc_series rcs[],
 		     int nframes, int nbad)
 {
 	ath_rate_tx_complete_11n(sc, an, ds, rcs, nframes, nbad);
 }
 
 void
-ath_rate_newassoc(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew, 
+ath_rate_newassoc(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew,
 		  unsigned int capflag, struct ieee80211_rate *rs)
 {
 	ath_rate_newassoc_11n(sc, an, isnew, capflag, rs);
@@ -1089,7 +1089,7 @@ void ath_rate_node_update(struct ath_softc_tgt *sc,
 {
 	struct ieee80211_node_target *ni = &an->ni;
 
-	ath_rate_newassoc(sc, ATH_NODE_TARGET(ni), isnew, capflag, rs); 
+	ath_rate_newassoc(sc, ATH_NODE_TARGET(ni), isnew, capflag, rs);
 }
 
 static int init_ath_rate_atheros(void);
@@ -1132,14 +1132,14 @@ static void
 ath_rate_tx_complete_11n(struct ath_softc_tgt *sc,
 			 struct ath_node_target *an,
 			 struct ath_tx_desc *ds,
-			 struct ath_rc_series rcs[], 
+			 struct ath_rc_series rcs[],
 			 int nframes, int nbad)
 {
 	int finalTSIdx = ds->ds_txstat.ts_rate;
 	int tx_status = 0;
 
 	if ((ds->ds_txstat.ts_status & HAL_TXERR_XRETRY) ||
-	    (ds->ds_txstat.ts_status & HAL_TXERR_FIFO) || 
+	    (ds->ds_txstat.ts_status & HAL_TXERR_FIFO) ||
 	    (ds->ds_txstat.ts_flags & HAL_TX_DATA_UNDERRUN) ||
 	    (ds->ds_txstat.ts_flags & HAL_TX_DELIM_UNDERRUN)) {
 		tx_status = 1;
@@ -1152,7 +1152,7 @@ ath_rate_tx_complete_11n(struct ath_softc_tgt *sc,
 }
 
 static void
-ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew, 
+ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew,
 		      unsigned int capflag, struct ieee80211_rate *rs)
 {
 	if (isnew) {

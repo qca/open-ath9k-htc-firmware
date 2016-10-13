@@ -53,7 +53,7 @@ static inline void 		__adf_os_mem_free(void *buf)
 /* move a memory buffer */
 static inline void 		__adf_os_mem_copy(void *dst, const void *src, adf_os_size_t size)
 {
-    A_MEMCPY(dst,src,size);    
+    A_MEMCPY(dst,src,size);
 }
 
 /* set a memory buffer */

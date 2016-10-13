@@ -103,13 +103,13 @@ typedef enum {
 
 
 typedef PREPACK struct {
-    a_int8_t      rssi;            
+    a_int8_t      rssi;
     a_uint8_t     info;            /* WMI_MSG_TYPE in lower 2 bits - b1b0 */
                                  /* UP in next 3 bits - b4b3b2 */
 #define WMI_DATA_HDR_MSG_TYPE_MASK  0x03
 #define WMI_DATA_HDR_MSG_TYPE_SHIFT 0
 #define WMI_DATA_HDR_UP_MASK        0x07
-#define WMI_DATA_HDR_UP_SHIFT       2   
+#define WMI_DATA_HDR_UP_SHIFT       2
 #define WMI_DATA_HDR_IS_MSG_TYPE(h, t)  (((h)->info & (WMI_DATA_HDR_MSG_TYPE_MASK)) == (t))
 } POSTPACK WMI_DATA_HDR;
 
@@ -174,7 +174,7 @@ typedef enum {
     WMI_FRAME_PROBE_RESP,
     WMI_FRAME_ASSOC_REQ,
     WMI_FRAME_ASSOC_RESP,
-    WMI_NUM_MGMT_FRAME 
+    WMI_NUM_MGMT_FRAME
 } WMI_MGMT_FRAME_TYPE;
 
 /*
@@ -194,7 +194,7 @@ typedef enum {
 } DOT11_AUTH_MODE;
 
 typedef enum {
-    NONE_AUTH           = 0x01, 
+    NONE_AUTH           = 0x01,
     WPA_AUTH            = 0x02,
     WPA_PSK_AUTH        = 0x03,
     WPA2_AUTH           = 0x04,

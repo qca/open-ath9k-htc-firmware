@@ -49,13 +49,13 @@
 /**
  * @brief register the driver into the shim
  * @param[in] drv
- * 
+ *
  * @return a_status_t
  */
 a_status_t
 __adf_net_register_drv(adf_drv_info_t *drv)
 {
-    wlan_pci_register_drv(drv);    
+    wlan_pci_register_drv(drv);
     return A_STATUS_OK;
 }
 

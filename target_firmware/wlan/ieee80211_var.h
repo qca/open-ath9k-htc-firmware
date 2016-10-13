@@ -47,7 +47,7 @@
 /*
  * Built-in implementation for local skb free. Only interesting for platforms
  * that pass skbs between OS instances.
- */ 
+ */
 #define ieee80211_tgt_free_local_nbuf( _nbuf)    ieee80211_tgt_free_nbuf( _nbuf)
 
 

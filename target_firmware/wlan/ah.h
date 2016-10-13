@@ -359,7 +359,7 @@ struct ath_hal
 	a_uint32_t ah_magic;
 	HAL_SOFTC ah_sc;
 	adf_os_device_t ah_dev;
-           
+
 	a_uint32_t ah_macVersion;
 	a_uint16_t ah_macRev;
 	a_uint16_t ah_phyRev;
@@ -368,20 +368,20 @@ struct ath_hal
 	void      __ahdecl(*ah_detach)(struct ath_hal*);
 	HAL_BOOL  __ahdecl(*ah_updateTxTrigLevel)(struct ath_hal*,
 						  HAL_BOOL incTrigLevel);
-           
+
 	/* Misc Functions */
-	void      __ahdecl(*ah_setDefAntenna)(struct ath_hal*, a_uint32_t);	
+	void      __ahdecl(*ah_setDefAntenna)(struct ath_hal*, a_uint32_t);
 	void      __ahdecl(*ah_setRxFilter)(struct ath_hal*, a_uint32_t);
-           
-                      
+
+
 	/* Target Transmit Functions */
 	HAL_BOOL  __ahdecl(*ah_setTxDP)(struct ath_hal*, a_uint32_t, a_uint32_t txdp);
-	a_uint32_t __ahdecl(*ah_numTxPending)(struct ath_hal *, a_uint32_t q);           
+	a_uint32_t __ahdecl(*ah_numTxPending)(struct ath_hal *, a_uint32_t q);
 	HAL_BOOL  __ahdecl(*ah_startTxDma)(struct ath_hal*, a_uint32_t);
 	HAL_BOOL  __ahdecl(*ah_stopTxDma)(struct ath_hal*, a_uint32_t);
-           
+
 	HAL_BOOL  __ahdecl(*ah_abortTxDma)(struct ath_hal *);
-           
+
 	void      __ahdecl(*ah_set11nTxDesc)(struct ath_tx_desc *ds,
 					     a_uint32_t pktLen, HAL_PKT_TYPE type,
 					     a_uint32_t txPower, a_uint32_t keyIx,
@@ -400,7 +400,7 @@ struct ath_hal
 	void      __ahdecl(*ah_set11nBurstDuration)(struct ath_tx_desc *ds,
 						    a_uint32_t burstDuration);
 	void      __ahdecl(*ah_set11nVirtualMoreFrag)(struct ath_tx_desc *ds, a_uint32_t vmf);
-           
+
 	HAL_BOOL  __ahdecl(*ah_setupTxDesc)(struct ath_tx_desc *,
 					    a_uint32_t pktLen, a_uint32_t hdrLen,
 					    HAL_PKT_TYPE type, a_uint32_t txPower,
@@ -418,21 +418,21 @@ struct ath_hal
 						   a_uint32_t filter0, a_uint32_t filter1);
 
 	u_int64_t __ahdecl(*ah_getTsf64)(struct ath_hal*);
-           
+
 	/* Target receive Functions */
 	void	   __ahdecl(*ah_setRxDP)(struct ath_hal*, a_uint32_t rxdp);
 	HAL_BOOL  __ahdecl(*ah_setupRxDesc)(struct ath_rx_desc *,
 					    a_uint32_t size, a_uint32_t flags);
 	HAL_STATUS __ahdecl(*ah_procRxDesc)(struct ath_hal *, struct ath_desc *,
 					    a_uint32_t phyAddr, struct ath_desc *next, u_int64_t tsf);
-	HAL_STATUS __ahdecl(*ah_procRxDescFast)(struct ath_hal *ah, 
+	HAL_STATUS __ahdecl(*ah_procRxDescFast)(struct ath_hal *ah,
 						struct ath_rx_desc *ds, a_uint32_t pa,
-						struct ath_desc *nds, 
+						struct ath_desc *nds,
 						struct ath_rx_status *rx_stats);
 	HAL_BOOL  __ahdecl(*ah_stopDmaReceive)(struct ath_hal*);
 	void      __ahdecl(*ah_stopPcuReceive)(struct ath_hal*);
 	void      __ahdecl(*ah_enableReceive)(struct ath_hal*);
-           
+
 	/* Interrupt functions */
 	HAL_BOOL  __ahdecl(*ah_isInterruptPending)(struct ath_hal*);
 	HAL_BOOL  __ahdecl(*ah_getPendingInterrupts)(struct ath_hal*, HAL_INT*);

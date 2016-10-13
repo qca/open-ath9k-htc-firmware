@@ -34,7 +34,7 @@
  */
 #include "adf_os_defer_pvt.h"
 
-void 
+void
 __adf_os_defer_func(void *arg, int pending)
 {
 	__adf_os_defer_ctx_t *ctx = (__adf_os_defer_ctx_t *)arg;

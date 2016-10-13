@@ -83,9 +83,9 @@ enum ieee80211_protmode {
  */
 #define IEEE80211_AMPDU_LIMIT_MIN           (1 * 1024)
 #define IEEE80211_AMPDU_LIMIT_MAX           (64 * 1024 - 1)
-#define IEEE80211_AMPDU_SUBFRAME_MIN        2 
-#define IEEE80211_AMPDU_SUBFRAME_MAX        64 
-#define IEEE80211_AMPDU_SUBFRAME_DEFAULT    32 
+#define IEEE80211_AMPDU_SUBFRAME_MIN        2
+#define IEEE80211_AMPDU_SUBFRAME_MAX        64
+#define IEEE80211_AMPDU_SUBFRAME_DEFAULT    32
 #define IEEE80211_AMSDU_LIMIT_MAX           4096
 
 struct ieee80211_rateset {

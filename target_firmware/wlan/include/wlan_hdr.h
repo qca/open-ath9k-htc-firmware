@@ -61,8 +61,8 @@ typedef struct _mgt_header {
 } POSTPACK ath_mgt_hdr_t;
 
 typedef struct _beacon_header {
-	a_uint8_t   vap_index;   
-	a_uint8_t   len_changed;    
+	a_uint8_t   vap_index;
+	a_uint8_t   len_changed;
 	a_uint16_t  reserved;
 } ath_beacon_hdr_t;
 
@@ -79,7 +79,7 @@ typedef struct __data_header {
 	a_uint8_t   ni_index;
 	a_uint8_t   vap_index;
 	a_uint8_t   tidno;
-	a_uint32_t  flags;  
+	a_uint32_t  flags;
 	a_int8_t    keytype;
 	a_int8_t    keyix;
 	a_uint8_t   cookie;
@@ -101,7 +101,7 @@ struct ieee80211com_target {
 
 #define VAP_TARGET_SIZE 12
 
-struct ieee80211vap_target 
+struct ieee80211vap_target
 {
 	a_uint8_t               iv_vapindex;
 	a_uint8_t               iv_opmode; /* enum ieee80211_opmode */
@@ -170,11 +170,11 @@ struct ath_tx_stats {
 	a_uint32_t   ast_tx_altrate;     /* tx frames with alternate rate */
 	a_uint32_t   ast_tx_protect;     /* tx frames with protection */
 
-	a_uint32_t   tx_tgt;	         /* tx data pkts recieved on target */  
+	a_uint32_t   tx_tgt;	         /* tx data pkts recieved on target */
 	a_uint32_t   tx_qnull;           /* txq empty occurences */
 
 	a_uint32_t   txaggr_nframes;     /* no. of frames aggregated */
-	a_uint32_t   tx_compunaggr;      /* tx unaggregated frame completions */ 
+	a_uint32_t   tx_compunaggr;      /* tx unaggregated frame completions */
 	a_uint32_t   tx_compaggr;        /* tx aggregated completions */
 	a_uint32_t   txaggr_retries;     /* tx retries of sub frames */
 	a_uint32_t   txaggr_single;      /* tx frames not aggregated */
@@ -219,7 +219,7 @@ struct ath_aggr_info {
 	a_uint8_t tidno;
 	a_uint8_t aggr_enable;
 	a_uint8_t padding;
-};    
+};
 
 struct wmi_data_delba {
 	a_uint8_t  ni_nodeindex;
@@ -233,4 +233,4 @@ struct wmi_fw_version {
 	a_uint16_t minor;
 };
 
-#endif 
+#endif

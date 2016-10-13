@@ -139,7 +139,7 @@
 
 /*
  * Intentional Misaligned Load special "addresses".
- * Loads from misaligned addresses have special semantics, 
+ * Loads from misaligned addresses have special semantics,
  * handled by the OS, depending on the lower nibble.
  *
  * NOTE1: word-aligned nibbles will not cause any exception,
@@ -165,7 +165,7 @@
 #endif
 
 #ifdef HTC_TRACE_MBOX_PAUSE
-#define A_ASSERT( __bool ) 
+#define A_ASSERT( __bool )
 #else
 /*
  * Code space dedicated to asserts is minimal.  We use an Intentional

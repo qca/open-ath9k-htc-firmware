@@ -74,11 +74,11 @@
 /* HIF support */
 #define HIF_MODULE_INSTALL() hif_module_install(&_A_OS_INDIRECTION_TABLE->hif)
 #define HIF_init(pConfig)                 A_INDIR(hif._init(pConfig))
-#define HIF_start()                       A_INDIR(hif._start())  
-#define HIF_config_pipe(pipe, desc_list)  A_INDIR(hif._config_pipe(pipe, desc_list)) 
-#define HIF_send_buffer(pipe, buf)        A_INDIR(hif._send_buffer(pipe, buf)) 
-#define HIF_return_recv_buf(pipe, buf)    A_INDIR(hif._return_recv_buf(pipe, buf)) 
-#define HIF_isr_handler()                 A_INDIR(hif._isr_handler()) 
+#define HIF_start()                       A_INDIR(hif._start())
+#define HIF_config_pipe(pipe, desc_list)  A_INDIR(hif._config_pipe(pipe, desc_list))
+#define HIF_send_buffer(pipe, buf)        A_INDIR(hif._send_buffer(pipe, buf))
+#define HIF_return_recv_buf(pipe, buf)    A_INDIR(hif._return_recv_buf(pipe, buf))
+#define HIF_isr_handler()                 A_INDIR(hif._isr_handler())
 #define HIF_is_pipe_supported(pipe)       A_INDIR(hif._is_pipe_supported(pipe))
 
 /* VBUF APIs */
@@ -125,13 +125,13 @@
  */
 typedef struct _A_athos_indirection_table {
     _A_cmnos_indirection_table_t        cmnos;
-    
+
     /* TBD: to be added */
     struct hif_api                      hif;
     struct vbuf_api                     vbuf;
     struct vdesc_api                    vdesc;
     struct htc_apis                     htc;
-    //WMI_SVC_APIS                        wmi_svc_api;    
+    //WMI_SVC_APIS                        wmi_svc_api;
 } _A_athos_indirection_table_t;
 
 #if 1
@@ -167,7 +167,7 @@ struct _A_os_linkage_check {
 };
 
 
-/* 
+/*
  * A_INIT() handles any initialization needed by the OS abstraction,
  * and it clears the application's BSS, if necessary.  (Application BSS
  * is not cleared if the application is linked into a single image that
@@ -181,7 +181,7 @@ A_INIT(void)
 {
     struct _A_os_linkage_check link_check;
     unsigned int *clrptr;
-    
+
     if (&START_BSS != _A_MAGPIE_INDIRECTION_TABLE->cmnos.start_bss) {
         /* Clear BSS */
         for (clrptr = &START_BSS; clrptr < &END_BSS; clrptr++) {

@@ -39,8 +39,8 @@
 
 
 #define PCI_MAX_PKT_LEN         1600
-#define PCI_MAX_DESC            2 
-     
+#define PCI_MAX_DESC            2
+
 typedef enum hif_pci_pipe_rx{
     HIF_PCI_PIPE_RX0, /*Normal Priority RX*/
     HIF_PCI_PIPE_RX1,

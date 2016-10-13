@@ -137,7 +137,7 @@
 #define ZM_ADDR_CONV                     0x0
 
 #define ZM_CBUS_FIFO_SIZE_REG			(ZM_CBUS_FIFO_SIZE_OFFSET^ZM_ADDR_CONV)
-                                		
+
 #define ZM_CBUS_CTRL_REG				(cSOC_USB_OFST+cSOC_CBUS_CTL_OFFSET^ZM_ADDR_CONV)
 
 #define ZM_MAIN_CTRL_REG				(ZM_MAIN_CTRL_OFFSET^ZM_ADDR_CONV)
@@ -179,7 +179,7 @@
 #define ZM_INTR_SOURCE_2_REG			(ZM_INTR_SOURCE_2_OFFSET^ZM_ADDR_CONV)
 
 #define ZM_INTR_SOURCE_3_REG			(ZM_INTR_SOURCE_3_OFFSET^ZM_ADDR_CONV)
-    
+
 #define ZM_INTR_SOURCE_4_REG			(ZM_INTR_SOURCE_4_OFFSET^ZM_ADDR_CONV)
 
 #define ZM_INTR_SOURCE_5_REG			(ZM_INTR_SOURCE_5_OFFSET^ZM_ADDR_CONV)
@@ -239,7 +239,7 @@
 											USB_BYTE_REG_READ(ZM_MAIN_CTRL_OFFSET)&~BIT0)
 #define mUsbRmWkupSet()             	USB_BYTE_REG_WRITE(ZM_MAIN_CTRL_OFFSET, \
 											USB_BYTE_REG_READ(ZM_MAIN_CTRL_OFFSET)|BIT0)
-                                    	                                         
+
 #define mUsbGlobIntEnable()         	USB_BYTE_REG_WRITE(ZM_MAIN_CTRL_OFFSET, \
 											USB_BYTE_REG_READ(ZM_MAIN_CTRL_OFFSET)|BIT2)
 
@@ -296,7 +296,7 @@
     #if (HS_C1_INTERFACE_NUMBER >= 1)
         // Interface 0
         #define HS_C1_I0_ALT_NUMBER    	0X01
-        #if (HS_C1_I0_ALT_NUMBER >= 1) 
+        #if (HS_C1_I0_ALT_NUMBER >= 1)
             // AlternateSetting 0X00
             #define HS_C1_I0_A0_bInterfaceNumber   0X00
             #define HS_C1_I0_A0_bAlternateSetting  0X00
@@ -850,7 +850,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define USB_ENABLE_UP_DMA()  USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET,    \
                                                     (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|BIT0)) // upstream DMA enable
-                                                    
+
 #define USB_DISABLE_UP_DMA()  USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET,    \
                                                     (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT0))) // upstream DMA disable
 
@@ -875,10 +875,10 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define USB_ENABLE_HP_DN_DMA() USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET,  \
-                                (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|BIT8))    // hp downstream DMA enable 
+                                (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|BIT8))    // hp downstream DMA enable
 
 #define USB_DISABLE_HP_DN_DMA() USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET,  \
-                                    (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT8)))  // hp downstream DMA disable 
+                                    (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT8)))  // hp downstream DMA disable
 
 #define USB_HP_DN_PACKET_MODE() USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, \
                                     (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT7)))   // hpQ packet mode
@@ -887,9 +887,9 @@
                                     (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|BIT7))          // hpQ stream mode
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define USB_ENABLE_MP_DN_DMA() USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|BIT9))    // mp downstream DMA enable 
+#define USB_ENABLE_MP_DN_DMA() USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|BIT9))    // mp downstream DMA enable
 
-#define USB_DISABLE_MP_DN_DMA() USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT9)))    // mp downstream DMA disable 
+#define USB_DISABLE_MP_DN_DMA() USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT9)))    // mp downstream DMA disable
 
 #define USB_MP_DN_PACKET_MODE() USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)&(~BIT10)))   // hpQ packet mode
 
@@ -931,7 +931,7 @@
                                             USB_ENABLE_HP_DN_DMA();
 
 #define USB_STREAM_HOST_BUF_SIZE(size)  USB_WORD_REG_WRITE(ZM_SOC_USB_MODE_CTRL_OFFSET, \
-                                                                            (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|(size)));   
+                                                                            (USB_WORD_REG_READ(ZM_SOC_USB_MODE_CTRL_OFFSET)|(size)));
 #define USB_STREAM_TIMEOUT(time_cnt)    USB_WORD_REG_WRITE(ZM_SOC_USB_TIME_CTRL_OFFSET, time_cnt);  // set stream mode timeout critirea
 #define USB_STREAM_AGG_PKT_CNT(cnt)     USB_WORD_REG_WRITE(ZM_SOC_USB_MAX_AGGREGATE_OFFSET, cnt); // set stream mode packet buffer critirea
 

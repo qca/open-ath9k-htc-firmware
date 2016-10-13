@@ -34,9 +34,9 @@
  */
 /*
  * @File: VBUF_api.h
- * 
+ *
  * @Abstract: Host Interface api
- * 
+ *
  * @Notes:
  */
 
@@ -50,10 +50,10 @@
 typedef struct _VBUF
 {
 	VDESC           *desc_list;
-	struct _VBUF    *next_buf; 
-	A_UINT16        buf_length; 
+	struct _VBUF    *next_buf;
+	A_UINT16        buf_length;
 	A_UINT8         reserved[2];
-	A_UINT8         ctx[MAX_BUF_CTX_LEN];  
+	A_UINT8         ctx[MAX_BUF_CTX_LEN];
 } VBUF;
 
 #define VBUF_GET_DATA_ADDR(vbuf)    (vbuf->desc_list->buf_addr + vbuf->desc_list->data_offset)
@@ -66,7 +66,7 @@ struct vbuf_api {
 	void (*_free_vbuf)(VBUF *buf);
 
         /* room to expand this table by another table */
-	void *pReserved;    
+	void *pReserved;
 };
 
 extern void vbuf_module_install(struct vbuf_api *apis);

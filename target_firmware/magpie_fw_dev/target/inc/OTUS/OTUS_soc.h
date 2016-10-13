@@ -96,7 +96,7 @@ typedef A_ULONG             A_ADDR;
     ((void *)((((A_UINT32)(addr)) & ~A_MIPS_KSEG_MASK) | A_MIPS_KSEG_CACHED))
 
 /* Read/Write a 32-bit AR6000 SOC register, specified by its physical address */
-#define A_SOC_ADDR_READ(addr) (*((volatile A_UINT32 *)A_UNCACHED_ADDR(addr))) 
+#define A_SOC_ADDR_READ(addr) (*((volatile A_UINT32 *)A_UNCACHED_ADDR(addr)))
 
 #define A_SOC_ADDR_WRITE(addr, val)                                           \
     do {                                                                      \
@@ -126,7 +126,7 @@ typedef A_ULONG             A_ADDR;
 #define A_UNCACHED_ADDR(addr)     (addr)
 #define A_CACHED_ADDR(addr)       (addr)
 
-#define A_SOC_ADDR_READ(addr) (*((volatile A_UINT32 *)(addr))) 
+#define A_SOC_ADDR_READ(addr) (*((volatile A_UINT32 *)(addr)))
 
 #define A_SOC_ADDR_WRITE(addr, val)                                           \
     do {                                                                      \
@@ -199,7 +199,7 @@ do {                                                                     \
                   HF_TIMER_CONTROL_RESET_MASK);                          \
 } while (0)
 
-/* 
+/*
  * Turn it OFF when you're done:
  */
 #define A_TIMESTAMP_DISABLE() A_RTC_REG_WRITE(HF_TIMER_CONTROL_ADDRESS, 0)

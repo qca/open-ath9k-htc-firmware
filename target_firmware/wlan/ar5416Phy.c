@@ -55,13 +55,13 @@
 /* TRUE_ALL_11N - valid for 20/40/Legacy, TRUE - Legacy only, TRUE_20 - HT 20 only, TRUE_40 - HT 40 only */
 /* 4ms frame limit not used for NG mode.  The values filled for HT are the 64K max aggregate limit */
 
-#ifndef MAGPIE_MERLIN // K2  
+#ifndef MAGPIE_MERLIN // K2
 
 RATE_TABLE_11N ar5416_11ngRateTable = {
 
-    54,  /* number of rates - should match the no. of rows below */ 
-   100,  /* probe interval */     
-    50,  /* rssi reduce interval */    
+    54,  /* number of rates - should match the no. of rows below */
+   100,  /* probe interval */
+    50,  /* rssi reduce interval */
     WLAN_RC_HT_FLAG,  /* Phy rates allowed initially */
     {/*                    Multiple      Single    */
      /*                    stream        stream                                              short    dot11 ctrl  RssiAck  RssiAck  Base  CW40   SGI    Ht  tx chain 4ms tx valid for*/
@@ -110,7 +110,7 @@ RATE_TABLE_11N ar5416_11ngRateTable = {
      /* 121.5Mb [41] */ {  FALSE,        TRUE_40,      WLAN_PHY_HT_40_SS,121500,102700,0x86, 0x00,    6,    8,     23,     3,       20,   41,    42,    42, 1, 1, 60156, FALSE},
      /*  135 Mb [42] */ {  FALSE,        TRUE_40,  WLAN_PHY_HT_40_SS_HGI,135000,111900,0x86, 0x00,    6,    8,     23,     3,       20,   41,    42,    42, 1, 1, 66840, FALSE},
      /*  135 Mb [43] */ {  FALSE,        TRUE_40,      WLAN_PHY_HT_40_SS,135000,112000,0x87, 0x00,    7,    8,     25,     3,       22,   43,    44,    44, 1, 1, 66840, TRUE},
-     /*  150 Mb [44] */ {  FALSE,        TRUE_40,  WLAN_PHY_HT_40_SS_HGI,150000,122000,0x87, 0x00,    7,    8,     25,     3,       22,   43,    44,    44, 1, 1, 74200, TRUE},     
+     /*  150 Mb [44] */ {  FALSE,        TRUE_40,  WLAN_PHY_HT_40_SS_HGI,150000,122000,0x87, 0x00,    7,    8,     25,     3,       22,   43,    44,    44, 1, 1, 74200, TRUE},
      /*  108 Mb [45] */ {  TRUE_40,      FALSE,        WLAN_PHY_HT_40_DS,108000,92500, 0x8b, 0x00,    11,   8,     10,     3,       24,   45,    45,    45, 3, 7, 53440, FALSE},
      /*  162 Mb [46] */ {  TRUE_40,      FALSE,        WLAN_PHY_HT_40_DS,162000,130300,0x8c, 0x00,    12,   8,     14,     3,       25,   46,    47,    47, 3, 7, 80160, TRUE},
      /*  180 Mb [47] */ {  FALSE,        FALSE,    WLAN_PHY_HT_40_DS_HGI,180000,156900,0x8c, 0x00,    12,   8,     14,     3,       25,   46,    47,    47, 3, 7, 89090, TRUE},
@@ -122,7 +122,7 @@ RATE_TABLE_11N ar5416_11ngRateTable = {
      /*  300 Mb [53] */ {  TRUE_40,      FALSE,    WLAN_PHY_HT_40_DS_HGI,300000,207000,0x8f, 0x00,    15,   8,     25,     3,       31,   52,    53,    53, 3, 5, 148400, TRUE},
      /*                    Multiple      Single    */
      /*                    stream        stream                                              short    dot11 ctrl  RssiAck  RssiAck  Base  CW40   SGI    Ht  tx chain 4ms tx valid for*/
-     /*                    valid         valid                           Kbps   uKbps  RC    Preamble Rate  Rate  ValidMin DeltaMin Idx   Idx    Idx    Idx mask     limit  UAPSD    */     
+     /*                    valid         valid                           Kbps   uKbps  RC    Preamble Rate  Rate  ValidMin DeltaMin Idx   Idx    Idx    Idx mask     limit  UAPSD    */
     },
 };
 
@@ -130,9 +130,9 @@ RATE_TABLE_11N ar5416_11ngRateTable = {
 
 RATE_TABLE_11N ar5416_11ngRateTable = {
 
-    46,  /* number of rates - should match the no. of rows below */ 
-    50,  /* probe interval */     
-    50,  /* rssi reduce interval */    
+    46,  /* number of rates - should match the no. of rows below */
+    50,  /* probe interval */
+    50,  /* rssi reduce interval */
     WLAN_RC_HT_FLAG,  /* Phy rates allowed initially */
     {/*                    Multiple      Single      Single    */
      /*                    stream        stream      stream                                              short    dot11 ctrl  RssiAck  RssiAck  Base  CW40   SGI    Ht  tx chain 4ms tx valid for*/
@@ -173,7 +173,7 @@ RATE_TABLE_11N ar5416_11ngRateTable = {
      /*  108 Mb [33] */ {  FALSE,        TRUE_40,      TRUE_40,       WLAN_PHY_HT_40_SS,108000,92900, 0x85, 0x00,    5,    8,     20,     3,       17,   33,    33,    33, 1, 1, 53476, FALSE},
      /* 121.5Mb [34] */ {  FALSE,        TRUE_40,      TRUE_40,       WLAN_PHY_HT_40_SS,121500,102700,0x86, 0x00,    6,    8,     23,     3,       18,   34,    34,    34, 1, 1, 60156, FALSE},
      /*  135 Mb [35] */ {  FALSE,        TRUE_40,      FALSE,         WLAN_PHY_HT_40_SS,135000,112000,0x87, 0x00,    7,    8,     25,     3,       19,   35,    36,    36, 1, 1, 66840, TRUE},
-     /*  150 Mb [36] */ {  FALSE,        TRUE_40,      FALSE,     WLAN_PHY_HT_40_SS_HGI,150000,122000,0x87, 0x00,    7,    8,     25,     3,       19,   35,    36,    36, 1, 1, 74200, TRUE},     
+     /*  150 Mb [36] */ {  FALSE,        TRUE_40,      FALSE,     WLAN_PHY_HT_40_SS_HGI,150000,122000,0x87, 0x00,    7,    8,     25,     3,       19,   35,    36,    36, 1, 1, 74200, TRUE},
      /*   27 Mb [37] */ {  FALSE,        FALSE,        FALSE,         WLAN_PHY_HT_40_DS,27000, 25800, 0x88, 0x00,    8,    8,     2,      3,       20,   37,    37,    37, 3, 7, 13360, TRUE},
      /*   54 Mb [38] */ {  FALSE,        FALSE,        FALSE,         WLAN_PHY_HT_40_DS,54000, 49800, 0x89, 0x00,    9,    8,     4,      3,       21,   38,    38,    38, 3, 7, 26720, FALSE},
      /*   81 Mb [39] */ {  FALSE,        FALSE,        FALSE,         WLAN_PHY_HT_40_DS,81000, 71900, 0x8a, 0x00,    10,   8,     6,      3,       22,   39,    39,    39, 3, 7, 40080, TRUE},
@@ -185,7 +185,7 @@ RATE_TABLE_11N ar5416_11ngRateTable = {
      /*  300 Mb [45] */ {  TRUE_40,      FALSE,        TRUE_40,   WLAN_PHY_HT_40_DS_HGI,300000,207000,0x8f, 0x00,    15,   8,     25,     3,       27,   44,    45,    45, 3, 5, 148400, TRUE},
      /*                    Multiple      Single    */
      /*                    stream        stream                                              short    dot11 ctrl  RssiAck  RssiAck  Base  CW40   SGI    Ht  tx chain 4ms tx valid for*/
-     /*                    valid         valid                           Kbps   uKbps  RC    Preamble Rate  Rate  ValidMin DeltaMin Idx   Idx    Idx    Idx mask     limit  UAPSD    */     
+     /*                    valid         valid                           Kbps   uKbps  RC    Preamble Rate  Rate  ValidMin DeltaMin Idx   Idx    Idx    Idx mask     limit  UAPSD    */
     },
 };
 
@@ -193,9 +193,9 @@ RATE_TABLE_11N ar5416_11ngRateTable = {
 //static RATE_TABLE_11N ar5416_11naRateTable = {
 RATE_TABLE_11N ar5416_11naRateTable = {
 
-    42,  /* number of rates */    
-    50,  /* probe interval */    
-    50,  /* rssi reduce interval */    
+    42,  /* number of rates */
+    50,  /* probe interval */
+    50,  /* rssi reduce interval */
     WLAN_RC_HT_FLAG,  /* Phy rates allowed initially */
     {/*                Multiple        Single     Single*/
      /*                  stream        stream     stream                                              rate  short    dot11 ctrl  RssiAck  RssiAck  Base  CW40   SGI    Ht  tx chain  4ms tx valid for */
@@ -232,7 +232,7 @@ RATE_TABLE_11N ar5416_11naRateTable = {
      /*  108 Mb [29] */ {  FALSE,        TRUE_40,   TRUE_40,         WLAN_PHY_HT_40_SS,108000,92900, 0x85,  0x00,   5,    4,     20,     3,       13,   29,    29,    29, 1, 1,  53476, FALSE},
      /* 121.5Mb [30] */ {  FALSE,        TRUE_40,   TRUE_40,         WLAN_PHY_HT_40_SS,121500,102700,0x86,  0x00,   6,    4,     23,     3,       14,   30,    30,    30, 1, 1,  60156, FALSE},
      /*  135 Mb [31] */ {  FALSE,        TRUE_40,   FALSE,           WLAN_PHY_HT_40_SS,135000,112000,0x87,  0x00,   7,    4,     25,     3,       15,   31,    32,    32, 1, 1,  66840, TRUE},
-     /*  150 Mb [32] */ {  FALSE,        TRUE_40,   FALSE,       WLAN_PHY_HT_40_SS_HGI,150000,122000,0x87,  0x00,   7,    8,     25,     3,       15,   31,    32,    32, 1, 1, 65535, TRUE},     
+     /*  150 Mb [32] */ {  FALSE,        TRUE_40,   FALSE,       WLAN_PHY_HT_40_SS_HGI,150000,122000,0x87,  0x00,   7,    8,     25,     3,       15,   31,    32,    32, 1, 1, 65535, TRUE},
      /*   27 Mb [33] */ {  FALSE,        FALSE,     FALSE,           WLAN_PHY_HT_40_DS,27000, 25800, 0x88,  0x00,   8,    0,     2,      3,       16,   33,    33,    33, 3, 7,  13360, TRUE},
      /*   54 Mb [34] */ {  FALSE,        FALSE,     FALSE,           WLAN_PHY_HT_40_DS,54000, 49800, 0x89,  0x00,   9,    2,     4,      3,       17,   34,    34,    34, 3, 7,  26720, FALSE},
      /*   81 Mb [35] */ {  FALSE,        FALSE,     FALSE,           WLAN_PHY_HT_40_DS,81000, 71900, 0x8a,  0x00,   10,   2,     6,      3,       18,   35,    35,    35, 3, 7,  40080, TRUE},
@@ -243,12 +243,12 @@ RATE_TABLE_11N ar5416_11naRateTable = {
      /*  270 Mb [40] */ {  TRUE_40,      FALSE,     TRUE_40,         WLAN_PHY_HT_40_DS,270000,192100,0x8f,  0x00,   15,   4,     25,     3,       23,   40,    41,    41, 3, 5, 133600, TRUE},
      /*  300 Mb [41] */ {  TRUE_40,      FALSE,     TRUE_40,     WLAN_PHY_HT_40_DS_HGI,300000,207000,0x8f,  0x00,   15,   4,     25,     3,       23,   40,    41,    41, 3, 5, 148400, TRUE},
      /*                    stream        stream                                                 rate  short    dot11 ctrl  RssiAck  RssiAck  Base  CW40   SGI    Ht  tx chain  4ms tx valid for */
-     /*                    valid         valid                                             Kbps   uKbps  Code  Preamble Rate  Rate  ValidMin DeltaMin Idx   Idx    Idx    Idx mask      limit  UAPSD     */     
+     /*                    valid         valid                                             Kbps   uKbps  Code  Preamble Rate  Rate  ValidMin DeltaMin Idx   Idx    Idx    Idx mask      limit  UAPSD     */
     },
 };
 #endif //ATH_SUPPORT_A_MODE
 
-#endif //#ifdef MAGPIE_MERLIN // MAGPIE_MERLIN 
+#endif //#ifdef MAGPIE_MERLIN // MAGPIE_MERLIN
 
 void
 ar5416AttachRateTables(struct atheros_softc *sc)

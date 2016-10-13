@@ -45,12 +45,12 @@
 
 /**
  * @brief Representation of a cipher context.
- */ 
+ */
 typedef __adf_os_cipher_t     adf_os_cipher_t;
 
 /**
  * @brief Types of crypto algorithms
- */ 
+ */
 typedef enum adf_os_crypto_alg{
     ADF_OS_CRYPTO_AES = __ADF_OS_CRYPTO_AES,
     ADF_OS_CRYPTO_OTHER = __ADF_OS_CRYPTO_OTHER,
@@ -60,7 +60,7 @@ typedef enum adf_os_crypto_alg{
 /**
  * @brief allocate the cipher context
  * @param[in] type crypto algorithm
- * 
+ *
  * @return the new cipher context
  */
 static inline adf_os_cipher_t
@@ -71,7 +71,7 @@ adf_os_crypto_alloc_cipher(adf_os_crypto_alg_t type)
 
 /**
  * @brief free the cipher context
- * 
+ *
  * @param[in] cipher cipher context
  */
 static inline void
@@ -82,11 +82,11 @@ adf_os_crypto_free_cipher(adf_os_cipher_t cipher)
 
 /**
  * @brief set the key for cipher context with length keylen
- * 
+ *
  * @param[in] cipher    cipher context
  * @param[in] key       key material
  * @param[in] keylen    length of key material
- * 
+ *
  * @return a_uint32_t
  */
 static inline a_uint32_t
@@ -97,7 +97,7 @@ adf_os_crypto_cipher_setkey(adf_os_cipher_t cipher, const a_uint8_t *key, a_uint
 
 /**
  * @brief encrypt the data with AES
- * 
+ *
  * @param[in]   cipher  cipher context
  * @param[in]   src     unencrypted data
  * @param[out]  dst     encrypted data

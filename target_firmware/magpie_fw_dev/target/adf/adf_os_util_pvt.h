@@ -37,18 +37,18 @@
 
 #include <adf_os_types.h>
 
-#define __adf_os_unlikely(_expr)   
-#define __adf_os_likely(_expr)    
+#define __adf_os_unlikely(_expr)
+#define __adf_os_likely(_expr)
 
 /**
- * @brief memory barriers. 
+ * @brief memory barriers.
  */
 #define __adf_os_wmb()          oops no implementation...
 #define __adf_os_rmb()          oops no implementation...
 #define __adf_os_mb()           oops no implementation...
 
-#define __adf_os_min(_a, _b)	((_a < _b) ? _a : _b)         
-#define __adf_os_max(_a, _b)    ((_a > _b) ? _a : _b)     
+#define __adf_os_min(_a, _b)	((_a < _b) ? _a : _b)
+#define __adf_os_max(_a, _b)    ((_a > _b) ? _a : _b)
 
 #ifdef _DEBUG_BUILD_
 #define __adf_os_assert(expr)  do {\
@@ -79,10 +79,10 @@
 #define inline
 #endif
 
-static void inline 	
+static void inline
 __adf_os_get_rand(adf_os_handle_t  hdl,__a_uint8_t *ptr, __a_uint32_t len)
 {
-#if 0    
+#if 0
 	u_int8_t *dp = ptr;
 	u_int32_t v;
 	size_t nb;
@@ -93,7 +93,7 @@ __adf_os_get_rand(adf_os_handle_t  hdl,__a_uint8_t *ptr, __a_uint32_t len)
 		dp += sizeof(u_int32_t);
 		len -= nb;
 	}
-#endif    
+#endif
 }
 
 

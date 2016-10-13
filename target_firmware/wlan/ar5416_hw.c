@@ -58,7 +58,7 @@ static const struct ath_hal_private ar5416hal_10 = {{
 		/* Transmit functions */
 		.ah_updateTxTrigLevel   = ar5416UpdateTxTrigLevel,
 		.ah_setTxDP             = ar5416SetTxDP,
-		.ah_numTxPending        = ar5416NumTxPending,    
+		.ah_numTxPending        = ar5416NumTxPending,
 		.ah_startTxDma          = ar5416StartTxDma,
 		.ah_stopTxDma           = ar5416StopTxDma,
 
@@ -316,7 +316,7 @@ HAL_BOOL ar5416StopDmaReceive(struct ath_hal *ah)
 void ar5416SetRxFilter(struct ath_hal *ah, a_uint32_t bits)
 {
 	a_uint32_t phybits;
-    
+
 	iowrite32_mac(AR_RX_FILTER, (bits & 0xff) | AR_RX_COMPR_BAR);
 	phybits = 0;
 	if (bits & HAL_RX_FILTER_PHYRADAR)
@@ -382,7 +382,7 @@ HAL_STATUS ar5416ProcRxDescFast_20(struct ath_hal *ah, struct ath_rx_desc *ds,
 		return HAL_EINPROGRESS;
 
 	/*
-	 * Now we need to get the stats from the descriptor. Since desc are 
+	 * Now we need to get the stats from the descriptor. Since desc are
 	 * uncached, lets make a copy of the stats first. Note that, since we
 	 * touch most of the rx stats, a memcpy would always be more efficient
 	 *
@@ -400,7 +400,7 @@ HAL_STATUS ar5416ProcRxDescFast_20(struct ath_hal *ah, struct ath_rx_desc *ds,
 	rx_stats->rs_tstamp =  ads.AR_RcvTimestamp;
 
 	/* XXX what about KeyCacheMiss? */
-	rx_stats->rs_rssi_combined = 
+	rx_stats->rs_rssi_combined =
 		MS(ads.ds_rxstatus4, AR_RxRSSICombined);
 	rx_stats->rs_rssi_ctl0 = MS(ads.ds_rxstatus0, AR_RxRSSIAnt00);
 	rx_stats->rs_rssi_ctl1 = MS(ads.ds_rxstatus0, AR_RxRSSIAnt01);
@@ -601,7 +601,7 @@ HAL_BOOL ar5416AbortTxDma(struct ath_hal *ah)
 HAL_BOOL ar5416StopTxDma(struct ath_hal*ah, a_uint32_t q)
 {
 	a_uint32_t i;
-	
+
         HALASSERT(q < AH_PRIVATE(ah)->ah_caps.halTotalQueues);
 
         HALASSERT(AH5416(ah)->ah_txq[q].tqi_type != HAL_TX_QUEUE_INACTIVE);
@@ -655,9 +655,9 @@ HAL_BOOL ar5416SetupTxDesc_20(struct ath_tx_desc *ds,
         ads->ds_ctl2 = SM(txTries0, AR_XmitDataTries0);
         ads->ds_ctl3 = (txRate0 << AR_XmitRate0_S);
 
-        ads->ds_ctl7 = SM(AR5416_LEGACY_CHAINMASK, AR_ChainSel0) 
+        ads->ds_ctl7 = SM(AR5416_LEGACY_CHAINMASK, AR_ChainSel0)
 		| SM(AR5416_LEGACY_CHAINMASK, AR_ChainSel1)
-		| SM(AR5416_LEGACY_CHAINMASK, AR_ChainSel2) 
+		| SM(AR5416_LEGACY_CHAINMASK, AR_ChainSel2)
 		| SM(AR5416_LEGACY_CHAINMASK, AR_ChainSel3);
 
         if (keyIx != HAL_TXKEYIX_INVALID) {
@@ -732,7 +732,7 @@ HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *gds)
 {
         struct ar5416_desc *ads = AR5416DESC(gds);
         struct ath_tx_desc *ds = (struct ath_tx_desc *)gds;
-        
+
         if ((ads->ds_txstatus9 & AR_TxDone) == 0)
                 return HAL_EINPROGRESS;
 
@@ -776,7 +776,7 @@ HAL_STATUS ar5416ProcTxDesc_20(struct ath_hal *ah, struct ath_tx_desc *gds)
          * ``alternate'' if it wasn't the series 0 rate.
          */
         ds->ds_txstat.ts_rate = MS(ads->ds_txstatus9, AR_FinalTxIdx);
-        ds->ds_txstat.ts_rssi_combined = 
+        ds->ds_txstat.ts_rssi_combined =
 		MS(ads->ds_txstatus5, AR_TxRSSICombined);
         ds->ds_txstat.ts_rssi_ctl0 = MS(ads->ds_txstatus0, AR_TxRSSIAnt00);
         ds->ds_txstat.ts_rssi_ctl1 = MS(ads->ds_txstatus0, AR_TxRSSIAnt01);
@@ -903,7 +903,7 @@ void ar5416Set11nAggrMiddle_20(struct ath_tx_desc *ds, a_uint32_t numDelims)
 	ads->ds_ctl1 |= (AR_IsAggr | AR_MoreAggr);
 
 	/*
-	 * We use a stack variable to manipulate ctl6 to reduce uncached 
+	 * We use a stack variable to manipulate ctl6 to reduce uncached
 	 * read modify, modfiy, write.
 	 */
 	ctl6 = ads->ds_ctl6;

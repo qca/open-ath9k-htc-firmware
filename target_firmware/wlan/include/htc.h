@@ -42,8 +42,8 @@
 
 #define ASSEMBLE_UNALIGNED_UINT16(p,highbyte,lowbyte) \
         (((a_uint16_t)(((a_uint8_t *)(p))[(highbyte)])) << 8 | (a_uint16_t)(((a_uint8_t *)(p))[(lowbyte)]))
-        
-/* alignment independent macros (little-endian) to fetch UINT16s or UINT8s from a 
+
+/* alignment independent macros (little-endian) to fetch UINT16s or UINT8s from a
  * structure using only the type and field name.
  * Use these macros if there is the potential for unaligned buffer accesses. */
 #define A_GET_UINT16_FIELD(p,type,field)			\
@@ -56,23 +56,23 @@
 		((a_uint8_t *)(p))[A_OFFSETOF(type,field)] = (a_uint8_t)((value) >> 8);	\
 		((a_uint8_t *)(p))[A_OFFSETOF(type,field) + 1] = (a_uint8_t)(value); \
 	}
-  
+
 #define A_GET_UINT8_FIELD(p,type,field) \
             ((a_uint8_t *)(p))[A_OFFSETOF(type,field)]
-            
+
 #define A_SET_UINT8_FIELD(p,type,field,value) \
     ((a_uint8_t *)(p))[A_OFFSETOF(type,field)] = (value)
 
 /****** DANGER DANGER ***************
- * 
+ *
  *   The frame header length and message formats defined herein were
  *   selected to accommodate optimal alignment for target processing.  This reduces code
  *   size and improves performance.
- * 
+ *
  *   Any changes to the header length may alter the alignment and cause exceptions
  *   on the target. When adding to the message structures insure that fields are
  *   properly aligned.
- * 
+ *
  */
 
 /* endpoint defines */
@@ -80,8 +80,8 @@ typedef enum
 {
 	ENDPOINT_UNUSED = -1,
 	ENDPOINT0 = 0, /* this is reserved for the control endpoint */
-	ENDPOINT1 = 1,  
-	ENDPOINT2 = 2,   
+	ENDPOINT1 = 1,
+	ENDPOINT2 = 2,
 	ENDPOINT3 = 3,
 	ENDPOINT4,
 	ENDPOINT5,
@@ -99,13 +99,13 @@ typedef PREPACK struct _HTC_FRAME_HDR{
 	a_uint8_t   EndpointID;
 	a_uint8_t   Flags;
 	a_uint16_t  PayloadLen;       /* length of data (including trailer) that follows the header */
-    
+
 	/***** end of 4-byte lookahead ****/
-    
+
 	a_uint8_t   ControlBytes[4];
-    
+
 	/* message payload starts after the header */
-    
+
 } POSTPACK HTC_FRAME_HDR;
 
 /* frame header flags */
@@ -121,24 +121,24 @@ typedef PREPACK struct _HTC_FRAME_HDR{
 typedef enum {
 	HTC_MSG_READY_ID = 1,
 	HTC_MSG_CONNECT_SERVICE_ID = 2,
-	HTC_MSG_CONNECT_SERVICE_RESPONSE_ID = 3,   
+	HTC_MSG_CONNECT_SERVICE_RESPONSE_ID = 3,
 	HTC_MSG_SETUP_COMPLETE_ID = 4,
 	HTC_MSG_CONFIG_PIPE_ID = 5,
 	HTC_MSG_CONFIG_PIPE_RESPONSE_ID = 6,
 } HTC_MSG_IDS;
- 
+
 #define HTC_MAX_CONTROL_MESSAGE_LENGTH  256
-         
+
 /* base message ID header */
 typedef PREPACK struct {
-	a_uint16_t MessageID;    
+	a_uint16_t MessageID;
 } POSTPACK HTC_UNKNOWN_MSG;
-                                                     
+
 /* HTC ready message
  * direction : target-to-host  */
 typedef PREPACK struct {
 	a_uint16_t  MessageID;    /* ID */
-	a_uint16_t  CreditCount;  /* number of credits the target can offer */       
+	a_uint16_t  CreditCount;  /* number of credits the target can offer */
 	a_uint16_t  CreditSize;   /* size of each credit */
 	a_uint8_t   MaxEndpoints; /* maximum number of endpoints the target has resources for */
 	a_uint8_t   _Pad1;
@@ -150,24 +150,24 @@ typedef PREPACK struct {
  * direction : host-to-target */
 typedef PREPACK struct {
 	a_uint16_t  MessageID;
-	a_uint16_t  ServiceID;           /* service ID of the service to connect to */       
+	a_uint16_t  ServiceID;           /* service ID of the service to connect to */
 	a_uint16_t  ConnectionFlags;     /* connection flags */
 	a_uint8_t   DownLinkPipeID;
 	a_uint8_t   UpLinkPipeID;
 
-#define HTC_CONNECT_FLAGS_REDUCE_CREDIT_DRIBBLE (1 << 2)  /* reduce credit dribbling when 
-                                                             the host needs credits */  
-#define HTC_CONNECT_FLAGS_THRESHOLD_LEVEL_MASK             (0x3)  
+#define HTC_CONNECT_FLAGS_REDUCE_CREDIT_DRIBBLE (1 << 2)  /* reduce credit dribbling when
+                                                             the host needs credits */
+#define HTC_CONNECT_FLAGS_THRESHOLD_LEVEL_MASK             (0x3)
 #define HTC_CONNECT_FLAGS_THRESHOLD_LEVEL_ONE_FOURTH        0x0
 #define HTC_CONNECT_FLAGS_THRESHOLD_LEVEL_ONE_HALF          0x1
 #define HTC_CONNECT_FLAGS_THRESHOLD_LEVEL_THREE_FOURTHS     0x2
 #define HTC_CONNECT_FLAGS_THRESHOLD_LEVEL_UNITY             0x3
-                                                             
+
 	a_uint8_t   ServiceMetaLength;   /* length of meta data that follows */
 	a_uint8_t   _Pad1;
-    
+
 	/* service-specific meta data starts after the header */
-    
+
 } POSTPACK HTC_CONNECT_SERVICE_MSG;
 
 /* connect response
@@ -175,14 +175,14 @@ typedef PREPACK struct {
 typedef PREPACK struct {
 	a_uint16_t  MessageID;
 	a_uint16_t  ServiceID;            /* service ID that the connection request was made */
-	a_uint8_t   Status;               /* service connection status */ 
+	a_uint8_t   Status;               /* service connection status */
 	a_uint8_t   EndpointID;           /* assigned endpoint ID */
 	a_uint16_t  MaxMsgSize;           /* maximum expected message size on this endpoint */
 	a_uint8_t   ServiceMetaLength;    /* length of meta data that follows */
-	a_uint8_t   _Pad1;               
-    
+	a_uint8_t   _Pad1;
+
 	/* service-specific meta data starts after the header */
-    
+
 } POSTPACK HTC_CONNECT_SERVICE_RESPONSE_MSG;
 
 typedef PREPACK struct {
@@ -194,26 +194,26 @@ typedef PREPACK struct {
  * direction : host-to-target */
 typedef PREPACK struct {
 	a_uint16_t  MessageID;
-	a_uint8_t   PipeID;           /* Pipe ID of the service to connect to */       
-	a_uint8_t   CreditCount;      /* CreditCount */                                                            
-	//a_uint8_t   _Pad1;        
+	a_uint8_t   PipeID;           /* Pipe ID of the service to connect to */
+	a_uint8_t   CreditCount;      /* CreditCount */
+	//a_uint8_t   _Pad1;
 } POSTPACK HTC_CONFIG_PIPE_MSG;
 
 /* config pipe
  * direction : host-to-target */
 typedef PREPACK struct {
 	a_uint16_t  MessageID;
-	a_uint8_t   PipeID;           /* Pipe ID of the service to connect to */       
-	a_uint8_t   Status;           /* status */                                                            
-	//a_uint8_t   _Pad1;        
+	a_uint8_t   PipeID;           /* Pipe ID of the service to connect to */
+	a_uint8_t   Status;           /* status */
+	//a_uint8_t   _Pad1;
 } POSTPACK HTC_CONFIG_PIPE_RESPONSE_MSG;
 
 /* connect response status codes */
 #define HTC_SERVICE_SUCCESS      0  /* success */
 #define HTC_SERVICE_NOT_FOUND    1  /* service could not be found */
 #define HTC_SERVICE_FAILED       2  /* specific service failed the connect */
-#define HTC_SERVICE_NO_RESOURCES 3  /* no resources (i.e. no more endpoints) */  
-#define HTC_SERVICE_NO_MORE_EP   4  /* specific service is not allowing any more 
+#define HTC_SERVICE_NO_RESOURCES 3  /* no resources (i.e. no more endpoints) */
+#define HTC_SERVICE_NO_MORE_EP   4  /* specific service is not allowing any more
                                        endpoints */
 
 /* shihhung: config pipe response status code */
@@ -225,7 +225,7 @@ typedef PREPACK struct {
 typedef enum {
 	HTC_RECORD_NULL  = 0,
 	HTC_RECORD_CREDITS   = 1,
-	HTC_RECORD_LOOKAHEAD = 2,   
+	HTC_RECORD_LOOKAHEAD = 2,
 } HTC_RPT_IDS;
 
 typedef PREPACK struct {
@@ -238,14 +238,14 @@ typedef PREPACK struct {
 	a_uint8_t Credits;        /* credits to report since last report */
 } POSTPACK HTC_CREDIT_REPORT;
 
-typedef PREPACK struct {    
+typedef PREPACK struct {
 	a_uint8_t PreValid;         /* pre valid guard */
 	a_uint8_t LookAhead[4];     /* 4 byte lookahead */
 	a_uint8_t PostValid;        /* post valid guard */
-    
+
 	/* NOTE: the LookAhead array is guarded by a PreValid and Post Valid guard bytes.
 	 * The PreValid bytes must equal the inverse of the PostValid byte */
-    
+
 } POSTPACK HTC_LOOKAHEAD_REPORT;
 
 #ifndef ATH_TARGET

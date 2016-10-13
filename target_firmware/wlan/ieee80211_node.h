@@ -52,7 +52,7 @@ struct ieee80211_node_table {
 };
 
 #define IEEE80211_KEYBUF_SIZE   16
-#define IEEE80211_TID_SIZE      17 
+#define IEEE80211_TID_SIZE      17
 #define IEEE80211_MICBUF_SIZE   (8+8)   /* space for both tx+rx keys */
 
 struct ieee80211_key_target {

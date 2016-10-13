@@ -52,22 +52,22 @@ VDESC * __adf_nbuf_last(VBUF *buf);
 // #############################################################################
 
 /**
- *  
+ *
  * @brief allocate a new nbuf,
- * 
+ *
  * @param hdl (adf_net handle)
  * @param size (size of the new buf)
  * @param reserve (amount of space to reserve in the head)
- * 
+ *
  * @return newly allocated nbuf
  */
-__adf_nbuf_t 
-__adf_nbuf_alloc(adf_os_size_t size, a_uint32_t reserve, 
+__adf_nbuf_t
+__adf_nbuf_alloc(adf_os_size_t size, a_uint32_t reserve,
                  a_uint32_t align)
 {
     VBUF *buf = NULL;
     VDESC *desc;
-    
+
     buf = VBUF_alloc_vbuf();
     if ( buf != NULL ) {
         desc = VDESC_alloc_vdesc();
@@ -76,21 +76,21 @@ __adf_nbuf_alloc(adf_os_size_t size, a_uint32_t reserve,
         desc->next_desc = NULL;
         desc->data_offset = reserve;
         desc->data_size = 0;
-        desc->control = 0;    
-        
+        desc->control = 0;
+
         buf->desc_list = desc;
-        buf->buf_length = 0;    
+        buf->buf_length = 0;
     }
-    
+
     return buf;
-}   
-  
+}
+
 /**
  * @brief Free the nbuf
  * function to be called in
  * @param hdl
  * @param adf_nbuf
- * 
+ *
  */
 void __adf_nbuf_free(__adf_nbuf_t  buf)
 {
@@ -100,13 +100,13 @@ void __adf_nbuf_free(__adf_nbuf_t  buf)
 /**
  * @brief reallocate the head space, call it only after the you
  *        have called headroom
- * 
+ *
  * @param adf_nbuf
- * @param headroom   
- * 
+ * @param headroom
+ *
  * @return new nbuf
  */
-__adf_nbuf_t 
+__adf_nbuf_t
 __adf_nbuf_realloc_headroom(__adf_nbuf_t buf, a_uint32_t headroom)
 {
     adf_os_assert(0);
@@ -116,13 +116,13 @@ __adf_nbuf_realloc_headroom(__adf_nbuf_t buf, a_uint32_t headroom)
 /**
  * @brief expand the tailroom, mostly by adding the new tail
  *        buffer, also take care of the priv
- * 
+ *
  * @param buf
  * @param tailroom
- * 
+ *
  * @return struct mbuf * (buffer with the new tailroom)
  */
-__adf_nbuf_t 
+__adf_nbuf_t
 __adf_nbuf_realloc_tailroom(__adf_nbuf_t  buf, a_uint32_t tailroom)
 {
     adf_os_assert(0);
@@ -131,14 +131,14 @@ __adf_nbuf_realloc_tailroom(__adf_nbuf_t  buf, a_uint32_t tailroom)
 
 /**
  * @brief expand the headroom or tailroom or both
- * 
+ *
  * @param buf
  * @param headroom ( 0 if no headroom expansion req)
  * @param tailroom ( 0 if no tailroom expansion req)
- * 
+ *
  * @return struct mbuf* (NULL if something goofed up)
  */
-__adf_nbuf_t 
+__adf_nbuf_t
 __adf_nbuf_expand(__adf_nbuf_t buf, a_uint32_t headroom, a_uint32_t tailroom)
 {
     adf_os_assert(0);
@@ -147,19 +147,19 @@ __adf_nbuf_expand(__adf_nbuf_t buf, a_uint32_t headroom, a_uint32_t tailroom)
 
 /**
  * @brief put data in the head
- * 
+ *
  * @param buf
  * @param len (how much data to put)
- * 
+ *
  * @return new data pointer ,NULL if the len is more than the
  *         space available in the head frag.
  */
-a_uint8_t *       
+a_uint8_t *
 __adf_nbuf_push_head(__adf_nbuf_t buf, adf_os_size_t len)
 {
-    a_uint8_t *ptr = NULL; 
+    a_uint8_t *ptr = NULL;
     VDESC *desc = buf->desc_list;
-    
+
     desc->data_offset -= len;
     desc->data_size += len;
     buf->buf_length += len;
@@ -168,12 +168,12 @@ __adf_nbuf_push_head(__adf_nbuf_t buf, adf_os_size_t len)
 }
 
 /**
- * 
+ *
  * @brief add data in the end of tail
- * 
+ *
  * @param buf
  * @param len (how much data to put)
- * 
+ *
  * @return previous tail (data+len),NULL if the len is more than
  *         space available
  */
@@ -182,79 +182,79 @@ __adf_nbuf_put_tail(__adf_nbuf_t buf, adf_os_size_t len)
 {
     a_uint8_t *tail = NULL;
     VDESC *last_desc = __adf_nbuf_last(buf);
-    
+
     tail = last_desc->buf_addr + last_desc->data_offset + last_desc->data_size;
     last_desc->data_size += len;
     buf->buf_length += len;
-    
+
     return tail;
 }
 
 /**
  * @brief strip data from head
- * 
+ *
  * @param adf_nbuf
  * @param len (how much data to rip)
- * 
+ *
  * @return new data pointer
  */
-a_uint8_t * 
+a_uint8_t *
 __adf_nbuf_pull_head(__adf_nbuf_t buf, adf_os_size_t len)
 {
     a_uint8_t *ptr = NULL;
     VDESC *desc = buf->desc_list;
-    
+
     desc->data_offset += len;
     desc->data_size -= len;
     buf->buf_length -= len;
     ptr = desc->buf_addr + desc->data_offset;
-    
+
     return ptr;
 }
 /**
  * @brief strip data from tail, priv safe
- * 
+ *
  * @param buf
  * @param len (how much to strip down)
- * 
+ *
  */
-void 
+void
 __adf_nbuf_trim_tail(__adf_nbuf_t buf, adf_os_size_t len)
 {
     VDESC *last_desc = __adf_nbuf_last(buf);
-    
+
     adf_os_assert(buf != NULL);
     last_desc->data_size -= len;
     buf->buf_length -= len;
-    
+
     //adf_os_assert(0);    //0820
 }
 /**
  * @brief Copy assumes that we create a writeable copy of the
  *        nbuf which is equivalent in FreeBSD as duping the
  *        mbuf.
- * 
+ *
  * @param src
- * 
+ *
  * @return struct mbuf * (newly allocated buffer)
  */
-__adf_nbuf_t 
+__adf_nbuf_t
 __adf_nbuf_copy(__adf_nbuf_t src)
 {
-    __adf_nbuf_t buf = NULL; 
+    __adf_nbuf_t buf = NULL;
 
     adf_os_assert(src != NULL);
-    
+
     return buf;
 }
 /**
  * @brief make the writable copy of the nbuf
- * 
+ *
  * @param adf_nbuf
- * 
+ *
  * @return new nbuf
  */
-__adf_nbuf_t 
+__adf_nbuf_t
 __adf_nbuf_unshare(__adf_nbuf_t  src)
 {
     __adf_nbuf_t buf = NULL;
@@ -267,32 +267,32 @@ __adf_nbuf_unshare(__adf_nbuf_t  src)
 /**
  * @brief return the frag data & len, where frag no. is
  *        specified by the index
- * 
+ *
  * @param[in] buf
  * @param[out] sg (scatter/gather list of all the frags)
- * 
+ *
  */
-void  
+void
 __adf_nbuf_frag_info(__adf_nbuf_t buf, adf_os_sglist_t	*sg)
 {
     VDESC *desc = buf->desc_list;
     int count = 0;
-    
+
     while( desc != NULL ) {
         sg->sg_segs[count].vaddr = desc->buf_addr + desc->data_offset;
         sg->sg_segs[count].len   = desc->data_size;
-        
-        count++;        
+
+        count++;
         desc = desc->next_desc;
     }
-    
+
     sg->nsegs = count;
 }
 /**
  * @brief retrieve the priv space pointer from nbuf
- * 
+ *
  * @param buf (nbuf to attach the priv space)
- * 
+ *
  * @return uint8_t* ( pointer to the data )
  */
 a_uint8_t *
@@ -304,15 +304,15 @@ __adf_nbuf_get_priv(__adf_nbuf_t buf)
 }
 
 /**
- * 
+ *
  * @brief append the nbuf to the queue
- * 
+ *
  * @param adf_qhead
  * @param adf_nbuf
- * 
+ *
  */
-void 
-__adf_nbuf_queue_add(__adf_nbuf_qhead_t  *qhead, 
+void
+__adf_nbuf_queue_add(__adf_nbuf_qhead_t  *qhead,
                      __adf_nbuf_t  buf)
 {
     qhead->qlen++;
@@ -330,12 +330,12 @@ __adf_nbuf_queue_add(__adf_nbuf_qhead_t  *qhead,
 
 /**
  * @brief dequeue an nbuf
- * 
+ *
  * @param adf_qhead
- * 
+ *
  * @return the nbuf
  */
-__adf_nbuf_t   
+__adf_nbuf_t
 __adf_nbuf_queue_remove(__adf_nbuf_qhead_t *qhead)
 {
     __adf_nbuf_t  b0 = NULL;
@@ -349,7 +349,7 @@ __adf_nbuf_queue_remove(__adf_nbuf_qhead_t *qhead)
         } else {
             qhead->head = qhead->head->next_buf;
         }
-    
+
         b0->next_buf = NULL;
     }
 	return b0;
@@ -363,51 +363,51 @@ __adf_nbuf_queue_remove(__adf_nbuf_qhead_t *qhead)
 /**
  * @brief creates a streaming mapping (takes a pre allocated
  *        global tag for 4K mbuf sizes)
- * 
+ *
  * @param hdl
  * @param max_sz
  * @param dmap
- * 
+ *
  * @return a_status_t
  */
-a_status_t 
+a_status_t
 __adf_nbuf_dmamap_create(__adf_os_device_t osdev, __adf_os_dma_map_t *dmap)
 {
     a_status_t retval = A_STATUS_OK;
-    
+
     (*dmap) = A_ALLOCRAM(sizeof(struct __adf_dma_map));
     if(*dmap == NULL)
         return A_STATUS_ENOMEM;
-            
+
     (*dmap)->buf = NULL;
     return retval;
 }
 
 
-a_status_t 
-__adf_nbuf_map(__adf_os_device_t osdev, __adf_os_dma_map_t bmap, 
+a_status_t
+__adf_nbuf_map(__adf_os_device_t osdev, __adf_os_dma_map_t bmap,
                           __adf_nbuf_t buf, adf_os_dma_dir_t dir)
-{   
+{
     bmap->buf = buf;
-    
+
     return A_STATUS_OK;
 }
 
-void 
-__adf_nbuf_unmap(__adf_os_device_t osdev, __adf_os_dma_map_t bmap, 
+void
+__adf_nbuf_unmap(__adf_os_device_t osdev, __adf_os_dma_map_t bmap,
                             adf_os_dma_dir_t dir)
 {
     bmap->buf = NULL;
-    
+
     return;
 }
 
 void
-__adf_nbuf_dmamap_destroy(__adf_os_device_t osdev, 
+__adf_nbuf_dmamap_destroy(__adf_os_device_t osdev,
                           __adf_os_dma_map_t dmap)
 {
     //dmap->buf = NULL;
-    
+
     // Should not be called in FW!
     //return A_STATUS_OK;
 }
@@ -415,26 +415,26 @@ __adf_nbuf_dmamap_destroy(__adf_os_device_t osdev,
 
 
 /**
- * @brief return the dma map info 
- * 
+ * @brief return the dma map info
+ *
  * @param[in]  bmap
  * @param[out] sg (map_info ptr)
  */
-void 
+void
 __adf_nbuf_dmamap_info(__adf_os_dma_map_t bmap, adf_os_dmamap_info_t *sg)
 {
     VDESC *desc = bmap->buf->desc_list;
     int count = 0;
-    
+
     while( desc != NULL ) {
         sg->dma_segs[count].paddr = (adf_os_dma_addr_t)(desc->buf_addr + desc->data_offset);
         sg->dma_segs[count].len   = desc->data_size;
-        
-        count++;        
+
+        count++;
         desc = desc->next_desc;
     }
-    
-    sg->nsegs = count;    
+
+    sg->nsegs = count;
 }
 
 /**
@@ -445,18 +445,18 @@ __adf_nbuf_dmamap_info(__adf_os_dma_map_t bmap, adf_os_dmamap_info_t *sg)
 /**
  * @brief sets the cksum type & value for nbuf
  * XXX: not fully implemented
- * 
+ *
  * @param buf
  * @param cksum
  */
-void 
+void
 __adf_nbuf_set_rx_cksum(__adf_nbuf_t buf, adf_nbuf_rx_cksum_t *cksum)
 {
 
 }
 
-a_status_t      
-__adf_nbuf_get_vlan_info(adf_net_handle_t hdl, __adf_nbuf_t buf, 
+a_status_t
+__adf_nbuf_get_vlan_info(adf_net_handle_t hdl, __adf_nbuf_t buf,
                          adf_net_vlanhdr_t *vlan)
 {
     return A_STATUS_OK;
@@ -504,7 +504,7 @@ __adf_nbuf_create_frm_frag(__adf_nbuf_queue_t *qhead)
     }
 
     if (cnt != len) {
-        //adf_os_print("cnt: %x, len: %x, __adf_nbuf_queue_len: %x\n", cnt, len, 
+        //adf_os_print("cnt: %x, len: %x, __adf_nbuf_queue_len: %x\n", cnt, len,
         //             __adf_nbuf_queue_len(qhead));
         adf_os_assert(0);
     }
@@ -547,36 +547,36 @@ __adf_nbuf_split_to_frag(__adf_nbuf_t buf, __adf_nbuf_qhead_t *qhead)
     buf->desc_list = NULL;
     buf->buf_length = 0;
     VBUF_free_vbuf(buf);
-    
+
 }
 
 /**
  * @brief return the last mbuf
- * 
+ *
  * @param m0
- * 
+ *
  * @return struct mbuf*
  */
-VDESC * 
+VDESC *
 __adf_nbuf_last(VBUF *buf)
 {
     VDESC *desc = buf->desc_list;
-    
+
     //for(; desc->next_desc != NULL; desc = desc->next_desc)
     //    ;
     while(desc->next_desc != NULL)
     {
         desc = desc->next_desc;
     }
-    
+
     return desc;
 }
 
 /**
  * @brief num bytes in the head
- * 
+ *
  * @param adf_nbuf
- * 
+ *
  * @return num of bytes available
  */
 a_uint32_t
@@ -589,45 +589,45 @@ __adf_nbuf_headroom(__adf_nbuf_t  buf)
 /**
  * @brief num of bytes available in the tail excluding the priv
  *        portion
- * 
+ *
  * @param adf_nbuf
- * 
+ *
  * @return num of bytes
  */
 
-a_uint32_t 
+a_uint32_t
 __adf_nbuf_tailroom(__adf_nbuf_t  buf)
 {
     VDESC *last_desc = __adf_nbuf_last(buf);
-    
+
     return last_desc->buf_size - last_desc->data_offset - last_desc->data_size;
 }
 
 /**
  * @brief get the entire packet length
- * 
+ *
  * @param adf_nbuf
- * 
+ *
  * @return total length of packet (sum of all frag lengths)
- */ 
+ */
 a_uint32_t
 __adf_nbuf_len(__adf_nbuf_t  buf)
 {
-    return buf->buf_length; 
+    return buf->buf_length;
 }
 
 /**
  * @brief Clone the nbuf (will not create writeable copies)
- * 
+ *
  * @param adf_nbuf
- * 
+ *
  * @return Read-only copy of the nbuf (including clusters)
  */
-__adf_nbuf_t 
+__adf_nbuf_t
 __adf_nbuf_clone(__adf_nbuf_t  src)
 {
     __adf_nbuf_t buf = NULL;
-    
+
     return buf;
 }
 
@@ -641,9 +641,9 @@ __adf_nbuf_cat(__adf_nbuf_t dst, __adf_nbuf_t src)
 
 /*
  * @brief check if the mbuf is cloned or not
- * 
+ *
  * @param buf
- * 
+ *
  * @return a_bool_t
  */
 a_bool_t
@@ -655,19 +655,19 @@ __adf_nbuf_is_cloned(__adf_nbuf_t  buf)
  * @brief This will return the header's addr & m_len
  */
 void
-__adf_nbuf_peek_header(__adf_nbuf_t buf, a_uint8_t   **addr, 
+__adf_nbuf_peek_header(__adf_nbuf_t buf, a_uint8_t   **addr,
                        a_uint32_t	*len)
 {
     VDESC *desc = buf->desc_list;
-    
+
     *addr = desc->buf_addr + desc->data_offset;
-    *len = desc->data_size; 
+    *len = desc->data_size;
 }
 /**
  * @brief init the queue
  * @param qhead
  */
-void 
+void
 __adf_nbuf_queue_init(__adf_nbuf_qhead_t *qhead)
 {
     qhead->qlen = 0;
@@ -677,11 +677,11 @@ __adf_nbuf_queue_init(__adf_nbuf_qhead_t *qhead)
 /**
  * @brief return the length of queue
  * @param adf_qhead
- * 
+ *
  * @return length
- * 
+ *
  */
-a_uint32_t  
+a_uint32_t
 __adf_nbuf_queue_len(__adf_nbuf_qhead_t *qhead)
 {
     return qhead->qlen;
@@ -689,34 +689,34 @@ __adf_nbuf_queue_len(__adf_nbuf_qhead_t *qhead)
 /**
  * @brief returns the first guy in the Q
  * @param qhead
- * 
+ *
  * @return (NULL if the Q is empty)
  */
-__adf_nbuf_t   
+__adf_nbuf_t
 __adf_nbuf_queue_first(__adf_nbuf_queue_t *qhead)
 {
     return qhead->head;
 }
 /**
  * @brief return the next packet from packet chain
- * 
+ *
  * @param buf (packet)
- * 
+ *
  * @return (NULL if no packets are there)
  */
-__adf_nbuf_t   
+__adf_nbuf_t
 __adf_nbuf_queue_next(__adf_nbuf_t  buf)
 {
     return buf->next_buf;
 }
 /**
  * @brief check if the queue is empty or not
- * 
+ *
  * @param qhead
- * 
+ *
  * @return a_bool_t
  */
-a_bool_t  
+a_bool_t
 __adf_nbuf_is_queue_empty(__adf_nbuf_qhead_t *qhead)
 {
     return ((qhead->qlen == 0));

@@ -34,9 +34,9 @@
  */
 /*
  * @File: wlan_pci.h
- * 
- * @Abstract: 
- * 
+ *
+ * @Abstract:
+ *
  * @Notes:
  */
 

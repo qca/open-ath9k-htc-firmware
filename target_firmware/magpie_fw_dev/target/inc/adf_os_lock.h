@@ -124,7 +124,7 @@ adf_os_spin_unlock_irq(adf_os_spinlock_t *lock, a_uint32_t *flags)
 
 /**
  * @brief locks the spinlock mutex in soft irq context
- * 
+ *
  * @param[in] lock  spinlock object pointer
  */
 static inline void
@@ -136,7 +136,7 @@ adf_os_spin_lock_bh(adf_os_spinlock_t   *lock)
 
 /**
  * @brief unlocks the spinlock mutex in soft irq context
- * 
+ *
  * @param[in] lock  spinlock object pointer
  */
 static inline void
@@ -153,7 +153,7 @@ adf_os_spin_unlock_bh(adf_os_spinlock_t *lock)
  * @param[in] lock      spinlock to be held for the critical region
  * @param[in] func      critical region function that to be executed
  * @param[in] context   context of the critical region function
- * 
+ *
  * @return Boolean status returned by the critical region function
  */
 static inline a_bool_t
