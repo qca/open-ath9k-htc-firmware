@@ -1026,13 +1026,15 @@ static void
 ath_update_stats(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
 	struct ath_tx_desc *ds = bf->bf_desc;
+	struct ieee80211_frame *wh = ATH_SKB2_WH(bf->bf_skb);
 	u_int32_t sr, lr;
 
 	if (ds->ds_txstat.ts_status == 0) {
 		if (ds->ds_txstat.ts_rate & HAL_TXSTAT_ALTRATE)
 			sc->sc_tx_stats.ast_tx_altrate++;
 	} else {
-		if (ds->ds_txstat.ts_status & HAL_TXERR_XRETRY)
+		if (ds->ds_txstat.ts_status & HAL_TXERR_XRETRY &&
+		    !IEEE80211_IS_MULTICAST(wh->i_addr1))
 			sc->sc_tx_stats.ast_tx_xretries++;
 		if (ds->ds_txstat.ts_status & HAL_TXERR_FIFO)
 			sc->sc_tx_stats.ast_tx_fifoerr++;
