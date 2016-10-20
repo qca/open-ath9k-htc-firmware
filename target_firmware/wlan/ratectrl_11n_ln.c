@@ -91,7 +91,7 @@ rcSortValidRates(const RATE_TABLE_11N *pRateTable, TX_RATE_CTRL *pRc)
 				    pRateTable->info[pRc->validRateIndex[j+1]].userRateKbps)
 #endif
 				{
-					A_UINT8 tmp=0;
+					A_UINT8 tmp = 0;
 					tmp = pRc->validRateIndex[j];
 					pRc->validRateIndex[j] = pRc->validRateIndex[j+1];
 					pRc->validRateIndex[j+1] = tmp;
@@ -423,7 +423,6 @@ static A_UINT8
 rcRateFind_ht(struct ath_softc_tgt *sc, struct atheros_node *pSib,
 	      const RATE_TABLE_11N *pRateTable, A_BOOL probeAllowed, A_BOOL *isProbing)
 {
-	A_UINT32             dt;
 	A_UINT32             bestThruput, thisThruput;
 	A_UINT32             nowMsec;
 	A_UINT8              rate, nextRate, bestRate;
@@ -445,7 +444,6 @@ rcRateFind_ht(struct ath_softc_tgt *sc, struct atheros_node *pSib,
 	 */
 
 	nowMsec = A_MS_TICKGET();
-	dt = nowMsec - pRc->rssiTime;
 
 	/*
 	 * Now look up the rate in the rssi table and return it.
@@ -615,7 +613,7 @@ rcRateGetIndex(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	return rix;
 }
 
-void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, 
+void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 		    int numTries, int numRates, int stepDnInc,
 		    unsigned int rcflag, struct ath_rc_series series[], int *isProbe)
 {
@@ -628,7 +626,7 @@ void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 	A_UINT8 dot11Rate;
 	WLAN_PHY phy;
 
-	rix = rcRateFind_ht(sc, asn, pRateTable, (rcflag & ATH_RC_PROBE_ALLOWED) ? 1 : 0, 
+	rix = rcRateFind_ht(sc, asn, pRateTable, (rcflag & ATH_RC_PROBE_ALLOWED) ? 1 : 0,
 			    isProbe);
 	nrix = rix;
 
@@ -636,7 +634,7 @@ void rcRateFind_11n(struct ath_softc_tgt *sc, struct ath_node_target *an,
 		/* set one try for probe rates. For the probes don't enable rts */
 		rcRateSetseries(pRateTable, &series[i++], 1, nrix,
 				FALSE, asc->tx_chainmask, asn->stbc);
-          
+
 		/*
 		 * Get the next tried/allowed rate. No RTS for the next series
 		 * after the probe rate
@@ -1075,7 +1073,7 @@ ath_rate_tx_complete(struct ath_softc_tgt *sc,
 }
 
 void
-ath_rate_newassoc(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew, 
+ath_rate_newassoc(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew,
 		  unsigned int capflag, struct ieee80211_rate *rs)
 {
 	ath_rate_newassoc_11n(sc, an, isnew, capflag, rs);
@@ -1152,7 +1150,7 @@ ath_rate_tx_complete_11n(struct ath_softc_tgt *sc,
 }
 
 static void
-ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew, 
+ath_rate_newassoc_11n(struct ath_softc_tgt *sc, struct ath_node_target *an, int isnew,
 		      unsigned int capflag, struct ieee80211_rate *rs)
 {
 	if (isnew) {
