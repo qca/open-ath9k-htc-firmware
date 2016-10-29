@@ -61,29 +61,29 @@ LOCAL const struct cmnos_clock_s {
     A_UINT32         pll_settling_time;      /* 50us */
 } cmnos_clocking_table[] = {
     {A_REFCLK_10_MHZ,
-     //10485760, 
+     //10485760,
      10000000,
-     0x0,  
+     0x0,
      0x0,
      0x0},
 
-    {A_REFCLK_20_MHZ,   
-     //20971520, 
+    {A_REFCLK_20_MHZ,
+     //20971520,
      20000000,
-     0x0,  
+     0x0,
      0x0,
      0x0},
 
     {A_REFCLK_40_MHZ,
-     //41943040, 
-     40000000, 
+     //41943040,
+     40000000,
      0x0,
      0x0,
      0x0},
 
-    {A_REFCLK_UNKNOWN,         
-     0, 
-     0x0, 
+    {A_REFCLK_UNKNOWN,
+     0,
+     0x0,
      0x0,
      0x0},
 };
@@ -147,7 +147,7 @@ cmnos_delay_us(int us)
     A_UINT32 ref_clk = (clock_info->ticks_per_sec) >> 20;
     A_UINT32 start_time = NOW();
     unsigned int num_ticks = us*ref_clk; // system_freq == number of ticks per 1us
-    
+
     while ( (NOW() - start_time) < num_ticks) {
         /* busy spin */;
     }
@@ -267,7 +267,7 @@ cmnos_clock_init(A_UINT32 ref_clk)
 
     clock_info = (struct cmnos_clock_s *)&cmnos_clocking_table[i];
 //    HOST_INTEREST->hi_clock_info = (A_UINT32)clock_info;
-    
+
 #endif
 }
 
@@ -277,7 +277,7 @@ LOCAL void
 cmnos_tick(void)
 {
 #if 0
-    
+
     set_ccompare0(xthal_get_ccompare(XTENSA_TIMER_0)+ONE_MSEC);
 
     cticks++;

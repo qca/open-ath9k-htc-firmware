@@ -53,6 +53,6 @@
 #define __adf_os_htons(x)                    	    x
 #define __adf_os_htonl(x)                    	    x
 
-#define __adf_os_cpu_to_le16(x)		                __bswap16(x)			
+#define __adf_os_cpu_to_le16(x)		                __bswap16(x)
 
 #endif

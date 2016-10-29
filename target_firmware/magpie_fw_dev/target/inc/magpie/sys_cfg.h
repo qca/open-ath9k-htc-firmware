@@ -56,8 +56,8 @@
 #if defined(_ROM_)
 #include "rom_cfg.h"
 
-#if MAGPIE_FPGA_RAM_256K == 1 
-#undef  MAX_BUF_NUM 
+#if MAGPIE_FPGA_RAM_256K == 1
+#undef  MAX_BUF_NUM
 #define MAX_BUF_NUM                100
 #endif
 
@@ -75,8 +75,8 @@
 #define MAX_BUF_NUM                40
 #endif
 
-#if MAGPIE_FPGA_RAM_256K == 1 
-#undef  MAX_BUF_NUM 
+#if MAGPIE_FPGA_RAM_256K == 1
+#undef  MAX_BUF_NUM
 #define MAX_BUF_NUM                100
 #endif
 

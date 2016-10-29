@@ -42,7 +42,7 @@
  * @brief this code is modified version of tvtohz(9) which
  *        returns signed int which we don't require, hence we
  *        got rid of the type casting thing
- * 
+ *
  * @return unsigned long
  */
 static inline unsigned long
@@ -63,7 +63,7 @@ __adf_os_msecs_to_ticks(a_uint32_t msecs)
 static inline unsigned long
 __adf_os_getuptime(void)
 {
-    return MSEC_TO_TICK(A_MILLISECONDS());;      
+    return MSEC_TO_TICK(A_MILLISECONDS());;
 }
 
 static inline void

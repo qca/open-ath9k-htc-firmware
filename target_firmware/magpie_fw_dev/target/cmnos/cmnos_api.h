@@ -156,7 +156,7 @@ do {                                                                    \
 #define A_MEMMOVE(dst, src, size)
 
 #define A_MEMCMP(p1, p2, nbytes)
-#endif 
+#endif
 
 
 #if 1
@@ -200,9 +200,9 @@ do {                                                                    \
 
 #define A_UART_HWINIT(freq, baud)
 
-#define A_UART_ENABLED() 
+#define A_UART_ENABLED()
 
-#define A_PUTS(str)          
+#define A_PUTS(str)
 
 #define A_PUTC(ch)
 #define A_GETC(pCh)
@@ -247,7 +247,7 @@ do {                                                                    \
 #define A_IS_HOST_PRESENT()
 #define A_KBHIT(delay)
 #define A_GET_ROM_VER()
-#endif 
+#endif
 
 //#if SYSTEM_MODULE_DBG
 /* debug Support */
@@ -268,16 +268,16 @@ do {                                                                    \
 #define A_USB_EP0_SETUP()               A_CMN(usb._usb_ep0_setup())
 #define A_USB_EP0_TX_DATA()             A_CMN(usb._usb_ep0_tx_data())
 #define A_USB_EP0_RX_DATA()             A_CMN(usb._usb_ep0_rx_data())
-                          
+
 #define A_USB_GET_CONFIG()              A_CMN(usb._usb_get_configuration())
 #define A_USB_SET_CONFIG()              A_CMN(usb._usb_set_configuration())
-                          
+
 #define A_USB_GET_INTERFACE()           A_CMN(usb._usb_get_interface())
 #define A_USB_SET_INTERFACE()           A_CMN(usb._usb_set_interface())
-                          
+
 #define A_USB_STANDARD_CMD()            A_CMN(usb._usb_standard_cmd())
 #define A_USB_VENDOR_CMD()              A_CMN(usb._usb_vendor_cmd())
-                          
+
 #define A_USB_POWER_OFF()               A_CMN(usb._usb_power_off())
 #define A_USB_RESET_FIFO()              A_CMN(usb._usb_reset_fifo())
 #define A_USB_GEN_WDT()                 A_CMN(usb._usb_gen_wdt())
@@ -299,31 +299,31 @@ do {                                                                    \
 
 #else
 #define A_USB_INIT()
-#define A_USB_TASK()    
+#define A_USB_TASK()
 #define A_USB_INIT_PHY()
 
-#define A_USB_EP0_SETUP()     
-#define A_USB_EP0_TX()        
-#define A_USB_EP0_RX()        
-                              
-#define A_USB_GET_CONFIG()    
-#define A_USB_SET_CONFIG()    
-                              
-#define A_USB_GET_INTERFACE() 
-#define A_USB_SET_INTERFACE() 
-                              
-#define A_USB_STANDARD_CMD()  
-#define A_USB_VENDOR_CMD()    
-                              
+#define A_USB_EP0_SETUP()
+#define A_USB_EP0_TX()
+#define A_USB_EP0_RX()
+
+#define A_USB_GET_CONFIG()
+#define A_USB_SET_CONFIG()
+
+#define A_USB_GET_INTERFACE()
+#define A_USB_SET_INTERFACE()
+
+#define A_USB_STANDARD_CMD()
+#define A_USB_VENDOR_CMD()
+
 #define A_USB_POWER_OFF()
 #define A_USB_RESET_FIFO()
 #define A_USB_GEN_WDT()
 #define A_USB_JUMP_BOOT()
 
 #define A_USB_GET_DESCRIPTOR()
-#define A_USB_SET_ADDRESS()   
-#define A_USB_SET_FEATURE()   
-#define A_USB_CLEAR_FEATURE() 
+#define A_USB_SET_ADDRESS()
+#define A_USB_SET_FEATURE()
+#define A_USB_CLEAR_FEATURE()
 
 #define A_USB_GET_STATUS()
 #define A_USB_SETUP_DESC()
@@ -458,10 +458,10 @@ do {                                                                    \
     A_CMN(timer._timer_run())
 
 #define A_PCI_BOOT_INIT() \
-    A_CMN(pci.pci_boot_init()) 
+    A_CMN(pci.pci_boot_init())
 
 #define A_GMAC_BOOT_INIT() \
-    A_CMN(gmac.gmac_boot_init()) 
+    A_CMN(gmac.gmac_boot_init())
 
 #if SYSTEM_MODULE_ALLOCRAM
 /* Default size of ALLOCRAM area */
@@ -541,7 +541,7 @@ typedef struct _A_cmnos_indirection_table {
     int (* hal_linkage_check)(int sz, struct _A_os_linkage_check *);
     unsigned int *start_bss;
     void (* app_start)(void);
-    
+
 #if SYSTEM_MODULE_MEM
     struct mem_api    mem;
 #endif

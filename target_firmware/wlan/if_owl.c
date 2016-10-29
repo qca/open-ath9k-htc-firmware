@@ -231,9 +231,7 @@ static void ath_dma_map(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 
 static void ath_dma_unmap(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 {
-	adf_nbuf_t skb = bf->bf_skb;
-
-	skb = adf_nbuf_queue_first(&bf->bf_skbhead);
+	adf_nbuf_queue_first(&bf->bf_skbhead);
 	adf_nbuf_unmap( sc->sc_dev, bf->bf_dmamap, ADF_OS_DMA_TO_DEVICE);
 }
 
@@ -884,14 +882,13 @@ static void ath_tgt_txq_add_ucast(struct ath_softc_tgt *sc, struct ath_tx_buf *b
 {
 	struct ath_hal *ah = sc->sc_ah;
 	struct ath_txq *txq;
-	HAL_STATUS status;
 	volatile a_int32_t txe_val;
 
 	adf_os_assert(bf);
 
 	txq = bf->bf_txq;
 
-	status = ah->ah_procTxDesc(ah, bf->bf_lastds);
+	ah->ah_procTxDesc(ah, bf->bf_lastds);
 
 	ATH_TXQ_INSERT_TAIL(txq, bf, bf_list);
 
@@ -1746,20 +1743,12 @@ ath_tx_comp_cleanup(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 	struct ath_tx_desc lastds;
 	struct ath_tx_desc *ds = &lastds;
 	struct ath_rc_series rcs[4];
-	u_int16_t seq_st;
-	u_int32_t *ba;
-	int ba_index;
 	int nbad = 0;
 	int nframes = bf->bf_nframes;
 	struct ath_tx_buf *bf_next;
-	int tx_ok = 1;
 
 	adf_os_mem_copy(ds, bf->bf_lastds, sizeof (struct ath_tx_desc));
 	adf_os_mem_copy(rcs, bf->bf_rcs, sizeof(rcs));
-
-	seq_st = ATH_DS_BA_SEQ(ds);
-	ba     = ATH_DS_BA_BITMAP(ds);
-	tx_ok  = (ATH_DS_TX_STATUS(ds) == HAL_OK);
 
 	if (!bf->bf_isaggr) {
 		ath_update_stats(sc, bf);
@@ -1779,7 +1768,6 @@ ath_tx_comp_cleanup(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 	}
 
 	while (bf) {
-		ba_index = ATH_BA_INDEX(seq_st, SEQNO_FROM_BF_SEQNO(bf->bf_seqno));
 		bf_next  = bf->bf_next;
 
 		ath_tx_status_update_aggr(sc, bf, ds, rcs, 0);
@@ -1966,9 +1954,6 @@ void ath_tgt_tx_cleanup(struct ath_softc_tgt *sc, struct ath_node_target *an,
 {
 	struct ath_tx_buf *bf;
 	struct ath_tx_buf *bf_next;
-	struct ath_txq *txq;
-
-	txq = TID_TO_ACTXQ(tid->tidno);
 
 	bf = asf_tailq_first(&tid->buf_q);
 
@@ -2065,11 +2050,9 @@ static void ath_bar_tx_comp(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 	struct ath_tx_desc *ds = bf->bf_lastds;
 	struct ath_node_target *an;
 	ath_atx_tid_t *tid;
-	struct ath_txq *txq;
 
 	an = (struct ath_node_target *)bf->bf_node;
 	tid = &an->tid[bf->bf_tidno];
-	txq = TID_TO_ACTXQ(tid->tidno);
 
 	if (ATH_DS_TX_STATUS(ds) & HAL_TXERR_XRETRY) {
 		ath_bar_retry(sc, bf);
@@ -2092,7 +2075,6 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 	struct ath_hal *ah = sc->sc_ah;
 	HAL_11N_RATE_SERIES series[4];
 	int i = 0;
-	adf_nbuf_queue_t skbhead;
 	a_uint8_t *anbdata;
 	a_uint32_t anblen;
 
@@ -2143,7 +2125,6 @@ static void ath_bar_tx(struct ath_softc_tgt *sc,
 			    | HAL_TXDESC_CLRDMASK
 			    , 0, 0);
 
-	skbhead = bf->bf_skbhead;
 	bf->bf_isaggr = 0;
 	bf->bf_next = NULL;
 

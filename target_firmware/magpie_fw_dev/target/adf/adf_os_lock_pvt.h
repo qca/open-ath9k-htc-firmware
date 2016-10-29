@@ -40,7 +40,7 @@ typedef int  		__adf_os_mutex_t;
 
 static inline void __adf_os_init_mutex(__adf_os_mutex_t *mtx)
 {
-	
+
 }
 
 static inline int __adf_os_mutex_acquire(__adf_os_mutex_t *mtx)
@@ -77,7 +77,7 @@ static inline void		__adf_os_spin_unlock_bh(__adf_os_spinlock_t	*lock)
 {
 	//mtx_unlock_spin(lock);
 }
-static inline a_bool_t __adf_os_spinlock_irq_exec(adf_os_handle_t  hdl, __adf_os_spinlock_t *lock, 
+static inline a_bool_t __adf_os_spinlock_irq_exec(adf_os_handle_t  hdl, __adf_os_spinlock_t *lock,
                                                   adf_os_irqlocked_func_t func, void *arg)
 {
     return 0;

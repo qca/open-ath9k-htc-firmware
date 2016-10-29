@@ -33,7 +33,7 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
- *  FreeBSD specific prototypes 
+ *  FreeBSD specific prototypes
  */
 #ifndef _ADF_NBUF_PVT_H
 #define _ADF_NBUF_PVT_H
@@ -44,7 +44,7 @@
 //#include <adf_nbuf_api.h>
 
 #define __ADF_NBUF_NULL         NULL
-#define __ADF_NBUF_CTX_BUF      
+#define __ADF_NBUF_CTX_BUF
 
 typedef VBUF *     __adf_nbuf_t;
 
@@ -53,94 +53,94 @@ typedef VBUF *     __adf_nbuf_t;
  */
 typedef struct __adf_nbuf_qhead {
     VBUF             *head;
-    VBUF             *tail;    
+    VBUF             *tail;
     a_uint32_t        qlen;
 }__adf_nbuf_qhead_t;
 
 typedef __adf_nbuf_qhead_t         __adf_nbuf_queue_t;
 
-__adf_nbuf_t 
-__adf_nbuf_alloc(adf_os_size_t size, 
-                 a_uint32_t reserve, a_uint32_t align);                                
+__adf_nbuf_t
+__adf_nbuf_alloc(adf_os_size_t size,
+                 a_uint32_t reserve, a_uint32_t align);
 
-void 
+void
 __adf_nbuf_free(__adf_nbuf_t  buf);
 
-a_uint8_t *   
+a_uint8_t *
 __adf_nbuf_push_head(__adf_nbuf_t buf, adf_os_size_t size);
- 
-a_uint8_t *    
+
+a_uint8_t *
 __adf_nbuf_pull_head(__adf_nbuf_t buf, adf_os_size_t size);
 
-a_uint8_t *    
+a_uint8_t *
 __adf_nbuf_put_tail(__adf_nbuf_t buf, adf_os_size_t size);
 
-void         
+void
 __adf_nbuf_trim_tail(__adf_nbuf_t buf, adf_os_size_t size);
 
-__adf_nbuf_t 
+__adf_nbuf_t
 __adf_nbuf_realloc_headroom(__adf_nbuf_t buf,
-                            a_uint32_t headroom);                           
-                            
-__adf_nbuf_t 
-__adf_nbuf_realloc_tailroom(__adf_nbuf_t buf, 
+                            a_uint32_t headroom);
+
+__adf_nbuf_t
+__adf_nbuf_realloc_tailroom(__adf_nbuf_t buf,
                             a_uint32_t tailroom);
-                                                
-__adf_nbuf_t 
+
+__adf_nbuf_t
 __adf_nbuf_expand(__adf_nbuf_t buf,
                                a_uint32_t headroom, a_uint32_t tailroom);
-                                                                               
-__adf_nbuf_t 
+
+__adf_nbuf_t
 __adf_nbuf_copy(__adf_nbuf_t src);
 
-__adf_nbuf_t 
+__adf_nbuf_t
 __adf_nbuf_unshare(__adf_nbuf_t  src);
 
-void         
+void
 __adf_nbuf_frag_info(__adf_nbuf_t buf, adf_os_sglist_t *sg);
 
-a_uint8_t *    
+a_uint8_t *
 __adf_nbuf_get_priv(__adf_nbuf_t buf);
-void         
-__adf_nbuf_queue_add(__adf_nbuf_qhead_t *qhead, 
+void
+__adf_nbuf_queue_add(__adf_nbuf_qhead_t *qhead,
                      __adf_nbuf_t buf);
-                                  
-__adf_nbuf_t 
+
+__adf_nbuf_t
 __adf_nbuf_queue_remove(__adf_nbuf_qhead_t *qhead);
 
-a_uint32_t     
-__adf_nbuf_tx_cksum_info(__adf_nbuf_t buf, 
-                         a_uint8_t **hdr_off, 
+a_uint32_t
+__adf_nbuf_tx_cksum_info(__adf_nbuf_t buf,
+                         a_uint8_t **hdr_off,
                          a_uint8_t **where);
-                                      
-void         
+
+void
 __adf_nbuf_set_rx_cksum(__adf_nbuf_t buf, adf_nbuf_rx_cksum_t *cksum);
-void         
+void
 __adf_nbuf_get_tso_info(__adf_nbuf_t buf, adf_nbuf_tso_t *tso);
 
-a_status_t   
-__adf_nbuf_get_vlan_info(adf_net_handle_t hdl, 
-                                      __adf_nbuf_t buf, 
-                                      adf_net_vlanhdr_t *vlan);                                                                                                
-                                       
-void         
+a_status_t
+__adf_nbuf_get_vlan_info(adf_net_handle_t hdl,
+                                      __adf_nbuf_t buf,
+                                      adf_net_vlanhdr_t *vlan);
+
+void
 __adf_nbuf_dmamap_info(__adf_os_dma_map_t bmap, adf_os_dmamap_info_t *sg);
 
 /**
  * @brief return the last mbuf
- * 
+ *
  * @param m0
- * 
+ *
  * @return struct mbuf*
  */
-VDESC * 
+VDESC *
 __adf_nbuf_last(VBUF *buf);
 
 /**
  * @brief num bytes in the head
- * 
+ *
  * @param adf_nbuf
- * 
+ *
  * @return num of bytes available
  */
 a_uint32_t
@@ -149,33 +149,33 @@ __adf_nbuf_headroom(__adf_nbuf_t  buf);
 /**
  * @brief num of bytes available in the tail excluding the priv
  *        portion
- * 
+ *
  * @param adf_nbuf
- * 
+ *
  * @return num of bytes
  */
 
-a_uint32_t 
+a_uint32_t
 __adf_nbuf_tailroom(__adf_nbuf_t  buf);
 
 /**
  * @brief get the entire packet length
- * 
+ *
  * @param adf_nbuf
- * 
+ *
  * @return total length of packet (sum of all frag lengths)
- */ 
+ */
 a_uint32_t
 __adf_nbuf_len(__adf_nbuf_t  buf);
 
 /**
  * @brief Clone the nbuf (will not create writeable copies)
- * 
+ *
  * @param adf_nbuf
- * 
+ *
  * @return Read-only copy of the nbuf (including clusters)
  */
-__adf_nbuf_t 
+__adf_nbuf_t
 __adf_nbuf_clone(__adf_nbuf_t  src);
 
 void
@@ -184,9 +184,9 @@ __adf_nbuf_cat(__adf_nbuf_t dst, __adf_nbuf_t src);
 
 /*
  * @brief check if the mbuf is cloned or not
- * 
+ *
  * @param buf
- * 
+ *
  * @return a_bool_t
  */
 a_bool_t
@@ -196,53 +196,53 @@ __adf_nbuf_is_cloned(__adf_nbuf_t  buf);
  * @brief This will return the header's addr & m_len
  */
 void
-__adf_nbuf_peek_header(__adf_nbuf_t buf, a_uint8_t   **addr, 
+__adf_nbuf_peek_header(__adf_nbuf_t buf, a_uint8_t   **addr,
                        a_uint32_t	*len);
 
 /**
  * @brief init the queue
  * @param qhead
  */
-void 
+void
 __adf_nbuf_queue_init(__adf_nbuf_qhead_t *qhead);
 
 /**
  * @brief return the length of queue
  * @param adf_qhead
- * 
+ *
  * @return length
- * 
+ *
  */
-a_uint32_t  
+a_uint32_t
 __adf_nbuf_queue_len(__adf_nbuf_qhead_t *qhead);
 
 /**
  * @brief returns the first guy in the Q
  * @param qhead
- * 
+ *
  * @return (NULL if the Q is empty)
  */
-__adf_nbuf_t   
+__adf_nbuf_t
 __adf_nbuf_queue_first(__adf_nbuf_queue_t *qhead);
 
 /**
  * @brief return the next packet from packet chain
- * 
+ *
  * @param buf (packet)
- * 
+ *
  * @return (NULL if no packets are there)
  */
-__adf_nbuf_t   
+__adf_nbuf_t
 __adf_nbuf_queue_next(__adf_nbuf_t  buf);
 
 /**
  * @brief check if the queue is empty or not
- * 
+ *
  * @param qhead
- * 
+ *
  * @return a_bool_t
  */
-a_bool_t  
+a_bool_t
 __adf_nbuf_is_queue_empty(__adf_nbuf_qhead_t *qhead);
 
 __adf_nbuf_t
@@ -250,10 +250,10 @@ __adf_nbuf_create_frm_frag(__adf_nbuf_queue_t *head);
 void
 __adf_nbuf_split_to_frag(__adf_nbuf_t buf, __adf_nbuf_queue_t *qhead);
 
-a_status_t      __adf_nbuf_dmamap_create(__adf_os_device_t osdev, 
+a_status_t      __adf_nbuf_dmamap_create(__adf_os_device_t osdev,
                                          __adf_os_dma_map_t *dmap);
 
-void            __adf_nbuf_dmamap_destroy(__adf_os_device_t osdev, 
+void            __adf_nbuf_dmamap_destroy(__adf_os_device_t osdev,
                                           __adf_os_dma_map_t dmap);
 
 a_status_t      __adf_nbuf_map(__adf_os_device_t osdev, __adf_os_dma_map_t dmap,

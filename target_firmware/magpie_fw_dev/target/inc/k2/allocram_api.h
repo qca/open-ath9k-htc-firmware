@@ -71,7 +71,7 @@ struct allocram_api {
 	 * be set to 0 -- only a single arena is currently supported.
 	 */
 	void *(* cmnos_allocram)(void *which_arena, A_UINT32 nbytes);
-    
+
 	void (* cmnos_allocram_debug)(void);
 };
 

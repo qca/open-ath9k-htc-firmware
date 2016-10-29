@@ -52,7 +52,7 @@
 typedef enum WMI_EVT_CLASS {
 	WMI_EVT_CLASS_NONE = -1,
 	WMI_EVT_CLASS_CMD_EVENT = 0,
-	WMI_EVT_CLASS_CMD_REPLY = 1,            
+	WMI_EVT_CLASS_CMD_REPLY = 1,
 	WMI_EVT_CLASS_MAX
 } WMI_EVT_CLASS;
 
@@ -70,25 +70,25 @@ typedef struct _WMI_SVC_CONFIG {
 	int             MaxCmdReplyEvts;    /* total buffers for command replies */
 	int             MaxEventEvts;       /* total buffers for low priority events */
 } WMI_SVC_CONFIG;
-                                                
+
 /* command dispatch entry */
 typedef struct _WMI_DISPATCH_ENTRY {
 	WMI_CMD_HANDLER      pCmdHandler;    /* dispatch function */
 	A_UINT16             CmdID;          /* WMI command to dispatch from */
-	A_UINT16             CheckLength;    /* expected length of command, set to 0 to bypass check */    
+	A_UINT16             CheckLength;    /* expected length of command, set to 0 to bypass check */
 } WMI_DISPATCH_ENTRY;
 
 /* dispatch table that is used to register a set of dispatch entries */
 typedef struct _WMI_DISPATCH_TABLE {
 	struct _WMI_DISPATCH_TABLE *pNext;              /* next dispatch, WMI-reserved */
-	void                       *pContext;           /* optional context that is passed to command handlers 
+	void                       *pContext;           /* optional context that is passed to command handlers
 							   assigned to this dispatch table  */
 	int                         NumberOfEntries;    /* number of elements pointed to by pTable */
 	WMI_DISPATCH_ENTRY         *pTable;             /* start of table */
 } WMI_DISPATCH_TABLE;
 
 #define WMI_DISPATCH_ENTRY_COUNT(table) \
-    (sizeof((table)) / sizeof(WMI_DISPATCH_ENTRY))  
+    (sizeof((table)) / sizeof(WMI_DISPATCH_ENTRY))
 
     /* handy macro to declare a dispatch table */
 #define WMI_DECLARE_DISPATCH_TABLE(name,dispatchEntries)         \
@@ -100,15 +100,15 @@ WMI_DISPATCH_TABLE name =                                        \
 
 typedef struct _WMI_BUF_CONTEXT {
 	HTC_BUF_CONTEXT     HtcBufCtx;
-        
-	WMI_EVT_CLASS       EventClass;   /* the event class this packet belongs to */ 
-	A_UINT16            Flags;        /* internal flags reserved for WMI */     
+
+	WMI_EVT_CLASS       EventClass;   /* the event class this packet belongs to */
+	A_UINT16            Flags;        /* internal flags reserved for WMI */
 } WMI_BUF_CONTEXT;
 
 /* ROM-version, eventually. For now, in RAM */
-    
+
 typedef void* wmi_handle_t;
-   
+
 /* the API table */
 typedef struct _wmi_svc_apis {
 	wmi_handle_t    (* _WMI_Init)(WMI_SVC_CONFIG *pWmiConfig);
@@ -119,15 +119,15 @@ typedef struct _wmi_svc_apis {
 	void            (* _WMI_SendCompleteHandler)(HTC_ENDPOINT_ID Endpt, adf_nbuf_t pHTCBuf, void *arg);
 	int             (* _WMI_GetControlEp)(wmi_handle_t h);
 	void            (* _WMI_Shutdown)(wmi_handle_t h);
-    
+
 	/* */
 	void            (*_WMI_RecvMessageHandler)(HTC_ENDPOINT_ID EndPt, adf_nbuf_t hdr_buf, adf_nbuf_t pHTCBuf, void *arg);
-	A_UINT8         (*_WMI_ServiceConnect)(HTC_SERVICE *pService, HTC_ENDPOINT_ID eid, 
-					       A_UINT8 *pDataIn, 
+	A_UINT8         (*_WMI_ServiceConnect)(HTC_SERVICE *pService, HTC_ENDPOINT_ID eid,
+					       A_UINT8 *pDataIn,
 					       int LengthIn,
 					       A_UINT8 *pDataOut,
 					       int *pLengthOut);
-                                 
+
 	void            *pReserved;  /* for expansion if need be */
 } WMI_SVC_APIS;
 

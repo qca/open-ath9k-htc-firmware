@@ -34,9 +34,9 @@
  */
 /*
  * @File: VBUF_api.h
- * 
+ *
  * @Abstract: Host Interface api
- * 
+ *
  * @Notes:
  */
 
@@ -53,7 +53,7 @@ typedef struct _VDESC
 	A_UINT16        data_offset;
 	A_UINT16        data_size;
 	A_UINT16        control;
-	A_UINT8         hw_desc_buf[MAX_HW_DESC_SIZE]; 
+	A_UINT8         hw_desc_buf[MAX_HW_DESC_SIZE];
 } VDESC;
 
 #define VDESC_HW_TO_VDESC(hwdesc)   ((VDESC *)(((A_UINT32 *)hwdesc - 4)))
@@ -65,9 +65,9 @@ struct vdesc_api {
 	void        (*_swap_vdesc)(VDESC *dest, VDESC *src);
 
         /* room to expand this table by another table */
-	void *pReserved;    
+	void *pReserved;
 };
 
 extern void vdesc_module_install(struct vdesc_api *apis);
 
-#endif 
+#endif

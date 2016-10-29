@@ -88,7 +88,7 @@ adf_os_mem_copy(void *dst, const void *src, adf_os_size_t size)
  * @param[in] src     source address
  * @param[in] size    buffer size
  */
-static inline void 
+static inline void
 adf_os_mem_move(void *dst, void *src, adf_os_size_t size)
 {
 	__adf_os_mem_move(dst,src,size);
@@ -97,7 +97,7 @@ adf_os_mem_move(void *dst, void *src, adf_os_size_t size)
 
 /**
  * @brief Fill a memory buffer
- * 
+ *
  * @param[in] buf   buffer to be filled
  * @param[in] b     byte to fill
  * @param[in] size  buffer size
@@ -111,7 +111,7 @@ adf_os_mem_set(void *buf, a_uint8_t b, adf_os_size_t size)
 
 /**
  * @brief Zero a memory buffer
- * 
+ *
  * @param[in] buf   buffer to be zeroed
  * @param[in] size  buffer size
  */

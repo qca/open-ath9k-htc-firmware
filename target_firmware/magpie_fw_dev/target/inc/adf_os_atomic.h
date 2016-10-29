@@ -32,12 +32,12 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/** 
+/**
  * @ingroup adf_os_public
  * @file adf_os_atomic.h
  * This file abstracts an atomic counter.
  */
- 
+
 #ifndef _ADF_OS_ATOMIC_H
 #define _ADF_OS_ATOMIC_H
 
@@ -50,7 +50,7 @@
  */
 typedef __adf_os_atomic_t    adf_os_atomic_t;
 
-/** 
+/**
  * @brief Initialize an atomic type variable
  * @param[in] v a pointer to an opaque atomic variable
  */

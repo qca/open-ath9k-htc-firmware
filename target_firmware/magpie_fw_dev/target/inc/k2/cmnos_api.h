@@ -449,10 +449,10 @@ do {                                                                    \
     A_CMN(timer._timer_run())
 
 #define A_PCI_BOOT_INIT() \
-    A_CMN(pci.pci_boot_init()) 
+    A_CMN(pci.pci_boot_init())
 
 #define A_GMAC_BOOT_INIT() \
-    A_CMN(gmac.gmac_boot_init()) 
+    A_CMN(gmac.gmac_boot_init())
 
 #if SYSTEM_MODULE_ALLOCRAM
 /* Default size of ALLOCRAM area */

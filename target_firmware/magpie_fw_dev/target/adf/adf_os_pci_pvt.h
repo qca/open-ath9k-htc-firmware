@@ -47,7 +47,7 @@
 /**
  * exit module macro
  */
-#define __adf_os_pci_module_exit(_fn)   
+#define __adf_os_pci_module_exit(_fn)
 
 /**
  * initiallize the PCI driver structure
@@ -69,10 +69,10 @@
  * @param osdev
  * @param offset
  * @param val
- * 
+ *
  * @return int
  */
-static inline int 
+static inline int
 __adf_os_pci_config_read8(adf_os_device_t osdev, int offset, a_uint8_t *val)
 {
     (*val) = wlan_pci_config_read(offset, 1);
@@ -82,39 +82,39 @@ __adf_os_pci_config_read8(adf_os_device_t osdev, int offset, a_uint8_t *val)
      */
 }
 
-static inline int 
+static inline int
 __adf_os_pci_config_write8(adf_os_device_t osdev, int offset, a_uint8_t val)
 {
     wlan_pci_config_write(offset, val, 1);
-    return 0;    
+    return 0;
 }
 
-static inline int 
+static inline int
 __adf_os_pci_config_read16(adf_os_device_t osdev, int offset, a_uint16_t *val)
 {
     (*val) = wlan_pci_config_read(offset, 2);
     return 0;
 }
 
-static inline int 
+static inline int
 __adf_os_pci_config_write16(adf_os_device_t osdev, int offset, a_uint16_t val)
 {
     wlan_pci_config_write(offset, val, 2);
-    return 0;  
+    return 0;
 }
 
-static inline int 
+static inline int
 __adf_os_pci_config_read32(adf_os_device_t osdev, int offset, a_uint32_t *val)
 {
     (*val) = wlan_pci_config_read(offset, 4);
     return 0;
 }
 
-static inline int 
+static inline int
 __adf_os_pci_config_write32(adf_os_device_t osdev, int offset, a_uint32_t val)
 {
     wlan_pci_config_write(offset, val, 4);
-    return 0;  
+    return 0;
 }
 
 #endif

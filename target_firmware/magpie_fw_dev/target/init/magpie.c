@@ -97,7 +97,7 @@ void _wmi_cmd_rsp(void *pContext, WMI_COMMAND_ID cmd_id, A_UINT16 SeqNo,
 	A_UINT8 *pData;
 
 	netbuf = WMI_AllocEvent(pContext, WMI_EVT_CLASS_CMD_REPLY, sizeof(WMI_CMD_HDR) + Length);
-    
+
 	if (netbuf == ADF_NBUF_NULL) {
 		adf_os_print("%s: buffer allocation for event_id %x failed!\n", __FUNCTION__, cmd_id);
 		adf_os_assert(0);
@@ -116,10 +116,10 @@ void _wmi_cmd_rsp(void *pContext, WMI_COMMAND_ID cmd_id, A_UINT16 SeqNo,
 void Magpie_init(void)
 {
 	A_PRINTF("[+++Magpie_init]\n\r");
- 
+
 	A_PRINTF("[+++VBUF_init(%d)]\n\r", MAX_BUF_NUM);
 	VBUF_init(MAX_BUF_NUM);
-    
+
 	A_PRINTF("[+++VBUF_init(%d)]\n\r", MAX_DESC_NUM);
 	VDESC_init(MAX_DESC_NUM);
 
@@ -137,7 +137,7 @@ void Magpie_init(void)
 #if SYSTEM_MODULE_HP_EP6
 	HIF_config_pipe(hif_handle, HIF_USB_PIPE_MP_TX, 3);
 #endif
-    
+
 	A_PRINTF("[+++HIF_init(0)]\n\r");
 
 	HIF_start(hif_handle);
@@ -172,7 +172,7 @@ void Magpie_init(void)
 	WMI_RegisterDispatchTable(Magpie_Sys_Commands_Tbl.pContext, &Magpie_Sys_Commands_Tbl);
 
 #endif/* ZM_FM_LOOPBACK == 0 */
-#endif /* MAGPIE_ENABLE_WLAN */                 
+#endif /* MAGPIE_ENABLE_WLAN */
 }
 
 #endif /* #if MAGPIE==1 */

@@ -48,12 +48,12 @@
 #define ADF_OS_MAX_SCATTER  __ADF_OS_MAX_SCATTER
 /**
  * @brief Max number of scatter-gather segments.
- */ 
+ */
 #define ADF_OS_MAX_SGLIST   4
 
 /**
  * @brief denotes structure is packed.
- */ 
+ */
 #define adf_os_packed       __adf_os_packed
 
 /**
@@ -86,34 +86,34 @@ typedef __adf_os_off_t      adf_os_off_t;
 
 /**
  * @brief DMA mapping object.
- */ 
+ */
 typedef __adf_os_dma_map_t  adf_os_dma_map_t;
 
 /**
  * @brief DMA address.
- */ 
+ */
 typedef __adf_os_dma_addr_t     adf_os_dma_addr_t;
 
 /**
  * @brief DMA size.
- */ 
+ */
 typedef __adf_os_dma_size_t     adf_os_dma_size_t;
 
 /**
  * @brief Information inside a DMA map.
- */ 
+ */
 typedef struct adf_os_dmamap_info{
     a_uint32_t                  nsegs;      /**< total number mapped segments*/
     struct __dma_segs{
         adf_os_dma_addr_t       paddr;      /**< physical(dma'able) address of the segment*/
         adf_os_dma_size_t       len;        /**< length of the segment*/
-    } dma_segs[ADF_OS_MAX_SCATTER]; 
+    } dma_segs[ADF_OS_MAX_SCATTER];
 
 }adf_os_dmamap_info_t;
 
 /**
  * @brief Representation of a scatter-gather list.
- */ 
+ */
 typedef struct adf_os_sglist{
     a_uint32_t                  nsegs;      /**< total number of segments*/
     struct __sg_segs{
@@ -133,7 +133,7 @@ typedef struct adf_os_sglist{
  *  operations, where reading a network packet or
  *  storage sector corresponds to a read operation in
  *  bus_dma.
- * 
+ *
  *  ADF_SYNC_PREREAD       Perform any synchronization
  *                         required prior to an update
  *                         of host memory by the DMA
@@ -180,7 +180,7 @@ typedef enum {
 } a_status_t;
 
 /**
- * @brief An ecore needs to provide a table of all pci device/vendor id's it 
+ * @brief An ecore needs to provide a table of all pci device/vendor id's it
  * supports
  *
  * This table should be terminated by a NULL entry , i.e. {0}
@@ -214,7 +214,7 @@ typedef enum {
 
 /**
  * @brief Representation of a h/w resource.
- */ 
+ */
 typedef struct {
     a_uint64_t             start;
     a_uint64_t             end;
@@ -225,7 +225,7 @@ typedef struct {
 
 /**
  * @brief Representation of bus registration data.
- */ 
+ */
 typedef union {
     adf_os_pci_dev_id_t  *pci;
     void              *raw;
@@ -233,7 +233,7 @@ typedef union {
 
 /**
  * @brief Representation of data required for attach.
- */ 
+ */
 typedef union {
     adf_os_pci_dev_id_t pci;
     void *raw;
@@ -243,7 +243,7 @@ typedef union {
 
 /**
  * @brief Types of buses.
- */ 
+ */
 typedef enum {
     ADF_OS_BUS_TYPE_PCI = 1,
     ADF_OS_BUS_TYPE_GENERIC,
@@ -251,7 +251,7 @@ typedef enum {
 
 /**
  * @brief IRQ handler response codes.
- */ 
+ */
 typedef enum {
     ADF_OS_IRQ_NONE,
     ADF_OS_IRQ_HANDLED,
@@ -259,7 +259,7 @@ typedef enum {
 
 /**
  * @brief DMA mask types.
- */ 
+ */
 typedef enum {
     ADF_OS_DMA_MASK_32BIT,
     ADF_OS_DMA_MASK_64BIT,
@@ -272,8 +272,8 @@ typedef enum {
  *        ADF_OS_DMA_FROM_DEVICE (data going from memory to device)
  */
 typedef enum {
-    ADF_OS_DMA_TO_DEVICE = __ADF_OS_DMA_TO_DEVICE, 
-    ADF_OS_DMA_FROM_DEVICE = __ADF_OS_DMA_FROM_DEVICE, 
+    ADF_OS_DMA_TO_DEVICE = __ADF_OS_DMA_TO_DEVICE,
+    ADF_OS_DMA_FROM_DEVICE = __ADF_OS_DMA_FROM_DEVICE,
 } adf_os_dma_dir_t;
 
 /*
@@ -300,12 +300,12 @@ typedef void (*adf_os_timer_func_t)(void *);
 
 /**
  * @brief Prototype of IRQ function.
- */ 
-typedef adf_os_irq_resp_t (*adf_os_drv_intr)(adf_drv_handle_t hdl);                  
+ */
+typedef adf_os_irq_resp_t (*adf_os_drv_intr)(adf_drv_handle_t hdl);
 
 /**
  * @brief The OS print routine.
- */ 
+ */
 #define adf_os_print         __adf_os_print
 
 /**
@@ -316,8 +316,8 @@ typedef struct _adf_drv_info{
     /**
      * @brief driver specific functions
      */
-    adf_drv_handle_t (*drv_attach)  (adf_os_resource_t *res, int count, 
-                                     adf_os_attach_data_t *data, 
+    adf_drv_handle_t (*drv_attach)  (adf_os_resource_t *res, int count,
+                                     adf_os_attach_data_t *data,
                                      adf_os_device_t osdev);
     void       (*drv_detach)  (adf_drv_handle_t hdl);
     void       (*drv_suspend) (adf_drv_handle_t hdl, adf_os_pm_t pm);

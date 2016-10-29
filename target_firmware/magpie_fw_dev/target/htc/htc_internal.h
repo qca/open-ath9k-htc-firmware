@@ -33,11 +33,11 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
- * @File: 
- * 
+ * @File:
+ *
  * @Abstract: internal data and structure definitions for HTC
- * 
- * @Notes: 
+ *
+ * @Notes:
  */
 
 #ifndef HTC_INTERNAL_H_
@@ -49,7 +49,7 @@
                                           (sizeof(HTC_RECORD_HDR)) * 2  ) +            \
                                           HTC_HDR_LENGTH,                              \
                                           sizeof(A_UINT32)))
-/* minimum allocation for a credit message */                                   
+/* minimum allocation for a credit message */
 #define MIN_CREDIT_BUFFER_ALLOC_SIZE     (MIN_BUF_SIZE_FOR_RPTS)
 
 /* max ctrl buffers size for a setup message */
@@ -62,14 +62,14 @@
 
 #define HTC_DEFAULT_MAX_EP_PENDING_CREDIT_REPORTS 3  /* an EP should not have more than this many outstanding reports */
 
-#define HTC_FLAGS_CRPT_EP_MASK      0x1F     /* if the message is a credit report this is the endpoint 
+#define HTC_FLAGS_CRPT_EP_MASK      0x1F     /* if the message is a credit report this is the endpoint
                                                 that issued it */
 
 #define HTC_FLAGS_CREDIT_RPT       (1 << 5)  /* the buffer was a credit report */
 #define HTC_FLAGS_BUF_HDR          (1 << 6)  /* the buffer was manipulated and a header added */
 #define HTC_FLAGS_RECV_END_MSG     (1 << 7)  /* this buffer is the last buffer for the recev
-                                                message (used for recv pause logic) */     
-                                                                                                                              
+                                                message (used for recv pause logic) */
+
 #define HTC_MAILBOX                 0        /* we use mailbox 0 for all communications */
 #define HTC_ANY_ENDPOINT_MASK       0xFFFFFFFF
 #define HTC_LOOKAHEAD_POST_VALID    0x55
@@ -79,14 +79,14 @@
 typedef struct _HTC_ENDPOINT {
 	A_INT16       CreditsToReturn;       /* credits that are ready to be returned to the host */
 	HTC_SERVICE   *pService;             /* service that is bound to this endpoint */
-#ifdef HTC_PAUSE_RESUME_REF_COUNTING 
+#ifdef HTC_PAUSE_RESUME_REF_COUNTING
 	int           PauseRefCount;         /* reference count */
 #endif
 	A_INT16       CreditReturnThreshhold;   /* threshold before credits are returned via NULL pkts,
-						   this reduces dribbling effect */    
-	A_INT16       CreditsConsumed;          /* number of credits consumed (outstanding) on the endpoint */  
-	A_UINT16      ConnectionFlags;          /* HTC connection flags */          
-	int           PendingCreditReports;     /* no. of pending credit reports issued by this endpoint */    
+						   this reduces dribbling effect */
+	A_INT16       CreditsConsumed;          /* number of credits consumed (outstanding) on the endpoint */
+	A_UINT16      ConnectionFlags;          /* HTC connection flags */
+	int           PendingCreditReports;     /* no. of pending credit reports issued by this endpoint */
 	A_UINT8       DownLinkPipeID;           /* The pipe ID to be use for the direction: target -> host */
 	A_UINT8       UpLinkPipeID;             /* The pipe ID to be use for the direction: host   -> target */
 } HTC_ENDPOINT;
@@ -113,7 +113,7 @@ typedef struct _HTC_CONTEXT {
 	pool_handle_t   PoolHandle;
 
 	// Left a door for extension the structure
-	void *pReserved;      
+	void *pReserved;
 } HTC_CONTEXT;
 
 #define HTC_STATE_SETUP_COMPLETE    (1 << 0)  /* HTC host-target setup is complete */

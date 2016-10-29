@@ -115,7 +115,7 @@ enum {
 
 #define RX_FLIP_THRESHOLD       3       /* XXX */
 
-#ifdef MAGPIE_MERLIN  
+#ifdef MAGPIE_MERLIN
 #define MAX_TX_RATE_TBL         46
 #else
 #define MAX_TX_RATE_TBL         54//46
@@ -149,7 +149,7 @@ typedef struct TxRateCtrl_s {
 typedef struct phy_rate_ctrl {
 	/* 11n state */
 	A_UINT8  validPhyRateCount[WLAN_RC_PHY_MAX]; /* valid rate count */
-	A_UINT8  validPhyRateIndex[WLAN_RC_PHY_MAX][MAX_TX_RATE_TBL]; /* index */    
+	A_UINT8  validPhyRateIndex[WLAN_RC_PHY_MAX][MAX_TX_RATE_TBL]; /* index */
 }PHY_STATE_CTRL;
 
 /* per-node state */
@@ -272,7 +272,7 @@ void rcSibInit(struct ath_softc_tgt *, struct ath_node_target *);
 
 /*
  * Determines and returns the new Tx rate index.
- */ 
+ */
 A_UINT16 rcRateFind(struct ath_softc_tgt *, struct atheros_node *,
 		    A_UINT32 frameLen,const  RATE_TABLE *pRateTable);
 

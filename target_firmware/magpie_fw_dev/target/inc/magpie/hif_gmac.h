@@ -50,7 +50,7 @@
 #define ATH_P_MAGNORM           0x13 /*Magpie GMAC 19 for HTC & others*/
 
 #define ETH_P_ATH               0x88bd
-     
+
 typedef enum hif_gmac_pipe{
     HIF_GMAC_PIPE_RX = 1, /*Normal Priority RX*/
     HIF_GMAC_PIPE_TX = 2, /*Normal Priority TX*/
@@ -162,7 +162,7 @@ enum __gmac_reg_mac_cfg2{
     MAC_CFG2_PREAMBLE = (7 << 12),/*Default Preamble Length*/
 };
 enum __gmac_reg_mii_cfg{
-    MII_CFG_CLK_2MHZ  = 0x0006,/*Clock is 2Mhz*/ 
+    MII_CFG_CLK_2MHZ  = 0x0006,/*Clock is 2Mhz*/
 };
 
 
@@ -198,7 +198,7 @@ enum __gmac_reg_mii_addr{
 #define MII_ADDR_RESET_ENABLE_AUTONEG (1 << 12)
 #define MII_ADDR_RESET_ENABLE_LOOPBACK (1<<14)
 #define MII_ADDR_RESET_SOFT_RESET (1<<15)
-/* flags for autonegotiaion register MII_ADDR_AUTONEG_ADV, 
+/* flags for autonegotiaion register MII_ADDR_AUTONEG_ADV,
    All writes to this register should be followed by a soft
    reset on the phy
    The list is not exhaustive, only required fields added
@@ -230,7 +230,7 @@ enum __gmac_reg_fifo_cfg4{
     FIFO_CFG4_RX_ALL = 0x3ffff,/*receive all frames*/
 };
 enum __gmac_reg_if_ctrl{
-    IF_CTRL_SPEED_100  = (1 << 16),/*Interface speed 100 Mbps for MII*/ 
+    IF_CTRL_SPEED_100  = (1 << 16),/*Interface speed 100 Mbps for MII*/
 };
 
 
@@ -257,15 +257,15 @@ struct __ethhdr{
 }__attribute__((packed));
 /**
  * @brief this is will be in big endian format
- */ 
+ */
 struct __athhdr{
 #ifdef LITTLE_ENDIAN
     A_UINT8   proto:6,
                 res:2;
-#else                    
+#else
     A_UINT8   res:2,
                 proto:6;
-#endif                
+#endif
     A_UINT8   res_lo;
     A_UINT16  res_hi;
 }__attribute__((packed));

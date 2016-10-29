@@ -39,7 +39,7 @@
 #include "Magpie_api.h"
 
 
-typedef struct 
+typedef struct
 {
 	A_timer_t 				*magpie_timer;
 	adf_os_timer_func_t 	timer_func;
@@ -50,7 +50,7 @@ typedef struct
 void
 __adf_os_timer_func(A_HANDLE timer_handle, void *arg);
 
-/* 
+/*
  * Initialize a timer
  */
 static inline void
@@ -61,8 +61,8 @@ __adf_os_timer_init(adf_os_handle_t  hdl, __adf_os_timer_t   *timer,
     A_INIT_TIMER(timer->magpie_timer, __adf_os_timer_func, arg);
 }
 
-/* 
- * start a timer 
+/*
+ * start a timer
  */
 static inline void
 __adf_os_timer_start(__adf_os_timer_t *timer, int msec)

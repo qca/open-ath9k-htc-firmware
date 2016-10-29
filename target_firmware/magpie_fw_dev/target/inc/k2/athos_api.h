@@ -82,7 +82,7 @@ struct _A_os_linkage_check {
 	int table;
 };
 
-/* 
+/*
  * A_INIT() handles any initialization needed by the OS abstraction,
  * and it clears the application's BSS, if necessary.  (Application BSS
  * is not cleared if the application is linked into a single image that
@@ -96,7 +96,7 @@ A_INIT(void)
 {
 	struct _A_os_linkage_check link_check;
 	unsigned int *clrptr;
-    
+
 	if (&START_BSS != _A_MAGPIE_INDIRECTION_TABLE->cmnos.start_bss) {
 		/* Clear BSS */
 		for (clrptr = &START_BSS; clrptr < &END_BSS; clrptr++) {

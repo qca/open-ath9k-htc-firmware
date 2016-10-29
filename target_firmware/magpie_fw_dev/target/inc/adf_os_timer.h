@@ -53,7 +53,7 @@ typedef __adf_os_timer_t           adf_os_timer_t;
 
 /**
  * @brief Initialize a timer
- * 
+ *
  * @param[in] hdl       OS handle
  * @param[in] timer     timer object pointer
  * @param[in] func      timer function
@@ -70,7 +70,7 @@ adf_os_timer_init(adf_os_handle_t      hdl,
 
 /**
  * @brief Start a one-shot timer
- * 
+ *
  * @param[in] timer     timer object pointer
  * @param[in] msec      expiration period in milliseconds
  */
@@ -84,7 +84,7 @@ adf_os_timer_start(adf_os_timer_t *timer, int msec)
  * @brief Cancel a timer
  *
  * @param[in] timer     timer object pointer
- * 
+ *
  * @retval    TRUE      timer was cancelled and deactived
  * @retval    FALSE     timer was cancelled but already got fired.
  */

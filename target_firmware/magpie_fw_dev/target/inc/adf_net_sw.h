@@ -36,7 +36,7 @@
  * @ingroup adf_net_public
  * @file adf_net_sw.h
  * This file defines the device and virtual device switch tables.
- */ 
+ */
 
 #ifndef __ADF_NET_SW_H
 #define __ADF_NET_SW_H
@@ -49,7 +49,7 @@ typedef struct _adf_dev_sw{
     /**
      * @brief Handler for device open - mandatory interface
      */
-    a_status_t        (*drv_open)      (adf_drv_handle_t hdl); 
+    a_status_t        (*drv_open)      (adf_drv_handle_t hdl);
     /**
      * @brief Handler for device close - mandatory interface
      */
@@ -66,7 +66,7 @@ typedef struct _adf_dev_sw{
     /**
      * @brief Handler for ioctl - mandatory interface
      */
-    a_status_t        (*drv_ioctl)     (adf_drv_handle_t hdl, int num, 
+    a_status_t        (*drv_ioctl)     (adf_drv_handle_t hdl, int num,
                                         void *data);
     /**
      * @brief Handler for transmission timeout - mandatory interface
@@ -77,17 +77,17 @@ typedef struct _adf_dev_sw{
      */
     a_status_t  (*drv_wcmd) (adf_drv_handle_t hdl, adf_net_wcmd_type_t cmd,
                                            adf_net_wcmd_data_t *data);
-    /** 
-     * @brief Handler for polling if polling/deferred processing required - 
+    /**
+     * @brief Handler for polling if polling/deferred processing required -
      * optional interface
      */
-    adf_net_poll_resp_t (*drv_poll) (adf_drv_handle_t hdl, int quota, 
+    adf_net_poll_resp_t (*drv_poll) (adf_drv_handle_t hdl, int quota,
                                      int *work_done);
     /**
      * @brief Handler for per cpu deffered callback (e.g. for RSS) - optional
      * interface
      */
-    adf_net_poll_resp_t (*drv_poll_cpu) (adf_drv_handle_t hdl, int quota, 
+    adf_net_poll_resp_t (*drv_poll_cpu) (adf_drv_handle_t hdl, int quota,
                                          int *work_done, void *arg);
     /**
      * @brief Handler for disabling receive interrupts for polling.

@@ -564,7 +564,7 @@ static int db_intr_cmd(char *cmd, char *param1, char *param2, char *param3)
 			pending_intrs = A_INTR_GET_INTRENABLE()&(~CMNOS_IMASK_XTTIMER);
 			A_INTR_SET_INTRENABLE(pending_intrs);
 			A_PRINTF("- intr [0x%08x]\n\r", pending_intrs);
-            
+
 		}
 		else if( db_ascii_to_hex(param2, &data)==0 )
 		{
@@ -572,7 +572,7 @@ static int db_intr_cmd(char *cmd, char *param1, char *param2, char *param3)
 				delay = data;
 			else
 				delay = 3;
-            
+
 			A_PRINTF("==>set cb to %d seconds \n\r", delay);
 		}
 
@@ -623,7 +623,7 @@ static void clk_change(uint32_t clk, uint32_t ratio, uint32_t baud)
 		clk_sel = 4;
 		break;
         case 40:
-		clk_sel = 6;            
+		clk_sel = 6;
 		break;
         default:
 		clk_sel = 6;
@@ -640,7 +640,7 @@ static int db_clock_cmd(char *cmd, char *param1, char *param2, char *param3)
 	uint32_t ratio = 1;
 	uint32_t baud = 19200;
 	uint32_t clk = 0;
-    
+
 	if( db_ascii_to_int(param1, &clk) != -1 )
 	{
 		A_PRINTF("changing clock to %d\n", clk);
@@ -667,7 +667,7 @@ static int db_info_cmd(char *cmd, char *param1, char *param2, char *param3)
 	return 1;
 
 #else
-    
+
 	{
 		uint32_t ccount1;
 		uint32_t ccount2;

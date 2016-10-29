@@ -49,7 +49,7 @@
 #define _ROM_CFG_H_
 
 /************************** FPGA version **************************/
-#define MAGPIE_FPGA_RAM_256K        0 
+#define MAGPIE_FPGA_RAM_256K        0
 
 /************************** SYSTEM WIDE ***************************/
 /* Release Code :
@@ -210,7 +210,7 @@ typedef enum {
 #define WATCH_DOG_MAGIC_PATTERN_ADDR    (SYS_D_RAM_REGION_0_BASE+SYS_RAM_SZIE-0x4)        //  0x53fffc,magic pattern address
 #define WATCH_DOG_RESET_COUNTER_ADDR    (SYS_D_RAM_REGION_0_BASE+SYS_RAM_SZIE-0x8)        //  0x53fff8,record the reset counter
 #define DEBUG_SYSTEM_STATE_ADDR         (SYS_D_RAM_REGION_0_BASE+SYS_RAM_SZIE-0xc)        //  0x53fff4,record the state of system
-#define CURRENT_PROGRAM_ADDR            (SYS_D_RAM_REGION_0_BASE+SYS_RAM_SZIE-0x10)       //  0x53fff0,reserved 
+#define CURRENT_PROGRAM_ADDR            (SYS_D_RAM_REGION_0_BASE+SYS_RAM_SZIE-0x10)       //  0x53fff0,reserved
 
 #define WATCH_DOG_MAGIC_PATTERN         (*((volatile u32_t*)(WATCH_DOG_MAGIC_PATTERN_ADDR)))
 #define WATCH_DOG_RESET_COUNTER         (*((volatile u32_t*)(WATCH_DOG_RESET_COUNTER_ADDR)))

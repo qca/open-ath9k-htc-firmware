@@ -34,9 +34,9 @@
  */
 /*
  * @File: HIF_api.h
- * 
+ *
  * @Abstract: Host Interface api
- * 
+ *
  * @Notes:
  */
 
@@ -64,33 +64,33 @@ typedef void* hif_handle_t;
 /* hardware API table structure (API descriptions below) */
 struct hif_api {
     hif_handle_t (*_init)(HIF_CONFIG *pConfig);
-            
+
     void (* _shutdown)(hif_handle_t);
-    
+
     void (*_register_callback)(hif_handle_t, HIF_CALLBACK *);
-    
+
     int  (*_get_total_credit_count)(hif_handle_t);
-    
+
     void (*_start)(hif_handle_t);
 
     void (*_config_pipe)(hif_handle_t handle, int pipe, int creditCount);
-    
+
     int  (*_send_buffer)(hif_handle_t handle, int pipe, adf_nbuf_t buf);
 
-    void (*_return_recv_buf)(hif_handle_t handle, int pipe, adf_nbuf_t buf);                                 
+    void (*_return_recv_buf)(hif_handle_t handle, int pipe, adf_nbuf_t buf);
     //void (*_set_recv_bufsz)(int pipe, int bufsz);
     //void (*_pause_recv)(int pipe);
     //void (*_resume_recv)(int pipe);
     int  (*_is_pipe_supported)(hif_handle_t handle, int pipe);
-    
+
     int  (*_get_max_msg_len)(hif_handle_t handle, int pipe);
-    
+
     int  (*_get_reserved_headroom)(hif_handle_t handle);
-    
+
     void (*_isr_handler)(hif_handle_t handle);
-    
+
     void (*_get_default_pipe)(hif_handle_t handle, A_UINT8 *pipe_uplink, A_UINT8 *pipe_downlink);
-    
+
         /* room to expand this table by another table */
     void *pReserved;
 };

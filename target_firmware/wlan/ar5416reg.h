@@ -172,7 +172,7 @@
 #define AR_SREV_VERSION_HOWL                  0x014
 
 #define AR_SREV_5416_V20_OR_LATER(_ah) (AR_SREV_HOWL((_ah)) || AR_SREV_OWL_20_OR_LATER(_ah))
-#define AR_SREV_5416_V22_OR_LATER(_ah)	(AR_SREV_HOWL((_ah)) || AR_SREV_OWL_22_OR_LATER(_ah)) 
+#define AR_SREV_5416_V22_OR_LATER(_ah)	(AR_SREV_HOWL((_ah)) || AR_SREV_OWL_22_OR_LATER(_ah))
 
 #ifdef AR5416_EMULATION
 /* XXX - AR5416 Emulation only
@@ -788,7 +788,7 @@
                                          ((AH_PRIVATE((_ah))->ah_macVersion == AR_SREV_VERSION_MERLIN) && \
                                           (AH_PRIVATE((_ah))->ah_macRev >= AR_SREV_REVISION_MERLIN_20)))
 
-#define AR_SREV_SOWL(_ah) ((AH_PRIVATE((_ah))->ah_macVersion == AR_SREV_VERSION_SOWL))				
+#define AR_SREV_SOWL(_ah) ((AH_PRIVATE((_ah))->ah_macVersion == AR_SREV_VERSION_SOWL))
 #define AR_SREV_SOWL_11(_ah) (AR_SREV_SOWL(_ah) && (AH_PRIVATE((_ah))->ah_macRev == AR_SREV_REVISION_SOWL_11))
 
 #define AR_RADIO_SREV_MAJOR    0xf0

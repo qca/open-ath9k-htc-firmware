@@ -66,13 +66,13 @@ extern void __adf_os_defer_func(void *arg, int pending);
 
 /**
  * @brief initiallize the defer function (work or bh)
- * 
+ *
  * @param defer
  * @param func
  * @param arg
  */
 static inline void __adf_os_init_defer(__adf_os_defer_t  *defer,
-                                       adf_os_defer_fn_t    func, 
+                                       adf_os_defer_fn_t    func,
                                        void              *arg)
 {
     defer->ctx.caller_fn  = func;
@@ -97,27 +97,27 @@ static inline void	__adf_os_init_bh(adf_os_handle_t  hdl,
 	//__adf_os_init_defer(bh, func, arg);
 	A_TASKLET_INIT_TASK(func, arg, bh);
 }
-static inline void __adf_os_sched_work(adf_os_handle_t  hdl, 
+static inline void __adf_os_sched_work(adf_os_handle_t  hdl,
                                        __adf_os_work_t  * work)
 {
     //taskqueue_enqueue(taskqueue_thread, &work->tsk);
 }
-static inline void __adf_os_disable_work(adf_os_handle_t  hdl, 
+static inline void __adf_os_disable_work(adf_os_handle_t  hdl,
                                          __adf_os_work_t  * work)
 {
     //taskqueue_drain(taskqueue_thread, &work->tsk);
 }
 
-static inline void __adf_os_sched_bh(adf_os_handle_t  hdl, 
+static inline void __adf_os_sched_bh(adf_os_handle_t  hdl,
                                        __adf_os_bh_t  * bh)
 {
     A_TASKLET_SCHEDULE(bh);
 }
 
-static inline void __adf_os_disable_bh(adf_os_handle_t  hdl, 
+static inline void __adf_os_disable_bh(adf_os_handle_t  hdl,
                                        __adf_os_bh_t  * bh)
 {
     A_TASKLET_DISABLE(bh);
 }
 
-#endif 
+#endif

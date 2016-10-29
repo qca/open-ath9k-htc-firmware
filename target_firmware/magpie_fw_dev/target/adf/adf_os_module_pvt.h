@@ -55,18 +55,18 @@
 
 /**
  * @brief generic driver /module init function
- * 
+ *
  * @param mod (module data)
  * @param event (LOAD or UNLOAD)
  * @param arg (any extra argument needed if
- * 
+ *
  * @return int
  */
 /**
  * exit module macro
  */
-#define __adf_os_virt_module_exit(_fn)  
+#define __adf_os_virt_module_exit(_fn)
 
-#define __adf_os_module_dep(_name, _dep)    
+#define __adf_os_module_dep(_name, _dep)
 
 #endif

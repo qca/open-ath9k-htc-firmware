@@ -61,20 +61,20 @@ struct ath_ratectrl {
 #define ATH_RC_RTSCTS_FLAG           0x10
 #define ATH_RC_TX_STBC_FLAG          0x20    /* TX STBC */
 #define ATH_RC_RX_STBC_FLAG          0xC0    /* RX STBC ,2 bits */
-#define ATH_RC_RX_STBC_FLAG_S        6   
+#define ATH_RC_RX_STBC_FLAG_S        6
 #define ATH_RC_WEP_TKIP_FLAG         0x100    /* WEP/TKIP encryption */
 
 enum ath_rc_cwmode{
 	ATH_RC_CW20_MODE,
-	ATH_RC_CW40_MODE,     
+	ATH_RC_CW40_MODE,
 };
 
 #define ATH_RC_PROBE_ALLOWED    0x00000001
 #define ATH_RC_MINRATE_LASTRATE 0x00000002
 
 struct ath_rc_series {
-	a_uint8_t rix;	
-	a_uint8_t tries;	
+	a_uint8_t rix;
+	a_uint8_t tries;
 	u_int8_t tx_chainmask;
 	a_uint8_t flags;
 	a_uint32_t max4msframelen;
@@ -113,7 +113,7 @@ void ath_rate_tx_complete(struct ath_softc_tgt *, struct ath_node_target *,
 			  a_int32_t nframes, a_int32_t nbad);
 
 
-void ath_rate_stateupdate(struct ath_softc_tgt *sc, struct ath_node_target *an, 
+void ath_rate_stateupdate(struct ath_softc_tgt *sc, struct ath_node_target *an,
 			  enum ath_rc_cwmode cwmode);
 
 

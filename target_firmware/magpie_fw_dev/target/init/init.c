@@ -109,7 +109,7 @@ change_magpie_clk(void)
 
 	A_DELAY_USECS(60); // wait for stable
 
-	/* CPU & AHB settings */  
+	/* CPU & AHB settings */
 	/*
 	 * AHB clk = ( CPU clk / 2 )
 	 */
@@ -193,7 +193,7 @@ LOCAL void zfGenExceptionEvent(uint32_t exccause, uint32_t pc, uint32_t badvaddr
 	iowrite32_usb(ZM_EP3_DATA_OFFSET, exccause);
 	iowrite32_usb(ZM_EP3_DATA_OFFSET, pc);
 	iowrite32_usb(ZM_EP3_DATA_OFFSET, badvaddr);
-    
+
 	mUSB_EP3_XFER_DONE();
 }
 
@@ -237,14 +237,14 @@ AR6002_fatal_exception_handler_patch(CPU_exception_frame_t *exc_frame)
 #endif
 	A_ASSFAIL(&dump);
 
-#if defined(_ROM_)     
+#if defined(_ROM_)
 	A_WDT_ENABLE();
 #endif
 
 	while(1) ;
 }
 
-void 
+void
 HTCControlSvcProcessMsg_patch(HTC_ENDPOINT_ID EndpointID, adf_nbuf_t hdr_buf,
 			      adf_nbuf_t pBuffers, void *arg)
 {
@@ -265,7 +265,7 @@ HTCControlSvcProcessMsg_patch(HTC_ENDPOINT_ID EndpointID, adf_nbuf_t hdr_buf,
 }
 
 /* Patch callback for check the endpoint ID is correct or not */
-void 
+void
 HTCMsgRecvHandler_patch(adf_nbuf_t hdr_buf, adf_nbuf_t buffer, void *context)
 {
 	int eid;
@@ -273,27 +273,27 @@ HTCMsgRecvHandler_patch(adf_nbuf_t hdr_buf, adf_nbuf_t buffer, void *context)
 	a_uint32_t anblen;
 	adf_nbuf_t tmp_nbuf;
 	HTC_FRAME_HDR *pHTCHdr;
-                
+
 	if (hdr_buf == ADF_NBUF_NULL) {
 		/* HTC hdr is not in the hdr_buf */
 		tmp_nbuf = buffer;
 	} else {
 		tmp_nbuf = hdr_buf;
 	}
-                
-	adf_nbuf_peek_header(tmp_nbuf, &anbdata, &anblen);        
-	pHTCHdr = (HTC_FRAME_HDR *)anbdata; 
-  
+
+	adf_nbuf_peek_header(tmp_nbuf, &anbdata, &anblen);
+	pHTCHdr = (HTC_FRAME_HDR *)anbdata;
+
 	eid = pHTCHdr->EndpointID;
-    
+
 	if ((eid != 0) && (htc_complete_setup == 0)) {
 		A_PRINTF("\nHTC Hdr EndpointID = %d, anblen = %d\n", pHTCHdr->EndpointID, anblen);
 		A_PRINTF("HTC Hder : %2x-%2x-%2x-%2x-%2x-%2x-%2x-%2x-%2x-%2x-%2x-%2x\n",
-                         *anbdata, *(anbdata+1), *(anbdata+2), *(anbdata+3), 
+                         *anbdata, *(anbdata+1), *(anbdata+2), *(anbdata+3),
                          *(anbdata+4), *(anbdata+5), *(anbdata+6), *(anbdata+7),
-                         *(anbdata+8), *(anbdata+9), *(anbdata+10), *(anbdata+11)); 
+                         *(anbdata+8), *(anbdata+9), *(anbdata+10), *(anbdata+11));
 		A_PRINTF("init_htc_handle = 0x%8x\n", init_htc_handle);
-            
+
 		if (pHTCHdr->EndpointID == 1) {
 			A_PRINTF("Return WMI Command buffer\n");
 			HTC_ReturnBuffers(init_htc_handle, 1, tmp_nbuf);
@@ -305,8 +305,8 @@ HTCMsgRecvHandler_patch(adf_nbuf_t hdr_buf, adf_nbuf_t buffer, void *context)
 	} else {
 		if ((pHTCHdr->EndpointID < 0) || (pHTCHdr->EndpointID >= ENDPOINT_MAX)) {
 			A_PRINTF("HTC Hdr EndpointID = %d, anblen = %d\n", pHTCHdr->EndpointID, anblen);
-			A_PRINTF("HTC Hder : %2x-%2x-%2x-%2x-%2x-%2x-%2x-%2x\n", 
-                                 *anbdata, *(anbdata+1), *(anbdata+2), *(anbdata+3), 
+			A_PRINTF("HTC Hder : %2x-%2x-%2x-%2x-%2x-%2x-%2x-%2x\n",
+                                 *anbdata, *(anbdata+1), *(anbdata+2), *(anbdata+3),
                                  *(anbdata+4), *(anbdata+5), *(anbdata+6), *(anbdata+7));
 
 			if (anblen > 64) {

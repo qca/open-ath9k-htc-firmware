@@ -126,11 +126,11 @@ static void turn_off_merlin()
 		default_data[6] = 0x1aaabe40;
 		default_data[7] = 0xbe105554;
 		default_data[8] = 0x00043007;
-        
+
 		for(i=0; i<9; i++)
 		{
 			A_DELAY_USECS(10);
-        
+
 			iowrite32(0x10ff4040, default_data[i]);
 		}
 		A_DELAY_USECS(10);
@@ -143,7 +143,7 @@ static void turn_off_merlin()
  * -- turn_off_phy --
  *
  * . write shift register to both pcie ep and rc
- * . 
+ * .
  */
 
 static void turn_off_phy()
@@ -164,16 +164,16 @@ static void turn_off_phy()
 
 	for(i=0; i<9; i++)
 	{
-		// check for the done bit to be set 
+		// check for the done bit to be set
 
 		while (1)
 		{
 			if (ioread32(0x40028) & BIT31)
 				break;
 		}
-        
+
 		A_DELAY_USECS(1);
-    
+
 		iowrite32(0x40024, default_data[i]);
 	}
 	iowrite32(0x40028, BIT0);
@@ -181,12 +181,12 @@ static void turn_off_phy()
 
 static void turn_off_phy_rc()
 {
-    
+
 	volatile uint32_t default_data[9];
 	uint32_t i=0;
-    
+
 	A_PRINTF("turn_off_phy_rc\n");
-    
+
 	default_data[0] = 0x9248fd00;
 	default_data[1] = 0x24924924;
 	default_data[2] = 0xa8000019;
@@ -196,11 +196,11 @@ static void turn_off_phy_rc()
 	default_data[6] = 0x1aaabe40;
 	default_data[7] = 0xbe105554;
 	default_data[8] = 0x00043007;
-        
+
 	for(i=0; i<9; i++)
 	{
-		// check for the done bit to be set 
-     
+		// check for the done bit to be set
+
 		while (1)
 		{
 			if (ioread32(0x40028) & BIT31)
@@ -221,7 +221,7 @@ volatile uint32_t gpio = 0x0;
  * -- patch zfTurnOffPower --
  *
  * . set suspend counter to non-zero value
- * . 
+ * .
  */
 void zfTurnOffPower_patch(void)
 {
@@ -237,13 +237,13 @@ void zfTurnOffPower_patch(void)
 
 	//32clk wait for External ETH PLL stable
 	A_DELAY_USECS(100);
-    
+
 	iowrite32(0x52000, 0x70303); /* read back 0x703f7 */
 	iowrite32(0x52008, 0x0e91c); /* read back 0x1e948 */
-    
+
 	io32_set(MAGPIE_REG_SUSPEND_ENABLE_ADDR, BIT0);
 
-	// wake up, and turn on cpu, eth, pcie and usb pll 
+	// wake up, and turn on cpu, eth, pcie and usb pll
 	_fw_power_on();
 	// restore gpio and other settings
 	_fw_restore_dma_fifo();
@@ -297,7 +297,7 @@ static void _fw_reset_dma_fifo()
 	A_PRINTF("0x4048  0x%x ......\n", ioread32(0x10ff4048));
 	A_PRINTF("0x404C  0x%x ......\n", ioread32(0x10ff404C));
 	A_PRINTF("0x4088  0x%x ......\n", ioread32(0x10ff4088));
-         
+
 	// turn off merlin
 	turn_off_merlin();
 	// pcie ep
@@ -308,7 +308,7 @@ static void _fw_reset_dma_fifo()
 	io32_clr(0x40040, BIT0 | BIT1);
 	A_PRINTF("turn_off_magpie_ep_end ......\n");
 
-	// pcie rc 
+	// pcie rc
 	A_PRINTF("turn_off_magpie_rc_start ......\n");
 	A_DELAY_USECS(measure_time);
 	io32_clr(0x40040, BIT0);
@@ -318,7 +318,7 @@ static void _fw_reset_dma_fifo()
 
 	A_PRINTF("0x4001C  %p ......\n", ioread32(0x4001c));
 	A_PRINTF("0x40040  %p ......\n", ioread32(0x40040));
-    
+
 	/* turn off pcie_pll - power down (bit16) */
 	A_PRINTF(" before pwd PCIE PLL CFG:0x5601C: 0x%08x\n",
 		 ioread32(0x5601C));
@@ -351,7 +351,7 @@ static void _fw_power_off()
 	 *  2. turn off CPU PLL
 	 *  3. turn off ETH PLL
 	 *  4. disable ETH PLL bypass and update
-	 *  4.1 set suspend timeout 
+	 *  4.1 set suspend timeout
 	 *  5. set SUSPEND_ENABLE
 	 */
 
@@ -374,14 +374,14 @@ static void _fw_power_off()
 }
 
 static void _fw_power_on()
-{ 
+{
     /*
      *  1. turn on CPU PLL
      *  2. disable CPU bypass
      *  3. turn on ETH PLL
      *  4. disable ETH PLL bypass and update
      *  5. turn on pcie pll
-     */    
+     */
 
 	io32_clr(MAGPIE_REG_ETH_PLL_ADDR, BIT16);
 
@@ -392,7 +392,7 @@ static void _fw_power_on()
 static void _fw_restore_dma_fifo(void)
 {
 	io32_clr(0x5601C, BIT18);
-    
+
 	/* reset pcie_rc shift */
 	io32_clr(0x50010, BIT10 | BIT8 | BIT7);
 	A_DELAY_USECS(1);

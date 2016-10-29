@@ -65,14 +65,14 @@
 /**
  * CACHE-SYNC (DMA)
  */
-#define __ADF_SYNC_PREREAD         0 
+#define __ADF_SYNC_PREREAD         0
 #define __ADF_SYNC_POSTREAD		   1
 #define __ADF_SYNC_PREWRITE		   2
 #define __ADF_SYNC_POSTWRITE	   3
 
 #define __ADF_OS_DMA_TO_DEVICE     0
-#define __ADF_OS_DMA_FROM_DEVICE   1 
-      
+#define __ADF_OS_DMA_FROM_DEVICE   1
+
 
 struct __adf_softc;
 
@@ -86,24 +86,24 @@ enum __adf_net_wireless_evcode{
     __ADF_IEEE80211_SCAN = 105,
     __ADF_IEEE80211_REPLAY = 106,
     __ADF_IEEE80211_MICHAEL = 107,
-    __ADF_IEEE80211_REJOIN = 108, 
+    __ADF_IEEE80211_REJOIN = 108,
     __ADF_CUSTOM_PUSH_BUTTON = 109,
 };
 
 /* generic data types */
 struct __adf_device  {
-int dummy;    
-}; 
+int dummy;
+};
 
 typedef struct __adf_device *__adf_os_device_t;
 
 
 struct __adf_dma_map {
     VBUF *buf;
-    
+
     A_UINT32 *ds_addr;
     A_UINT16 ds_len;
-}; 
+};
 
 typedef struct __adf_dma_map *__adf_os_dma_map_t;
 
@@ -116,23 +116,23 @@ typedef int             __adf_os_off_t;
 #define __adf_os_iomem_t
 
 #if 0
-typedef int           __a_uint8_t;    
-typedef int            __a_int8_t;     
-typedef int          __a_uint16_t;   
-typedef int           __a_int16_t;    
-typedef int          __a_uint32_t;   
-typedef int           __a_int32_t;    
-typedef int          __a_uint64_t;   
-typedef int           __a_int64_t; 
+typedef int           __a_uint8_t;
+typedef int            __a_int8_t;
+typedef int          __a_uint16_t;
+typedef int           __a_int16_t;
+typedef int          __a_uint32_t;
+typedef int           __a_int32_t;
+typedef int          __a_uint64_t;
+typedef int           __a_int64_t;
 #else
 typedef A_UINT8           __a_uint8_t;
-typedef A_INT8            __a_int8_t;     
-typedef A_UINT16          __a_uint16_t;   
-typedef A_INT16          __a_int16_t;    
-typedef A_UINT32          __a_uint32_t;   
-typedef A_INT32          __a_int32_t;    
-typedef A_UINT64          __a_uint64_t;   
-typedef A_INT64           __a_int64_t;    
+typedef A_INT8            __a_int8_t;
+typedef A_UINT16          __a_uint16_t;
+typedef A_INT16          __a_int16_t;
+typedef A_UINT32          __a_uint32_t;
+typedef A_INT32          __a_int32_t;
+typedef A_UINT64          __a_uint64_t;
+typedef A_INT64           __a_int64_t;
 
 typedef A_UINT32            u_int32_t;
 typedef A_UINT16            u_int16_t;
@@ -150,7 +150,7 @@ typedef A_UINT64            u_int64_t;
 //#define __adf_os_print        my_printf
 #define __adf_os_print          A_PRINTF
 
-#if 1  
+#if 1
 #if defined(__XCC__)
 #include "stdarg.h"
 #define __va_list __gnuc_va_list

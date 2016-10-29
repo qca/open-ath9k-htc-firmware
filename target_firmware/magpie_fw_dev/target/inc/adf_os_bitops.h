@@ -32,7 +32,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/** 
+/**
  * @ingroup adf_os_public
  * @file adf_os_bitops.h
  * This file abstracts bit-level operations on a stream of bytes.
@@ -136,7 +136,7 @@ static inline void adf_os_change_bit(a_uint32_t nr, volatile a_uint32_t *addr)
  * Note that nr may be almost arbitrarily large; this function is not
  * restricted to acting on a single-word quantity.
  */
-static inline void adf_os_test_and_set_bit_a(a_uint32_t nr, 
+static inline void adf_os_test_and_set_bit_a(a_uint32_t nr,
                                           volatile a_uint32_t *addr)
 {
     __adf_os_test_and_set_bit_a(nr, addr);
@@ -151,7 +151,7 @@ static inline void adf_os_test_and_set_bit_a(a_uint32_t nr,
  * Note that nr may be almost arbitrarily large; this function is not
  * restricted to acting on a single-word quantity.
  */
-static inline void adf_os_test_and_set_bit(a_uint32_t nr, 
+static inline void adf_os_test_and_set_bit(a_uint32_t nr,
                                           volatile a_uint32_t *addr)
 {
     __adf_os_test_and_set_bit(nr, addr);
@@ -166,7 +166,7 @@ static inline void adf_os_test_and_set_bit(a_uint32_t nr,
  * Note that nr may be almost arbitrarily large; this function is not
  * restricted to acting on a single-word quantity.
  */
-static inline void adf_os_test_and_clear_bit_a(a_uint32_t nr, 
+static inline void adf_os_test_and_clear_bit_a(a_uint32_t nr,
                                           volatile a_uint32_t *addr)
 {
     __adf_os_test_and_clear_bit_a(nr, addr);
@@ -181,7 +181,7 @@ static inline void adf_os_test_and_clear_bit_a(a_uint32_t nr,
  * Note that nr may be almost arbitrarily large; this function is not
  * restricted to acting on a single-word quantity.
  */
-static inline void adf_os_test_and_clear_bit(a_uint32_t nr, 
+static inline void adf_os_test_and_clear_bit(a_uint32_t nr,
                                           volatile a_uint32_t *addr)
 {
     __adf_os_test_and_clear_bit(nr, addr);
@@ -196,7 +196,7 @@ static inline void adf_os_test_and_clear_bit(a_uint32_t nr,
  * Note that nr may be almost arbitrarily large; this function is not
  * restricted to acting on a single-word quantity.
  */
-static inline void adf_os_test_and_change_bit_a(a_uint32_t nr, 
+static inline void adf_os_test_and_change_bit_a(a_uint32_t nr,
                                           volatile a_uint32_t *addr)
 {
     __adf_os_test_and_change_bit_a(nr, addr);
@@ -211,7 +211,7 @@ static inline void adf_os_test_and_change_bit_a(a_uint32_t nr,
  * Note that nr may be almost arbitrarily large; this function is not
  * restricted to acting on a single-word quantity.
  */
-static inline void adf_os_test_and_change_bit(a_uint32_t nr, 
+static inline void adf_os_test_and_change_bit(a_uint32_t nr,
                                           volatile a_uint32_t *addr)
 {
     __adf_os_test_and_change_bit(nr, addr);

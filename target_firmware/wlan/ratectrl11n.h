@@ -40,8 +40,8 @@
  * used only in 20 mode. If both 20/40 bits are enabled
  * then that rate can be used for both 20 and 40 mode */
 
-#define TRUE_20	 	0x2	
-#define TRUE_40 	0x4	
+#define TRUE_20	 	0x2
+#define TRUE_40 	0x4
 #define TRUE_2040	(TRUE_20|TRUE_40)
 #define TRUE_ALL_11N	(TRUE_2040|TRUE)
 
@@ -62,19 +62,19 @@ typedef enum {
 #define WLAN_RC_PHY_DS(_phy)   ((_phy == WLAN_RC_PHY_HT_20_DS)		\
                                 || (_phy == WLAN_RC_PHY_HT_40_DS)	\
                                 || (_phy == WLAN_RC_PHY_HT_20_DS_HGI)	\
-                                || (_phy == WLAN_RC_PHY_HT_40_DS_HGI))   
+                                || (_phy == WLAN_RC_PHY_HT_40_DS_HGI))
 #define WLAN_RC_PHY_40(_phy)   ((_phy == WLAN_RC_PHY_HT_40_SS)		\
                                 || (_phy == WLAN_RC_PHY_HT_40_DS)	\
                                 || (_phy == WLAN_RC_PHY_HT_40_SS_HGI)	\
-                                || (_phy == WLAN_RC_PHY_HT_40_DS_HGI))   
+                                || (_phy == WLAN_RC_PHY_HT_40_DS_HGI))
 #define WLAN_RC_PHY_20(_phy)   ((_phy == WLAN_RC_PHY_HT_20_SS)		\
                                 || (_phy == WLAN_RC_PHY_HT_20_DS)	\
                                 || (_phy == WLAN_RC_PHY_HT_20_SS_HGI)	\
-                                || (_phy == WLAN_RC_PHY_HT_20_DS_HGI))   
+                                || (_phy == WLAN_RC_PHY_HT_20_DS_HGI))
 #define WLAN_RC_PHY_SGI(_phy)  ((_phy == WLAN_RC_PHY_HT_20_SS_HGI)      \
                                 || (_phy == WLAN_RC_PHY_HT_20_DS_HGI)   \
                                 || (_phy == WLAN_RC_PHY_HT_40_SS_HGI)   \
-                                || (_phy == WLAN_RC_PHY_HT_40_DS_HGI))   
+                                || (_phy == WLAN_RC_PHY_HT_40_DS_HGI))
 
 #define WLAN_RC_PHY_HT(_phy)    (_phy >= WLAN_RC_PHY_HT_20_SS)
 
@@ -102,7 +102,7 @@ typedef enum {
 #define WLAN_RC_WEP_TKIP_FLAG   (0x100)
 
 /* Index into the rate table */
-#define INIT_RATE_MAX_20	23		
+#define INIT_RATE_MAX_20	23
 #define INIT_RATE_MAX_40	40
 
 /*
@@ -129,7 +129,7 @@ typedef struct {
 	A_BOOL    validSingleStream;/* Valid for use in rate control for single stream operation */
 #ifdef MAGPIE_MERLIN
 	A_BOOL    validSTBC;        /* Valid for use in rate control for single stream operation */
-#endif    
+#endif
 	WLAN_PHY  phy;              /* CCK/OFDM/TURBO/XR */
 	A_UINT32  rateKbps;         /* Rate in Kbits per second */
 	A_UINT32  userRateKbps;     /* User rate in KBits per second */
@@ -159,7 +159,7 @@ typedef struct {
 
 /*
  * Determines and returns the new Tx rate index.
- */ 
+ */
 void rcRateFind_11n(struct ath_softc_tgt *sc,
 		    struct ath_node_target *an,
 		    int numTries,

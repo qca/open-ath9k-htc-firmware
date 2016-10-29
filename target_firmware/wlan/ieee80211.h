@@ -42,7 +42,7 @@
 /* is 802.11 address multicast/broadcast? */
 #define	IEEE80211_IS_MULTICAST(_a)	(*(_a) & 0x01)
 
-#ifdef __CARRIER_PLATFORM__ 
+#ifdef __CARRIER_PLATFORM__
 #include <ath_carr_pltfrm.h>
 #endif
 
@@ -55,7 +55,7 @@ struct ieee80211_plcp_hdr {
 	a_uint16_t	i_crc;
 } adf_os_packed;
 
-#define IEEE80211_PLCP_SFD      0xF3A0 
+#define IEEE80211_PLCP_SFD      0xF3A0
 #define IEEE80211_PLCP_SERVICE  0x00
 
 /*
@@ -339,7 +339,7 @@ enum CountryCode {
     CTRY_CANADA2              = 5001     /* Canada */
 };
 
-/* 
+/*
  * Country information element.
  */
 #define IEEE80211_COUNTRY_MAX_TRIPLETS (83)
@@ -513,7 +513,7 @@ struct ieee80211_xr_param {
 } adf_os_packed;
 
 /*
- * Management Action Frames 
+ * Management Action Frames
  */
 
 /* generic frame format */
@@ -535,7 +535,7 @@ struct ieee80211_action {
 /* HT - recommended transmission channel width */
 struct ieee80211_action_ht_txchwidth {
 	struct ieee80211_action 	at_header;
-	a_uint8_t			at_chwidth;	
+	a_uint8_t			at_chwidth;
 } adf_os_packed;
 
 #define IEEE80211_A_HT_TXCHWIDTH_20	0
@@ -600,7 +600,7 @@ struct ieee80211_delba_parameterset {
 struct ieee80211_action_ba_addbarequest {
 	struct ieee80211_action			rq_header;
         a_uint8_t                		rq_dialogtoken;
-        struct ieee80211_ba_parameterset        rq_baparamset; 
+        struct ieee80211_ba_parameterset        rq_baparamset;
         a_uint16_t                	        rq_batimeout;	/* in TUs */
         struct ieee80211_ba_seqctrl     	rq_basequencectrl;
 } adf_os_packed;
@@ -610,7 +610,7 @@ struct ieee80211_action_ba_addbaresponse {
 	struct ieee80211_action			rs_header;
         a_uint8_t                		rs_dialogtoken;
         a_uint16_t                		rs_statuscode;
-        struct ieee80211_ba_parameterset        rs_baparamset; 
+        struct ieee80211_ba_parameterset        rs_baparamset;
         a_uint16_t                		rs_batimeout;          /* in TUs */
 } adf_os_packed;
 
@@ -789,7 +789,7 @@ struct vendor_ie_htcap {
 
 /* HT capability flags */
 #define	IEEE80211_HTCAP_C_ADVCODING		  0x0001
-#define	IEEE80211_HTCAP_C_CHWIDTH40	      	  0x0002	
+#define	IEEE80211_HTCAP_C_CHWIDTH40	      	  0x0002
 #define	IEEE80211_HTCAP_C_SMPOWERSAVE_STATIC      0x0000 /* Capable of SM Power Save (Static) */
 #define	IEEE80211_HTCAP_C_SMPOWERSAVE_DYNAMIC     0x0004 /* Capable of SM Power Save (Dynamic) */
 #define	IEEE80211_HTCAP_C_SM_RESERVED             0x0008 /* Reserved */
@@ -801,10 +801,10 @@ struct vendor_ie_htcap {
 #define IEEE80211_HTCAP_C_RXSTBC        	  0x0100  /* 2 bits */
 #define IEEE80211_HTCAP_C_DELAYEDBLKACK 	  0x0400
 #define IEEE80211_HTCAP_C_MAXAMSDUSIZE  	  0x0800  /* 1 = 8K, 0 = 3839B */
-#define IEEE80211_HTCAP_C_DSSSCCK40     	  0x1000  
-#define IEEE80211_HTCAP_C_PSMP          	  0x2000  
-#define IEEE80211_HTCAP_C_INTOLERANT40		  0x4000  
-#define IEEE80211_HTCAP_C_LSIGTXOPPROT  	  0x8000  
+#define IEEE80211_HTCAP_C_DSSSCCK40     	  0x1000
+#define IEEE80211_HTCAP_C_PSMP          	  0x2000
+#define IEEE80211_HTCAP_C_INTOLERANT40		  0x4000
+#define IEEE80211_HTCAP_C_LSIGTXOPPROT  	  0x8000
 
 #define	IEEE80211_HTCAP_C_SM_MASK                 0x000c /* Spatial Multiplexing (SM) capabitlity bitmask */
 
@@ -831,10 +831,10 @@ enum {
 
 /* HT extended capability flags */
 #define	IEEE80211_HTCAP_EXTC_PCO		        0x0001
-#define IEEE80211_HTCAP_EXTC_TRANS_TIME_RSVD    0x0000  
+#define IEEE80211_HTCAP_EXTC_TRANS_TIME_RSVD    0x0000
 #define IEEE80211_HTCAP_EXTC_TRANS_TIME_400     0x0002 /* 20-40 switch time */
 #define IEEE80211_HTCAP_EXTC_TRANS_TIME_1500    0x0004 /* in us             */
-#define IEEE80211_HTCAP_EXTC_TRANS_TIME_5000    0x0006 
+#define IEEE80211_HTCAP_EXTC_TRANS_TIME_5000    0x0006
 #define IEEE80211_HTCAP_EXTC_RSVD_1             0x00f8
 #define IEEE80211_HTCAP_EXTC_MCS_FEEDBACK_NONE  0x0000
 #define IEEE80211_HTCAP_EXTC_MCS_FEEDBACK_RSVD  0x0100
@@ -898,23 +898,23 @@ struct vendor_ie_htinfo {
 
 /* extension channel offset (2 bit signed number) */
 enum {
-	IEEE80211_HTINFO_EXTOFFSET_NA	 = 0,	/* 0  no extension channel is present */			
-	IEEE80211_HTINFO_EXTOFFSET_ABOVE = 1,   /* +1 extension channel above control channel */ 
-	IEEE80211_HTINFO_EXTOFFSET_UNDEF = 2,   /* -2 undefined */ 
+	IEEE80211_HTINFO_EXTOFFSET_NA	 = 0,	/* 0  no extension channel is present */
+	IEEE80211_HTINFO_EXTOFFSET_ABOVE = 1,   /* +1 extension channel above control channel */
+	IEEE80211_HTINFO_EXTOFFSET_UNDEF = 2,   /* -2 undefined */
 	IEEE80211_HTINFO_EXTOFFSET_BELOW = 3	/* -1 extension channel below control channel*/
 };
 
 /* recommended transmission width set */
 enum {
-	IEEE80211_HTINFO_TXWIDTH_20,		
-	IEEE80211_HTINFO_TXWIDTH_2040      	
+	IEEE80211_HTINFO_TXWIDTH_20,
+	IEEE80211_HTINFO_TXWIDTH_2040
 };
 
 /* operating flags */
 #define	IEEE80211_HTINFO_OPMODE_PURE		    0x00 /* no protection */
-#define IEEE80211_HTINFO_OPMODE_MIXED_PROT_OPT	0x01 /* prot optional (legacy device maybe present) */      	
-#define	IEEE80211_HTINFO_OPMODE_MIXED_PROT_40   0x02 /* prot required (20 MHz) */   
-#define	IEEE80211_HTINFO_OPMODE_MIXED_PROT_ALL	0x03 /* prot required (legacy devices present) */      	
+#define IEEE80211_HTINFO_OPMODE_MIXED_PROT_OPT	0x01 /* prot optional (legacy device maybe present) */
+#define	IEEE80211_HTINFO_OPMODE_MIXED_PROT_40   0x02 /* prot required (20 MHz) */
+#define	IEEE80211_HTINFO_OPMODE_MIXED_PROT_ALL	0x03 /* prot required (legacy devices present) */
 #define IEEE80211_HTINFO_OPMODE_MASK		0x03 /* For protection 0x00-0x03 */
 
 /* Non-greenfield STAs present */
@@ -1180,7 +1180,7 @@ enum {
 #define	IEEE80211_WEP_EXTIV		0x20
 #define	IEEE80211_WEP_EXTIVLEN		4	/* extended IV length */
 #define	IEEE80211_WEP_MICLEN		8	/* trailing MIC */
-#define	IEEE80211_WEP_ICVLEN		4	
+#define	IEEE80211_WEP_ICVLEN		4
 #define	IEEE80211_WAPI_MICLEN		16	/* trailing MIC */
 #define	IEEE80211_WAPI_IVLEN		16
 
@@ -1232,7 +1232,7 @@ A length of 3839 bytes is chosen here to support unaggregated data frames, any s
 
 #define	IEEE80211_AID(b)	((b) &~ 0xc000)
 
-/* 
+/*
  * RTS frame length parameters.  The default is specified in
  * the 802.11 spec.  The max may be wrong for jumbo frames.
  */
@@ -1240,7 +1240,7 @@ A length of 3839 bytes is chosen here to support unaggregated data frames, any s
 #define	IEEE80211_RTS_MIN		1
 #define	IEEE80211_RTS_MAX		2346
 
-/* 
+/*
  * Regulatory extention identifier for country IE.
  */
 #define IEEE80211_REG_EXT_ID		201

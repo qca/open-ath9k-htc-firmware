@@ -329,13 +329,11 @@ static void ath_uapsd_processtriggers(struct ath_softc_tgt *sc)
 	a_int32_t retval;
 	a_uint32_t cnt = 0;
 	a_uint16_t frame_len = 0;
-	a_uint64_t tsf;
 
 #define	PA2DESC(_sc, _pa)						\
 	((struct ath_desc *)((caddr_t)(_sc)->sc_rxdma.dd_desc +		\
 			     ((_pa) - (_sc)->sc_rxdma.dd_desc_paddr)))
 
-	tsf = ah->ah_getTsf64(ah);
 	bf = asf_tailq_first(&sc->sc_rxbuf);
 
 	ds = asf_tailq_first(&sc->sc_rxdesc);
@@ -586,9 +584,7 @@ static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
 	struct ath_tx_buf *bf;
 	a_uint8_t vap_index, *anbdata;
 	ath_beacon_hdr_t *bhdr;
-	struct ieee80211vap_target  *vap;
 	a_uint32_t anblen;
-	struct ieee80211_frame *wh;
 
 	if (!bc_hdr) {
 		adf_nbuf_peek_header(nbuf, &anbdata, &anblen);
@@ -599,10 +595,8 @@ static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
 
 	vap_index = bhdr->vap_index;
 	adf_os_assert(vap_index < TARGET_VAP_MAX);
-	vap = &sc->sc_vap[vap_index].av_vap;
 
-	wh = (struct ieee80211_frame *)adf_nbuf_pull_head(nbuf,
-						  sizeof(ath_beacon_hdr_t));
+	adf_nbuf_pull_head(nbuf, sizeof(ath_beacon_hdr_t));
 
 	bf = sc->sc_vap[vap_index].av_bcbuf;
 	adf_os_assert(bf);
@@ -876,7 +870,6 @@ static void ath_descdma_cleanup(struct ath_softc_tgt *sc,
 				ath_bufhead *head, a_int32_t dir)
 {
 	struct ath_buf *bf;
-	struct ieee80211_node_target *ni;
 
 	asf_tailq_foreach(bf, head, bf_list) {
 		if (adf_nbuf_queue_len(&bf->bf_skbhead) != 0) {
@@ -894,7 +887,6 @@ static void ath_descdma_cleanup(struct ath_softc_tgt *sc,
 
 		adf_nbuf_dmamap_destroy(sc->sc_dev, bf->bf_dmamap);
 
-		ni = bf->bf_node;
 		bf->bf_node = NULL;
 	}
 

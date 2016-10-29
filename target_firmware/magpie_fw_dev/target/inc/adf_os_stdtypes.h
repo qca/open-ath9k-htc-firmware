@@ -34,7 +34,7 @@
  */
 /**
  * @defgroup adf_os_public OS abstraction API
- */ 
+ */
 
 /**
  * @ingroup adf_os_public
@@ -48,11 +48,11 @@
 #include <adf_os_types_pvt.h>
 
 /**
- * @brief basic data types. 
+ * @brief basic data types.
  */
 typedef enum {
     A_FALSE,
-    A_TRUE           
+    A_TRUE
 }a_bool_t;
 
 typedef __a_uint8_t    a_uint8_t;

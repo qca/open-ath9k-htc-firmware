@@ -56,8 +56,8 @@
 #if defined(_ROM_)
 #include "rom_cfg.h"
 
-#if MAGPIE_FPGA_RAM_256K == 1 
-#undef  MAX_BUF_NUM 
+#if MAGPIE_FPGA_RAM_256K == 1
+#undef  MAX_BUF_NUM
 #define MAX_BUF_NUM                100
 #endif
 
@@ -76,13 +76,13 @@
 #endif
 
 #undef 	SYSTEM_MODULE_DBG
-#undef  MOVE_PRINT_TO_RAM 
+#undef  MOVE_PRINT_TO_RAM
 #ifdef _DEBUG_BUILD_
 #define SYSTEM_MODULE_DBG               1
 #define MOVE_PRINT_TO_RAM               1
 #else
 #define SYSTEM_MODULE_DBG               0
-#define MOVE_PRINT_TO_RAM               1 
+#define MOVE_PRINT_TO_RAM               1
 #endif
 #undef SYSTEM_MODULE_SFLASH
 #define SYSTEM_MODULE_SFLASH		    0

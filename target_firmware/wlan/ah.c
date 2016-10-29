@@ -142,14 +142,14 @@ ath_hal_computetxtime(struct ath_hal *ah,
 #undef OFDM_SYMBOL_TIME
 
 #ifdef MAGPIE_MERLIN
-a_uint32_t 
+a_uint32_t
 ath_hal_get_curmode(struct ath_hal *ah, HAL_CHANNEL_INTERNAL *chan)
 {
 	if (!chan)
 		return HAL_MODE_11NG;
 
 	if (IS_CHAN_NA(chan))
-		return HAL_MODE_11NA; 
+		return HAL_MODE_11NA;
 
 	if (IS_CHAN_A(chan))
 		return HAL_MODE_11A;
