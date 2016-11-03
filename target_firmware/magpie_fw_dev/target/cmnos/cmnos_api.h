@@ -70,7 +70,7 @@
 
 #if defined(PROJECT_K2)
 #if SYSTEM_MODULE_SFLASH
-#include "sflash_api.h"
+#include "cmnos/sflash_api.h"
 #endif
 #endif
 
@@ -117,7 +117,7 @@ do {                                                                    \
     asm volatile("rsr %0,%1" : "=r" (epc3) : "n" (EPC_3));              \
     asm volatile("rsr %0,%1" : "=r" (epc4) : "n" (EPC_4));              \
                                                                         \
-    A_PRINTF("\tepc1=0x%x, epc2=0x%x, epc3=0x%x, epc4=0x%x\n",            \
+    A_PRINTF("\tepc1=0x%x, epc2=0x%x, epc3=0x%x, epc4=0x%x\n",          \
                 epc1, epc2, epc3, epc4);                                \
     A_PRINTF("0x%08x, 0x%08x, 0x%08x, \n\r",                            \
         DEBUG_SYSTEM_STATE, WATCH_DOG_RESET_COUNTER,                    \
@@ -179,20 +179,20 @@ do {                                                                    \
 
 #if SYSTEM_MODULE_UART
 /* Serial port support */
-#define A_UART_INIT()                 A_CMN(uart._uart_init())
+#define A_UART_INIT()               A_CMN(uart._uart_init())
 
 #define A_UART_HWINIT(freq, baud)     \
         A_CMN(uart._uart_hwinit((freq), (baud)))
 
-#define A_UART_ENABLED()              (HOST_INTEREST->hi_uart_enable)
+#define A_UART_ENABLED()            (HOST_INTEREST->hi_uart_enable)
 
-#define A_PUTS(str)                      A_CMN(uart._uart_str_out(str))
+#define A_PUTS(str)                 A_CMN(uart._uart_str_out(str))
 
-#define A_PUTC(ch)                      A_CMN(uart._uart_char_put(ch))
-#define A_GETC(pCh)                     A_CMN(uart._uart_char_get(pCh))
+#define A_PUTC(ch)                  A_CMN(uart._uart_char_put(ch))
+#define A_GETC(pCh)                 A_CMN(uart._uart_char_get(pCh))
 
-#define A_UART_TASK()                 A_CMN(uart._uart_task())
-#define A_UART_CONFIG(x)                 A_CMN(uart._uart_config(x))
+#define A_UART_TASK()               A_CMN(uart._uart_task())
+#define A_UART_CONFIG(x)            A_CMN(uart._uart_config(x))
 
 #else
 
@@ -228,7 +228,7 @@ do {                                                                    \
 #define A_MISALIGNED_LOAD_HANDLER(dump)  A_CMN(misc._misaligned_load_handler(dump))
 
 /* reture the host interface type */
-#define A_IS_HOST_PRESENT()              A_CMN(misc._is_host_present())
+#define A_IS_HOST_PRESENT()             A_CMN(misc._is_host_present())
 #define A_KBHIT(delay)                  A_CMN(misc._kbhit(delay))
 #define A_GET_ROM_VER()                 A_CMN(misc._rom_version_get())
 #else
@@ -395,9 +395,9 @@ do {                                                                    \
 
 #if SYSTEM_MODULE_CLOCK
 
-#define A_CLOCK_INIT(refclk_guess)    A_CMN(clock._clock_init(refclk_guess))
-#define A_CLOCK_TICK()                A_CMN(clock._clock_tick())
-#define A_CLOCK_GET_TICK()            A_CMN(clock._clock_get_tick())
+#define A_CLOCK_INIT(refclk_guess)      A_CMN(clock._clock_init(refclk_guess))
+#define A_CLOCK_TICK()                  A_CMN(clock._clock_tick())
+#define A_CLOCK_GET_TICK()              A_CMN(clock._clock_get_tick())
 
 /*
  * Get the number of millisecond ticks since the system was started.
@@ -457,9 +457,6 @@ do {                                                                    \
 #define A_TIMER_RUN() \
     A_CMN(timer._timer_run())
 
-#define A_PCI_BOOT_INIT() \
-    A_CMN(pci.pci_boot_init())
-
 #define A_GMAC_BOOT_INIT() \
     A_CMN(gmac.gmac_boot_init())
 
@@ -477,7 +474,7 @@ do {                                                                            
     A_CMN(allocram.cmnos_allocram_init((astart), (asize)));                        \
 } while (0)
 
-#define A_ALLOCRAM(nbytes)    A_CMN(allocram.cmnos_allocram(0, (nbytes)))
+#define A_ALLOCRAM(nbytes)      A_CMN(allocram.cmnos_allocram(0, (nbytes)))
 
 #define A_ALLOCRAM_DEBUG()    A_CMN(allocram.cmnos_allocram_debug())
 
@@ -562,9 +559,6 @@ typedef struct _A_cmnos_indirection_table {
 //    struct dbg_api      dbg;
 //#endif
 
-#if SYSTEM_MODULE_PCI
-   struct pci_api pci;
-#endif
 
 #if SYSTEM_MODULE_GMAC
    struct gmac_api gmac;
@@ -659,10 +653,6 @@ extern void cmnos_wdt_module_install(struct wdt_api *);
 
 #if SYSTEM_MODULE_EEPROM
 extern void cmnos_eep_module_install(struct eep_api *);
-#endif
-
-#if SYSTEM_MODULE_PCI
-extern void cmnos_pci_module_install(struct pci_api *);
 #endif
 
 extern void cmnos_tasklet_module_install(struct tasklet_api *);
