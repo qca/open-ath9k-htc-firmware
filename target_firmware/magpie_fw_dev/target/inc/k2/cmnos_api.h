@@ -414,9 +414,7 @@ do {                                                                    \
         A_CMN(clock._wlan_band_set(which_band))
 
 /* Called whenever the system clock changes speed */
-#define A_SYSCLK_CHANGE(mhz)               A_CMN(clock._sysclk_change(mhz))
-
-#define A_SYSCLK_GET()               A_CMN(clock._sysclk_get())
+#define A_SYSCLK_CHANGE()               A_CMN(clock._sysclk_change())
 
 #else
 
@@ -430,7 +428,6 @@ do {                                                                    \
 #define A_CLOCKREGS_INIT()
 #define A_WLAN_BAND_SET(which_band)
 #define A_SYSCLK_CHANGE(mhz)
-#define A_SYSCLK_GET()
 
 #endif
 
