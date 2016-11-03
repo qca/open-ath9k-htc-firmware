@@ -39,7 +39,6 @@
  * user,hence these routines should be called to manipulate
  * anything inside it.
  */
-#include <adf_net.h>
 #include <osapi.h>
 #include "cmnos_api.h"
 #include <Magpie_api.h>

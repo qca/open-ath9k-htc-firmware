@@ -37,9 +37,6 @@
  * @module_desc     Magpie Network Shim
  */
 
-#include <adf_net.h>
-//#include <asf_queue.h>
-//#include "adf_net_wcmd_pvt.h"
 #include <wlan_pci.h>
 
 /**

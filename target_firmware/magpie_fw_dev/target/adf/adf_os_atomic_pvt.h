@@ -35,11 +35,6 @@
 #ifndef __ADF_OS_ATOMIC_PVT_H
 #define __ADF_OS_ATOMIC_PVT_H
 
-//#include <sys/types.h>
-//#include <machine/atomic.h>
-
-#include <adf_os_types.h>
-
 typedef a_uint32_t  __adf_os_atomic_t;
 
 /**
