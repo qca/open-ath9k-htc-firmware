@@ -95,6 +95,7 @@ struct hif_api {
     void *pReserved;
 };
 
+extern void hif_module_install(struct hif_api *apis);
 extern void generic_hif_module_install(struct hif_api *apis);
 
 #endif /* #ifndef _HIF_API_H */
