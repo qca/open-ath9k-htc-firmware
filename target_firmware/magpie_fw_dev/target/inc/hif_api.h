@@ -33,44 +33,69 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*
- * @File: VBUF_api.h
+ * @File: HIF_api.h
  *
  * @Abstract: Host Interface api
  *
  * @Notes:
  */
 
-#ifndef _VBUF_API_H
-#define _VBUF_API_H
+#ifndef _HIF_API_H
+#define _HIF_API_H
 
-#include <vdesc_api.h>
+#include <adf_nbuf.h>
 
-#define MAX_BUF_CTX_LEN     20
+/* mailbox hw module configuration structure */
+typedef struct _HIF_CONFIG {
+    int dummy;
+} HIF_CONFIG;
 
-typedef struct _VBUF
-{
-    VDESC           *desc_list;
-    struct _VBUF    *next_buf;
-    A_UINT16        buf_length;
-    A_UINT8         reserved[2];
-    A_UINT8         ctx[MAX_BUF_CTX_LEN];
-    //A_UINT8         end_point;
-    //A_UINT8         reserved[1];
-} VBUF;
+typedef struct _HIF_CALLBACK {
+    /* callback when a buffer has be sent to the host*/
+    void (*send_buf_done)(adf_nbuf_t buf, void *context);
+    /* callback when a receive message is received */
+    void (*recv_buf)(adf_nbuf_t hdr_buf, adf_nbuf_t buf, void *context);
+    /* context used for all callbacks */
+    void *context;
+} HIF_CALLBACK;
 
-#define VBUF_GET_DATA_ADDR(vbuf)    (vbuf->desc_list->buf_addr + vbuf->desc_list->data_offset)
+typedef void* hif_handle_t;
 
 /* hardware API table structure (API descriptions below) */
-struct vbuf_api {
-    void (*_init)(int nBuf);
-    VBUF* (*_alloc_vbuf)(void);
-    VBUF* (*_alloc_vbuf_with_size)(int size, int reserve);
-    void (*_free_vbuf)(VBUF *buf);
+struct hif_api {
+    hif_handle_t (*_init)(HIF_CONFIG *pConfig);
+
+    void (* _shutdown)(hif_handle_t);
+
+    void (*_register_callback)(hif_handle_t, HIF_CALLBACK *);
+
+    int  (*_get_total_credit_count)(hif_handle_t);
+
+    void (*_start)(hif_handle_t);
+
+    void (*_config_pipe)(hif_handle_t handle, int pipe, int creditCount);
+
+    int  (*_send_buffer)(hif_handle_t handle, int pipe, adf_nbuf_t buf);
+
+    void (*_return_recv_buf)(hif_handle_t handle, int pipe, adf_nbuf_t buf);
+    //void (*_set_recv_bufsz)(int pipe, int bufsz);
+    //void (*_pause_recv)(int pipe);
+    //void (*_resume_recv)(int pipe);
+    int  (*_is_pipe_supported)(hif_handle_t handle, int pipe);
+
+    int  (*_get_max_msg_len)(hif_handle_t handle, int pipe);
+
+    int  (*_get_reserved_headroom)(hif_handle_t handle);
+
+    void (*_isr_handler)(hif_handle_t handle);
+
+    void (*_get_default_pipe)(hif_handle_t handle, A_UINT8 *pipe_uplink, A_UINT8 *pipe_downlink);
 
         /* room to expand this table by another table */
     void *pReserved;
 };
 
-extern void vbuf_module_install(struct vbuf_api *apis);
+extern void hif_module_install(struct hif_api *apis);
+extern void generic_hif_module_install(struct hif_api *apis);
 
 #endif /* #ifndef _HIF_API_H */
