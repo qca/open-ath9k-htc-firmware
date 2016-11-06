@@ -94,9 +94,8 @@ target_firmware/magpie_fw_dev/target/cmnos/k2_fw_cmnos_printf.c
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
 //
-// You should have received a copy of the GNU General Public License along
-// with eCos; if not, write to the Free Software Foundation, Inc.,
-// 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // As a special exception, if other files instantiate templates or use macros
 // or inline functions from this file, or you compile this file and link it
