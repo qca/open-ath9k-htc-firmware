@@ -75,7 +75,6 @@ NOTICES:
 The following files are from ECoS with a GPLv2 licence with modification
 and linking caveats. Please see the licence below for more information:
 
-sboot/magpie_1_1/sboot/cmnos/printf/src/cmnos_printf.c
 target_firmware/magpie_fw_dev/target/cmnos/cmnos_printf.c
 target_firmware/magpie_fw_dev/target/cmnos/k2_fw_cmnos_printf.c
 
