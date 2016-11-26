@@ -103,7 +103,7 @@ define Build
 $(DL_DIR)/$($(1)_TAR):
 	mkdir -p $(DL_DIR)
 	wget -N -P $(DL_DIR) $($(1)_URL)
-	printf "%s  %s\n" $($(1)_SUM) $$@ | sha256sum -c
+	printf "%s  %s\n" $($(1)_SUM) $$@ | shasum -a 256 -c
 
 $(DL_DIR)/$($(1)_DIR)/.prepared: $(DL_DIR)/$($(1)_TAR)
 	tar -C $(DL_DIR) -x$(if $(findstring bz2,$($(1)_TAR)),j,z)f $(DL_DIR)/$($(1)_TAR)
