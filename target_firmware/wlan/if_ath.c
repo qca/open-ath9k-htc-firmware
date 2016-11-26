@@ -1098,9 +1098,9 @@ static void ath_enable_intr_tgt(void *Context, A_UINT16 Command,
 {
 	struct ath_softc_tgt *sc = (struct ath_softc_tgt *)Context;
 	struct ath_hal *ah = sc->sc_ah;
-	a_uint32_t intr;
+	a_uint32_t intr = 0;
 
-	if (data)
+	if (datalen == 4)
 		intr = (*(a_uint32_t *)data);
 
 	intr = adf_os_ntohl(intr);

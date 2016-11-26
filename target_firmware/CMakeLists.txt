@@ -46,10 +46,10 @@ ADD_DEFINITIONS(
 	-Wunused-variable
 	-Wunused-value
 	-Wpointer-arith
-	-Wundef
 	-nostdlib
 	-Wundef
 	-Wunused-but-set-variable
+	-Wmaybe-uninitialized
 )
 ADD_DEFINITIONS(
 	-D_RAM_
