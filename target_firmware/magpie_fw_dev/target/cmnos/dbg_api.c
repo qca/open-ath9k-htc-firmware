@@ -442,7 +442,7 @@ int db_help_cmd(char *cmd, char *param1, char *param2, char *param3)
 
 static int db_ldr_cmd(char *cmd, char *param1, char *param2, char *param3)
 {
-	unsigned long val;
+	unsigned long val = 0;
 	unsigned long addr;
 	char val_str[20];
 	char addr_str[20];
