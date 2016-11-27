@@ -1613,11 +1613,14 @@ static void ath_stop_tx_dma_tgt(void *Context, A_UINT16 Command,
 	struct ath_hal *ah = sc->sc_ah;
 	a_uint32_t q;
 
-	if (data)
-		q = *(a_uint32_t *)data;
+	if (!datalen)
+		goto done;
+
+	q = *(a_uint32_t *)data;
 
 	q = adf_os_ntohl(q);
 	ah->ah_stopTxDma(ah, q);
+done:
 	wmi_cmd_rsp(sc->tgt_wmi_handle, Command, SeqNo, NULL, 0);
 }
 
