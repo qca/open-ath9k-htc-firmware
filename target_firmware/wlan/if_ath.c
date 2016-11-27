@@ -583,7 +583,7 @@ static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
 	struct ath_hal *ah = sc->sc_ah;
 	struct ath_tx_buf *bf;
 	a_uint8_t vap_index, *anbdata;
-	ath_beacon_hdr_t *bhdr;
+	ath_beacon_hdr_t *bhdr = NULL;
 	a_uint32_t anblen;
 
 	if (!bc_hdr) {
@@ -591,6 +591,7 @@ static void ath_tgt_send_beacon(struct ath_softc_tgt *sc, adf_nbuf_t bc_hdr,
 		bhdr = (ath_beacon_hdr_t *)anbdata;
 	} else {
 		adf_os_print("found bc_hdr! 0x%x\n", bc_hdr);
+		adf_os_assert(0);
 	}
 
 	vap_index = bhdr->vap_index;
