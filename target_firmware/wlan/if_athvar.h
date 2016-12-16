@@ -225,6 +225,7 @@ struct ath_tx_buf
 	HTC_ENDPOINT_ID       bf_endpt;
 	a_uint16_t            al_delta;
 	a_uint8_t             bf_cookie;
+	a_uint8_t			vap_index;
 };
 
 struct ath_rx_buf

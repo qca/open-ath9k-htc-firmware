@@ -759,6 +759,7 @@ static void tgt_HTCRecvMessageHandler(HTC_ENDPOINT_ID EndPt,
 
 	bf->bf_endpt = EndPt;
 	bf->bf_cookie = dh->cookie;
+	bf->vap_index = dh->vap_index;
 
 	if (tid->flag & TID_AGGR_ENABLED)
 		ath_tgt_handle_aggr(sc, bf);
