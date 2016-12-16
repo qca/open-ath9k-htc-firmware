@@ -32,15 +32,19 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <utime.h>
+#include <stdio.h>
+#include <string.h>
 
 #define FILE_NAME_LEN 256
 
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
     char ar_file_name[FILE_NAME_LEN], obj_file_name[FILE_NAME_LEN];
    
@@ -69,5 +73,5 @@ int main(int argc, char **argv)
         }
     }       
    
-    exit(0);
+    return 0;
 }
