@@ -969,9 +969,13 @@ ath_tgt_tx_send_normal(struct ath_softc_tgt *sc, struct ath_tx_buf *bf)
 				      rcs, &isProbe);
 		ath_hal_memcpy(bf->bf_rcs, rcs, sizeof(rcs));
 	} else {
+		struct ath_vap_target *avp;
+
+		avp = &sc->sc_vap[bf->vap_index];
+
 		mrcs[1].tries = mrcs[2].tries = mrcs[3].tries = 0;
 		mrcs[1].rix = mrcs[2].rix = mrcs[3].rix = 0;
-		mrcs[0].rix   = 0;
+		mrcs[0].rix = ath_get_minrateidx(sc, avp);
 		mrcs[0].tries = 1;
 		mrcs[0].flags = 0;
 		ath_hal_memcpy(bf->bf_rcs, mrcs, sizeof(mrcs));
