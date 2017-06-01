@@ -27,7 +27,7 @@ GCC_VER=6.3.0
 GCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.bz2
 GCC_TAR=gcc-$(GCC_VER).tar.bz2
 GCC_DIR=gcc-$(GCC_VER)
-GCC_PATCHES=local/patches/gcc.patch
+GCC_PATCHES=local/patches/gcc.patch local/patches/gcc-6.3.0_fixup.patch
 GCC_SUM=f06ae7f3f790fbf0f018f6d40e844451e6bc3b7bc96e128e63b09825c1f8b29f
 
 BASEDIR=$(shell pwd)
