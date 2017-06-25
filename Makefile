@@ -23,12 +23,12 @@ BINUTILS_DIR=binutils-$(BINUTILS_VER)
 BINUTILS_PATCHES=local/patches/binutils.patch local/patches/binutils-2.27_fixup.patch
 BINUTILS_SUM=369737ce51587f92466041a97ab7d2358c6d9e1b6490b3940eb09fb0a9a6ac88
 
-GCC_VER=6.2.0
+GCC_VER=6.3.0
 GCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.bz2
 GCC_TAR=gcc-$(GCC_VER).tar.bz2
 GCC_DIR=gcc-$(GCC_VER)
-GCC_PATCHES=local/patches/gcc.patch
-GCC_SUM=9944589fc722d3e66308c0ce5257788ebd7872982a718aa2516123940671b7c5
+GCC_PATCHES=local/patches/gcc.patch local/patches/gcc-6.3.0_fixup.patch
+GCC_SUM=f06ae7f3f790fbf0f018f6d40e844451e6bc3b7bc96e128e63b09825c1f8b29f
 
 BASEDIR=$(shell pwd)
 TOOLCHAIN_DIR=$(BASEDIR)/toolchain
