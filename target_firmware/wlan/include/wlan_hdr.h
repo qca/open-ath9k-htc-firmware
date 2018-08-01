@@ -96,8 +96,8 @@ struct ieee80211com_target {
 	a_uint8_t     pad;
 };
 
-#define ATH_NODE_MAX 8       /* max no. of nodes */
-#define ATH_VAP_MAX  2       /* max no. of vaps */
+#define ATH_NODE_MAX 16       /* max no. of nodes */
+#define ATH_VAP_MAX  8       /* max no. of vaps */
 
 #define VAP_TARGET_SIZE 12
 
