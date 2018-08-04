@@ -66,10 +66,10 @@ RATE_TABLE_11N ar5416_11ngRateTable = {
     {/*                    Multiple      Single    */
      /*                    stream        stream                                              short    dot11 ctrl  RssiAck  RssiAck  Base  CW40   SGI    Ht  tx chain 4ms tx valid for*/
      /*                    valid         valid                           Kbps   uKbps  RC    Preamble Rate  Rate  ValidMin DeltaMin Idx   Idx    Idx    Idx mask     limit  UAPSD    */
-     /*    1 Mb [0]  */ {  TRUE_ALL_11N, TRUE_ALL_11N, WLAN_PHY_CCK,     1000,  900,   0x1b, 0x00,    2,    0,     0,      1,       0,    0,     0,     0,  3, 7,    0, TRUE },
-     /*    2 Mb [1]  */ {  TRUE_ALL_11N, TRUE_ALL_11N, WLAN_PHY_CCK,     2000,  1900,  0x1a, 0x04,    4,    1,     1,      1,       1,    1,     1,     1,  3, 7,    0, FALSE},
-     /*  5.5 Mb [2]  */ {  TRUE_ALL_11N, TRUE_ALL_11N, WLAN_PHY_CCK,     5500,  4900,  0x19, 0x04,    11,   2,     2,      2,       2,    2,     2,     2,  3, 7,    0, FALSE},
-     /*   11 Mb [3]  */ {  TRUE_ALL_11N, TRUE_ALL_11N, WLAN_PHY_CCK,     11000, 8100,  0x18, 0x04,    22,   3,     3,      2,       3,    3,     3,     3,  3, 7,    0, TRUE},
+     /*    1 Mb [0]  */ {  TRUE,         TRUE,         WLAN_PHY_CCK,     1000,  900,   0x1b, 0x00,    2,    0,     0,      1,       0,    0,     0,     0,  3, 7,    0, TRUE },
+     /*    2 Mb [1]  */ {  TRUE,         TRUE,         WLAN_PHY_CCK,     2000,  1900,  0x1a, 0x04,    4,    1,     1,      1,       1,    1,     1,     1,  3, 7,    0, FALSE},
+     /*  5.5 Mb [2]  */ {  TRUE,         TRUE,         WLAN_PHY_CCK,     5500,  4900,  0x19, 0x04,    11,   2,     2,      2,       2,    2,     2,     2,  3, 7,    0, FALSE},
+     /*   11 Mb [3]  */ {  TRUE,         TRUE,         WLAN_PHY_CCK,     11000, 8100,  0x18, 0x04,    22,   3,     3,      2,       3,    3,     3,     3,  3, 7,    0, TRUE},
      /*    6 Mb [4]  */ {  TRUE,         TRUE,         WLAN_PHY_OFDM,    6000,  5400,  0x0b, 0x00,    12,   4,     2,      1,       4,    4,     4,     4,  3, 7,    0, FALSE},
      /*    9 Mb [5]  */ {  TRUE,         TRUE,         WLAN_PHY_OFDM,    9000,  7800,  0x0f, 0x00,    18,   4,     3,      1,       5,    5,     5,     5,  3, 7,    0, FALSE},
      /*   12 Mb [6]  */ {  TRUE,         TRUE,         WLAN_PHY_OFDM,    12000, 10100, 0x0a, 0x00,    24,   6,     4,      1,       6,    6,     6,     6,  3, 7,    0, FALSE},
@@ -137,10 +137,10 @@ RATE_TABLE_11N ar5416_11ngRateTable = {
     {/*                    Multiple      Single      Single    */
      /*                    stream        stream      stream                                              short    dot11 ctrl  RssiAck  RssiAck  Base  CW40   SGI    Ht  tx chain 4ms tx valid for*/
      /*                    valid         valid         STBC                           Kbps   uKbps  RC    Preamble Rate  Rate  ValidMin DeltaMin Idx   Idx    Idx    Idx mask     limit  UAPSD    */
-     /*    1 Mb [0]  */ {  TRUE_ALL_11N, TRUE_ALL_11N, TRUE_ALL_11N,  WLAN_PHY_CCK,     1000,  900,   0x1b, 0x00,    2,    0,     0,      1,       0,    0,     0,     0,  3, 7,    0, TRUE },
-     /*    2 Mb [1]  */ {  TRUE_ALL_11N, TRUE_ALL_11N, TRUE_ALL_11N,  WLAN_PHY_CCK,     2000,  1900,  0x1a, 0x04,    4,    1,     1,      1,       1,    1,     1,     1,  3, 7,    0, FALSE},
-     /*  5.5 Mb [2]  */ {  TRUE_ALL_11N, TRUE_ALL_11N, TRUE_ALL_11N,  WLAN_PHY_CCK,     5500,  4900,  0x19, 0x04,    11,   2,     2,      2,       2,    2,     2,     2,  3, 7,    0, FALSE},
-     /*   11 Mb [3]  */ {  TRUE_ALL_11N, TRUE_ALL_11N, TRUE_ALL_11N,  WLAN_PHY_CCK,     11000, 8100,  0x18, 0x04,    22,   3,     3,      2,       3,    3,     3,     3,  3, 7,    0, TRUE},
+     /*    1 Mb [0]  */ {  TRUE,         TRUE,         TRUE,          WLAN_PHY_CCK,     1000,  900,   0x1b, 0x00,    2,    0,     0,      1,       0,    0,     0,     0,  3, 7,    0, TRUE },
+     /*    2 Mb [1]  */ {  TRUE,         TRUE,         TRUE,          WLAN_PHY_CCK,     2000,  1900,  0x1a, 0x04,    4,    1,     1,      1,       1,    1,     1,     1,  3, 7,    0, FALSE},
+     /*  5.5 Mb [2]  */ {  TRUE,         TRUE,         TRUE,          WLAN_PHY_CCK,     5500,  4900,  0x19, 0x04,    11,   2,     2,      2,       2,    2,     2,     2,  3, 7,    0, FALSE},
+     /*   11 Mb [3]  */ {  TRUE,         TRUE,         TRUE,          WLAN_PHY_CCK,     11000, 8100,  0x18, 0x04,    22,   3,     3,      2,       3,    3,     3,     3,  3, 7,    0, TRUE},
      /*    6 Mb [4]  */ {  TRUE,         TRUE,         TRUE,          WLAN_PHY_OFDM,    6000,  5400,  0x0b, 0x00,    12,   4,     2,      1,       4,    4,     4,     4,  3, 7,    0, FALSE},
      /*    9 Mb [5]  */ {  TRUE,         TRUE,         TRUE,          WLAN_PHY_OFDM,    9000,  7800,  0x0f, 0x00,    18,   4,     3,      1,       5,    5,     5,     5,  3, 7,    0, FALSE},
      /*   12 Mb [6]  */ {  TRUE,         TRUE,         TRUE,          WLAN_PHY_OFDM,    12000, 10100, 0x0a, 0x00,    24,   6,     4,      1,       6,    6,     6,     6,  3, 7,    0, FALSE},
