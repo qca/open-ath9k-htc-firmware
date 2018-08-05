@@ -136,9 +136,6 @@ typedef enum {
 #endif
 } HAL_RX_FILTER;
 
-#define CHANNEL_QUARTER 0x8000  /* Quarter rate channel */
-#define CHANNEL_HALF    0x4000  /* Half rate channel */
-
 typedef enum {
 	HAL_INT_RX      = 0x00000001,   /* Non-common mapping */
 	HAL_INT_RXDESC  = 0x00000002,
