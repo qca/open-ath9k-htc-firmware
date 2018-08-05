@@ -79,12 +79,10 @@ ath_hal_getcapability(struct ath_hal *ah, HAL_CAPABILITY_TYPE type)
 
 #define OFDM_SIFS_TIME_HALF     32
 #define OFDM_PREAMBLE_TIME_HALF 40
-#define OFDM_PLCP_BITS_HALF     22
 #define OFDM_SYMBOL_TIME_HALF   8
 
 #define OFDM_SIFS_TIME_QUARTER      64
 #define OFDM_PREAMBLE_TIME_QUARTER  80
-#define OFDM_PLCP_BITS_QUARTER      22
 #define OFDM_SYMBOL_TIME_QUARTER    16
 
 a_uint16_t
