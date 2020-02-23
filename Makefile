@@ -1,14 +1,14 @@
-GMP_VER=6.1.2
+GMP_VER=6.2.0
 GMP_URL=https://ftp.gnu.org/gnu/gmp/gmp-$(GMP_VER).tar.bz2
 GMP_TAR=gmp-$(GMP_VER).tar.bz2
 GMP_DIR=gmp-$(GMP_VER)
-GMP_SUM=5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2
+GMP_SUM=f51c99cb114deb21a60075ffb494c1a210eb9d7cb729ed042ddb7de9534451ea
 
-MPFR_VER=4.0.1
+MPFR_VER=4.0.2
 MPFR_URL=https://ftp.gnu.org/gnu/mpfr/mpfr-$(MPFR_VER).tar.bz2
 MPFR_TAR=mpfr-$(MPFR_VER).tar.bz2
 MPFR_DIR=mpfr-$(MPFR_VER)
-MPFR_SUM=a4d97610ba8579d380b384b225187c250ef88cfe1d5e7226b89519374209b86b
+MPFR_SUM=c05e3f02d09e0e9019384cdd58e0f19c64e6db1fd6f5ecf77b4b1c61ca253acc
 
 MPC_VER=1.1.0
 MPC_URL=https://ftp.gnu.org/gnu/mpc/mpc-$(MPC_VER).tar.gz
@@ -16,19 +16,19 @@ MPC_TAR=mpc-$(MPC_VER).tar.gz
 MPC_DIR=mpc-$(MPC_VER)
 MPC_SUM=6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e
 
-BINUTILS_VER=2.31
+BINUTILS_VER=2.34
 BINUTILS_URL=https://ftp.gnu.org/gnu/binutils/binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_TAR=binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_DIR=binutils-$(BINUTILS_VER)
-BINUTILS_PATCHES=local/patches/binutils.patch
-BINUTILS_SUM=2c49536b1ca6b8900531b9e34f211a81caf9bf85b1a71f82b81ae32fcd8ffe19
+BINUTILS_PATCHES=local/patches/binutils-2.34_fixup.patch local/patches/binutils.patch
+BINUTILS_SUM=89f010078b6cf69c23c27897d686055ab89b198dddf819efb0a4f2c38a0b36e6
 
-GCC_VER=8.2.0
+GCC_VER=9.2.0
 GCC_URL=https://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.gz
 GCC_TAR=gcc-$(GCC_VER).tar.gz
 GCC_DIR=gcc-$(GCC_VER)
 GCC_PATCHES=local/patches/gcc.patch
-GCC_SUM=1b0f36be1045ff58cbb9c83743835367b860810f17f0195a4e093458b372020f
+GCC_SUM=a931a750d6feadacbeecb321d73925cd5ebb6dfa7eff0802984af3aef63759f4
 
 BASEDIR=$(shell pwd)
 TOOLCHAIN_DIR=$(BASEDIR)/toolchain
