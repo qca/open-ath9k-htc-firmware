@@ -52,6 +52,8 @@
 #define ALLOCRAM_START       ( ((unsigned int)&_fw_image_end) + 4)
 #define ALLOCRAM_SIZE        ( SYS_RAM_SZIE - ( ALLOCRAM_START - SYS_D_RAM_REGION_0_BASE) - SYS_D_RAM_STACK_SIZE)
 
+void (* _assfail_ori)(struct register_dump_s *);
+
 // support for more than 64 bytes on command pipe
 extern void usb_reg_out_patch(void);
 extern int _HIFusb_get_max_msg_len_patch(hif_handle_t handle, int pipe);
