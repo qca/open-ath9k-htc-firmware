@@ -46,7 +46,7 @@
 void AR6002_fatal_exception_handler_patch(CPU_exception_frame_t *exc_frame);
 void exception_reset(struct register_dump_s *dump);
 
-void (* _assfail_ori)(struct register_dump_s *);
+extern void (* _assfail_ori)(struct register_dump_s *);
 void HTCMsgRecvHandler_patch(adf_nbuf_t hdr_buf, adf_nbuf_t buffer, void *context);
 void HTCControlSvcProcessMsg_patch(HTC_ENDPOINT_ID EndpointID, adf_nbuf_t hdr_buf,
 				   adf_nbuf_t pBuffers, void *arg);
