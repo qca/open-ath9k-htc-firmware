@@ -12,7 +12,7 @@ property.
 
 Copyright (c) 2013 QUALCOMM ATHEROS Incorporated.  All rights reserved.
 
-QUALCOMM ATHEROS® is a registered trademark and registered service mark of
+QUALCOMM ATHEROSÂ® is a registered trademark and registered service mark of
 QUALCOMM ATHEROS Incorporated.  All other trademarks and service marks are
 the property of their respective owners.
 
