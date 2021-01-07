@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: 2020 John Scott <jscott@posteo.net>
+# SPDX-License-Identifier: FSFAP
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved. This file is offered as-is,
+# without any warranty.
+#
+# This file provides AppStream metadata and should be installed in
+# /usr/share/metainfo/.
+
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="firmware">
+	<id>com.qualcomm.qca.ath9k_htc.firmware</id>
+	<metadata_license>FSFAP</metadata_license>
+	<name>Open ath9k_htc firmware</name>
+	<summary>Firmware for the Qualcomm Atheros AR7010 and AR9271 USB 802.11n NICs</summary>
+
+	<url type="homepage">https://github.com/qca/open-ath9k-htc-firmware</url>
+	<url type="bugtracker">https://github.com/qca/open-ath9k-htc-firmware/issues</url>
+	<url type="contact">mailto:ath9k_htc_fw@lists.infradead.org</url>
+	<update_contact>jscott@posteo.net</update_contact>
+
+	<provides>
+		<firmware type="runtime">ath9k_htc/htc_7010-1.4.0.fw</firmware>
+		<firmware type="runtime">ath9k_htc/htc_9271-1.4.0.fw</firmware>
+
+		# /sbin/modinfo -Falias ath9k_htc | sort
+		<modalias>usb:v040Dp3801d*</modalias>
+		<modalias>usb:v0411p017Fd*</modalias>
+		<modalias>usb:v0411p0197d*</modalias>
+		<modalias>usb:v0471p209Ed*</modalias>
+		<modalias>usb:v04CAp4605d*</modalias>
+		<modalias>usb:v04DAp3904d*</modalias>
+		<modalias>usb:v057Cp8403d*</modalias>
+		<modalias>usb:v07B8p9271d*</modalias>
+		<modalias>usb:v07D1p3A10d*</modalias>
+		<modalias>usb:v083ApA704d*</modalias>
+		<modalias>usb:v0846p9018d*</modalias>
+		<modalias>usb:v0846p9030d*</modalias>
+		<modalias>usb:v0930p0A08d*</modalias>
+		<modalias>usb:v0CF3p1006d*</modalias>
+		<modalias>usb:v0CF3p20FFd*</modalias>
+		<modalias>usb:v0CF3p7010d*</modalias>
+		<modalias>usb:v0CF3p7015d*</modalias>
+		<modalias>usb:v0CF3p9271d*</modalias>
+		<modalias>usb:v0CF3pB002d*</modalias>
+		<modalias>usb:v0CF3pB003d*</modalias>
+		<modalias>usb:v13D3p3327d*</modalias>
+		<modalias>usb:v13D3p3328d*</modalias>
+		<modalias>usb:v13D3p3346d*</modalias>
+		<modalias>usb:v13D3p3348d*</modalias>
+		<modalias>usb:v13D3p3349d*</modalias>
+		<modalias>usb:v13D3p3350d*</modalias>
+		<modalias>usb:v1668p1200d*</modalias>
+		<modalias>usb:v1EDAp2315d*</modalias>
+	</provides>
+</component>
