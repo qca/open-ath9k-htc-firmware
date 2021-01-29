@@ -145,3 +145,6 @@ under the following licence:
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
+The AppStream metadata file is subject to the copyright notice
+and license terms that it specifies.
