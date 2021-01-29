@@ -16,12 +16,12 @@ MPC_TAR=mpc-$(MPC_VER).tar.gz
 MPC_DIR=mpc-$(MPC_VER)
 MPC_SUM=6985c538143c1208dcb1ac42cedad6ff52e267b47e5f970183a3e75125b43c2e
 
-BINUTILS_VER=2.35
+BINUTILS_VER=2.36
 BINUTILS_URL=https://ftpmirror.gnu.org/gnu/binutils/binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_TAR=binutils-$(BINUTILS_VER).tar.bz2
 BINUTILS_DIR=binutils-$(BINUTILS_VER)
-BINUTILS_PATCHES=local/patches/binutils-2.34_fixup.patch local/patches/binutils.patch
-BINUTILS_SUM=7d24660f87093670738e58bcc7b7b06f121c0fcb0ca8fc44368d675a5ef9cff7
+BINUTILS_PATCHES=local/patches/binutils-2.36_fixup.patch local/patches/binutils-2.34_fixup.patch local/patches/binutils.patch
+BINUTILS_SUM=209ef690dc7ac28ca592daf7e87d6289222a61fb96104dd5d5e016133ed38e8d
 
 GCC_VER=10.2.0
 GCC_URL=https://ftpmirror.gnu.org/gnu/gcc/gcc-$(GCC_VER)/gcc-$(GCC_VER).tar.gz
