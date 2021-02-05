@@ -34,11 +34,47 @@ Ok, what are those NICs?
 
 The AR7010 is a USB/PCIe SoC with onboard RAM, ROM and flash.
 It comes with an external wireless chip connected via PCIe - typically
-an AR9280 or AR9287.
+an AR9280 or AR9287. For a list of devices using AR7010, see:
+https://wikidevi.com/wiki/Atheros_AR7010#Table_of_Systems
 
 The AR9271 is a USB/Wifi SoC with onboad RAM, ROM, flash and the
 actual wireless chip.  The wireless core is an off-shoot of the AR9285.
-It is a single-chip solution.
+It is a single-chip solution. For a list of devices using AR9271, see:
+https://wikidevi.com/wiki/Atheros_AR9271#Table_of_Systems
+
+Debian / Ubuntu
+---------------
+
+* Build and install the firmware: (takes a few minutes)
+
+sudo apt-get update && sudo apt-get upgrade
+sudo apt-get install build-essential git cmake
+git clone https://github.com/qca/open-ath9k-htc-firmware.git
+cd open-ath9k-htc-firmware
+make toolchain
+make -C target_firmware
+sudo make install-linux
+
+* Connect your AR9271 / AR7010 Wi-Fi adapter to your computer.
+
+* Verify that the device is detected and the new firmware is loaded:
+
+dmesg | tail -n 30
+
+[2.148045] usb 3-2: new high-speed USB device number 4 using xhci_hcd
+[2.172582] usb 3-2: New USB device found, idVendor=0cf3, idProduct=9271
+[2.172589] usb 3-2: New USB device strings: Mfr=16, Product=32, SerialNumber=48
+[2.172593] usb 3-2: Product: USB2.0 WLAN
+[2.172595] usb 3-2: Manufacturer: ATHEROS
+[2.172598] usb 3-2: SerialNumber: 12345
+[2.173156] usb 3-2: ath9k_htc: Firmware htc_9271.fw requested
+[2.456028] usb 3-2: ath9k_htc: Transferred FW: htc_9271.fw, size: 51008
+[2.707644] ath9k_htc 3-2:1.0: ath9k_htc: HTC initialized with 33 credits
+[2.976045] ath9k_htc 3-2:1.0: ath9k_htc: FW Version: 1.4
+[2.981115] ieee80211 phy4: Atheros AR9271 Rev:1
+[2.991007] systemd-udevd[697]: renamed network interface wlan1 to wlan6
+
+* You can now use the new wlan interface (wlan6 in the example above).
 
 How do I build it?
 ------------------
