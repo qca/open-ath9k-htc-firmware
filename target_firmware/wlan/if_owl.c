@@ -1108,7 +1108,6 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 	hdrlen = ieee80211_anyhdrsize(wh);
 	pktlen = len;
 	keyix = HAL_TXKEYIX_INVALID;
-	pktlen -= (hdrlen & 3);
 	pktlen += IEEE80211_CRC_LEN;
 
 	if (iswep)
@@ -1142,6 +1141,8 @@ ath_tgt_send_mgt(struct ath_softc_tgt *sc,adf_nbuf_t hdr_buf, adf_nbuf_t skb,
 			atype = HAL_PKT_TYPE_NORMAL;
 
 		break;
+	case IEEE80211_FC0_TYPE_CTL:
+		flags |= HAL_TXDESC_NOACK;
 	default:
 		atype = HAL_PKT_TYPE_NORMAL;
 		break;
