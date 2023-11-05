@@ -140,6 +140,17 @@ clean:
 firmware: toolchain
 	+$(MAKE) -C target_firmware
 
+# usage: sudo make install-linux
+install-linux:
+	cp -n /lib/firmware/htc_9271.fw /lib/firmware/htc_9271.fw.backup
+	cp -n /lib/firmware/htc_7010.fw /lib/firmware/htc_7010.fw.backup
+	cp target_firmware/htc_9271.fw /lib/firmware/
+	cp target_firmware/htc_7010.fw /lib/firmware/
+
+uninstall-linux:
+	cp /lib/firmware/htc_9271.fw.backup /lib/firmware/htc_9271.fw
+	cp /lib/firmware/htc_7010.fw.backup /lib/firmware/htc_7010.fw
+
 .PHONY: all toolchain-clean clean clean-dl download toolchain firmware
 
 $(eval $(call Build,GMP))
